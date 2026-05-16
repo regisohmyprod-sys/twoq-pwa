@@ -818,51 +818,43 @@
       const grouped = groupByMonth(rest);
 
       let html = `
-        <!-- En-tête personnalisé -->
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
-          <div>
-            <div style="font-size:11px; letter-spacing:2px; color:var(--smoke); margin-bottom:4px;">THE WORLD OF QUEEN</div>
-            <div style="font-family:var(--serif); font-size:24px; font-weight:500; color:var(--cream);">Bonjour.</div>
+        <!-- En-tête : THE WORLD OF QUEEN + refresh/connexion -->
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:12px;">
+          <div style="flex:1; min-width:0;">
+            <div style="font-family:var(--serif); font-size:26px; font-weight:700; color:#FFFFFF; letter-spacing:0.5px; line-height:1.1;">THE WORLD OF QUEEN</div>
+            <div style="font-size:13px; color:var(--smoke); margin-top:4px;">Bonjour.</div>
           </div>
-          <div style="background:var(--gold); color:#0A0A0A; padding:6px 14px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:1px; display:flex; align-items:center; gap:4px;">
-            🏅 ROYAL
+          <div style="display:flex; gap:8px; flex-shrink:0;">
+            <button onclick="hardRefresh()" aria-label="Actualiser" style="background:var(--charcoal); border:1px solid var(--border); color:var(--cream); width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            </button>
+            <button onclick="openAuth()" aria-label="Connexion" style="background:var(--charcoal); border:1px solid var(--border); color:var(--cream); width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </button>
           </div>
         </div>
 
-        <!-- Bloc PROCHAIN SHOW -->
+        <!-- Bloc lancement nouvelle tournée -->
         <div style="background:var(--charcoal); border-radius:12px; overflow:hidden; margin-bottom:24px; position:relative;">
-          <div style="position:absolute; top:12px; left:12px; background:var(--gold); color:#0A0A0A; padding:6px 14px; border-radius:6px; font-size:10px; font-weight:700; letter-spacing:1.5px; z-index:2;">
-            PROCHAIN SHOW
-          </div>
           <img src="./icons/affiche-show.jpg" alt="The World of Queen - L'Éternelle Légende" style="width:100%; display:block;">
-          <div style="padding:16px 20px;">
-            <div style="font-size:11px; letter-spacing:1.5px; color:var(--smoke); margin-bottom:6px;">NARBONNE • FRANCE</div>
-            <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; margin-bottom:8px;">L'Éternelle Légende</div>
-            <div style="font-size:13px; color:var(--smoke); line-height:1.5; margin-bottom:14px;">
-              Le grand lancement de la nouvelle tournée. Une nuit. Une légende.
+          <div style="padding:18px 20px;">
+            <div style="font-size:13px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:4px;">THE WORLD OF QUEEN</div>
+            <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; margin-bottom:12px;">L'Éternelle Légende</div>
+            <div style="font-size:14px; color:var(--smoke); line-height:1.5; margin-bottom:16px;">
+              Le grand lancement de la nouvelle tournée et du nouveau show !
             </div>
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; font-size:13px; color:var(--cream);">
-              <div style="display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                Narbonne Arena
-              </div>
-              <div style="display:flex; align-items:center; gap:6px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                20:30
-              </div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <span class="btn-gold" onclick="window.open('https://www.ticketmaster.fr/fr/artiste/the-world-of-queen/idartiste/33538', '_blank')" style="display:flex; align-items:center; gap:6px;">
-                Réserver
+            <div>
+              <span class="btn-gold" onclick="window.open('https://www.theworldofqueen.com', '_blank')" style="display:inline-flex; align-items:center; gap:6px;">
+                Infos
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </span>
-              <div style="font-size:15px; font-weight:600; color:var(--cream);">dès 75 €</div>
             </div>
           </div>
         </div>
 
         <!-- Section "Prochains concerts" -->
         <div style="margin-bottom:8px;">
+          <div style="font-size:13px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:4px;">THE WORLD OF QUEEN</div>
           <div style="font-size:11px; letter-spacing:1.5px; color:var(--gold); font-weight:600; margin-bottom:6px;">L'ÉTERNELLE LÉGENDE</div>
           <div style="font-family:var(--serif); font-size:22px; font-weight:500; color:var(--cream);">Prochains concerts</div>
         </div>
@@ -872,7 +864,6 @@
           <div class="hero" onclick="window.open('${featured.tm}', '_blank')">
             <div class="hero-tags">
               <span class="tag tag-crimson">Prochaine date</span>
-              ${featured.jaugePct ? `<span class="tag tag-outline">${featured.jaugePct}% rempli</span>` : ''}
             </div>
             <div class="hero-venue">${featured.venue}</div>
             <div class="hero-date">${featured.city} · ${fmtDate(featured.date)} · ${featured.hour}</div>
@@ -1182,6 +1173,21 @@
   function selectPoll(e, idx) {
     document.querySelectorAll('.poll-option').forEach(o => o.classList.remove('selected'));
     e.currentTarget.classList.add('selected');
+  }
+
+  function hardRefresh() {
+    // Vide le cache du Service Worker si présent puis recharge
+    if ('caches' in window) {
+      caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))))
+        .finally(() => location.reload(true));
+    } else {
+      location.reload(true);
+    }
+  }
+
+  function openAuth() {
+    // Placeholder — sera remplacé par la vraie popup inscription/connexion Supabase
+    alert('Connexion / Inscription — bientôt disponible');
   }
 
   function show(name) {
