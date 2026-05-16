@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>The World of Queen l'app</title>
+  <meta name="description" content="L'application officielle de The World of Queen — L'Éternelle Légende.">
+
+  <meta name="theme-color" content="#0A0A0A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TWOQ">
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/x-icon" href="./icons/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --card: #141414;
+      --card-2: #1A1A1A;
+      --border: #2A2A2A;
+      --border-strong: #3A3A3A;
+      --gold: #D4AF37;
+      --gold-pale: #F0D77A;
+      --gold-deep: #A8862A;
+      --crimson: #8B0000;
+      --crimson-deep: #5C0000;
+      --cream: #F5F1E8;
+      --smoke: #8B8580;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'Inter', -apple-system, system-ui, sans-serif;
+      --tab-h: 64px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--cream); font-family: var(--sans); height: 100%; overflow: hidden; }
+    body { font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+    a { color: var(--gold); text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      background: var(--bg);
+    }
+
+    .screen {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: calc(var(--safe-top) + 16px) 16px calc(var(--tab-h) + var(--safe-bottom) + 24px);
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen::-webkit-scrollbar { display: none; }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .h1 {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--cream);
+      margin: 0 0 16px;
+      line-height: 1.1;
+    }
+    .h2 {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--cream);
+      margin: 0 0 10px;
+    }
+    .mut { color: var(--smoke); font-size: 12px; }
+
+    .tabbar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: calc(var(--tab-h) + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 0.5px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: stretch;
+      z-index: 100;
+    }
+    .tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--smoke);
+      font-size: 9px;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      padding: 8px 2px;
+      transition: color 0.2s;
+    }
+    .tab.active { color: var(--gold); }
+    .tab svg { width: 22px; height: 22px; stroke-width: 1.5; }
+    .tab.active svg { stroke-width: 2; }
+
+    .btn-gold {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold);
+      color: #0A0A0A;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .btn-gold:active { transform: scale(0.97); background: var(--gold-pale); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      background: transparent;
+      transition: background 0.15s;
+    }
+    .btn-outline:active { background: rgba(212,175,55,0.1); }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .tag-gold { background: var(--gold); color: #3D2F08; }
+    .tag-crimson { background: var(--crimson); color: var(--cream); }
+    .tag-outline { border: 0.5px solid var(--gold); color: var(--gold); }
+
+    .hero {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      padding: 18px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #2a1a1a 0%, #0A0A0A 50%, #1a1a2a 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top, rgba(212,175,55,0.25) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero > * { position: relative; z-index: 2; }
+    .hero-tags { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+    .hero-venue { font-family: var(--serif); font-size: 20px; color: var(--cream); }
+    .hero-date { color: var(--smoke); margin-top: 4px; font-size: 12px; }
+
+    .card {
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .section-eyebrow {
+      color: var(--gold);
+      font-size: 10px;
+      letter-spacing: 1.8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin: 22px 0 6px;
+    }
+    .section-title {
+      font-family: var(--serif);
+      color: var(--cream);
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0 0 12px;
+    }
+
+    .date-card {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      background: var(--card);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      border-left: 3px solid var(--gold);
+      align-items: center;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .date-card:active { transform: scale(0.98); background: var(--card-2); }
+    .date-card .dt {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+      min-width: 50px;
+    }
+    .date-card .day {
+      font-family: var(--serif);
+      color: var(--gold);
+      font-size: 22px;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .date-card .mo {
+      color: var(--smoke);
+      font-size: 9px;
+      letter-spacing: 1.2px;
+      margin-top: 3px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .date-card .info { flex: 1; min-width: 0; }
+    .date-card .city { color: var(--cream); font-size: 14px; font-weight: 500; }
+    .date-card .venue { color: var(--smoke); font-size: 11px; margin-top: 2px; }
+    .date-card .arrow { color: var(--gold); }
+    .date-card.featured { border-left-color: var(--crimson); }
+
+    .video-thumb {
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-thumb::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at center, rgba(212,175,55,0.2) 0%, transparent 50%);
+    }
+    .play-btn {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+    .play-btn svg { width: 22px; height: 22px; color: #0A0A0A; margin-left: 3px; }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+    }
+    .gallery-item {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a1a1a 100%);
+      border-radius: 8px;
+    }
+    .gallery-item:nth-child(2) { background: linear-gradient(135deg, #1a1a2a 0%, #1a1a1a 100%); }
+    .gallery-item:nth-child(4) { background: linear-gradient(135deg, #2a1a1a 0%, #1a1a1a 100%); }
+    .gallery-item:nth-child(5) { background: linear-gradient(135deg, #1a1a1a 0%, #0a1a2a 100%); }
+    .gallery-item:nth-child(6) { background: linear-gradient(135deg, #2a2a1a 0%, #1a1a1a 100%); }
+    .gallery-item:nth-child(8) { background: linear-gradient(135deg, #1a1a2a 0%, #2a1a2a 100%); }
+    .gallery-item:nth-child(9) { background: linear-gradient(135deg, #2a1a1a 0%, #1a2a1a 100%); }
+
+    .contest-card {
+      background: var(--card);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .contest-progress {
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+    .contest-progress > div {
+      height: 100%;
+      background: var(--gold);
+      transition: width 0.4s ease-out;
+    }
+
+    .poll-option {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      transition: border-color 0.15s;
+    }
+    .poll-option.selected { border-color: var(--gold); background: rgba(212,175,55,0.08); }
+    .poll-option .pct { margin-left: auto; color: var(--gold); font-weight: 500; }
+
+    .avatar-circle {
+      width: 92px; height: 92px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--gold);
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 36px;
+      font-family: var(--serif);
+      font-weight: 500;
+    }
+
+    .stat-row { display: flex; gap: 8px; margin: 14px 0; }
+    .stat-box {
+      flex: 1;
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    .stat-num { color: var(--gold); font-size: 22px; font-weight: 500; font-family: var(--serif); }
+    .stat-lab { color: var(--smoke); font-size: 9px; letter-spacing: 1.2px; margin-top: 2px; }
+
+    .menu-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 0.5px solid #1F1F1F;
+      gap: 14px;
+    }
+    .menu-row svg { color: var(--gold); width: 20px; height: 20px; flex-shrink: 0; }
+    .menu-row .lbl { flex: 1; color: var(--cream); font-size: 14px; }
+    .menu-row .arr { color: var(--smoke); }
+
+    .product-tile {
+      aspect-ratio: 0.9;
+      background: var(--card);
+      border-radius: 12px;
+      border: 0.5px solid var(--border);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-img {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a1a1a 100%);
+      border-radius: 8px;
+      flex: 1;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+    }
+    .product-img svg { width: 32px; height: 32px; }
+    .product-name { color: var(--cream); font-size: 12px; font-weight: 500; line-height: 1.3; }
+    .product-price { color: var(--gold); font-size: 12px; margin-top: 4px; font-weight: 500; }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .fred-cover {
+      height: 160px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #1a1a1a 0%, #2a1a1a 50%, #0A0A0A 100%);
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .fred-cover::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(212,175,55,0.25) 0%, transparent 60%);
+    }
+    .fred-cover .legend {
+      position: absolute;
+      bottom: 16px; left: 16px; right: 16px;
+      z-index: 2;
+    }
+    .fred-cover .legend .name { font-family: var(--serif); font-size: 24px; color: var(--cream); }
+    .fred-cover .legend .role { font-size: 10px; color: var(--gold); letter-spacing: 1.8px; margin-top: 4px; text-transform: uppercase; }
+
+    .artist-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px;
+      background: var(--card);
+      border-radius: 12px;
+      border: 0.5px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .artist-card .av {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .artist-card .info { flex: 1; }
+    .artist-card .nm { color: var(--cream); font-size: 13px; font-weight: 500; }
+    .artist-card .rl { color: var(--smoke); font-size: 11px; margin-top: 2px; }
+
+    .splash {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 9999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    .splash.hidden { opacity: 0; visibility: hidden; }
+    .splash .crown {
+      width: 120px;
+      height: 120px;
+      animation: crownPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes crownPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(212,175,55,0.3)); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(212,175,55,0.6)); }
+    }
+    .splash .label {
+      margin-top: 24px;
+      font-family: var(--serif);
+      letter-spacing: 4px;
+      color: var(--cream);
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    .splash .title {
+      margin-top: 8px;
+      font-family: var(--serif);
+      letter-spacing: 2px;
+      color: var(--gold);
+      font-size: 22px;
+      font-weight: 900;
+    }
+    .splash .sub {
+      margin-top: 6px;
+      font-family: var(--serif);
+      font-style: italic;
+      letter-spacing: 3px;
+      color: var(--gold-pale);
+      font-size: 9px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="splash" class="splash">
+  <img src="./icons/icon-512.png" alt="" class="crown">
+  <div class="label">THE WORLD OF</div>
+  <div class="title">QUEEN</div>
+  <div class="sub">L'ÉTERNELLE LÉGENDE</div>
+</div>
+
+<div class="app">
+  <div id="screen" class="screen"></div>
+  <nav class="tabbar" id="tabbar">
+    <button class="tab" data-tab="dates">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      DATES
+    </button>
+    <button class="tab" data-tab="show">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      SHOW
+    </button>
+    <button class="tab" data-tab="artistes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a4 4 0 014 4v5a4 4 0 11-8 0V6a4 4 0 014-4z"/><path d="M19 11a7 7 0 11-14 0M12 18v4M8 22h8"/></svg>
+      ARTISTES
+    </button>
+    <button class="tab" data-tab="fanzone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13M5 12v9h14v-9M7.5 8a2.5 2.5 0 010-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 010 5"/></svg>
+      FAN ZONE
+    </button>
+    <button class="tab" data-tab="boutique">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 11-8 0"/></svg>
+      BOUTIQUE
+    </button>
+    <button class="tab" data-tab="moi">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      MOI
+    </button>
+  </nav>
+</div>
+
+<script src="./dates.js"></script>
+<script>
+  setTimeout(() => document.getElementById('splash').classList.add('hidden'), 1600);
+
+  const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const MONTHS_SHORT = ['JAN','FÉV','MAR','AVR','MAI','JUI','JUL','AOÛ','SEP','OCT','NOV','DÉC'];
+
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    return `${d.getDate()} ${MONTHS_FR[d.getMonth()]} ${d.getFullYear()}`;
+  }
+  function dayMonth(iso) {
+    const d = new Date(iso);
+    return { day: d.getDate(), mo: MONTHS_SHORT[d.getMonth()], full: `${MONTHS_FR[d.getMonth()]} ${d.getFullYear()}` };
+  }
+  function groupByMonth(dates) {
+    const map = new Map();
+    dates.forEach(dt => {
+      const key = dt.date.substring(0, 7);
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(dt);
+    });
+    return Array.from(map.entries()).map(([k, items]) => {
+      const d = new Date(k + '-01');
+      return { label: `${MONTHS_FR[d.getMonth()]} ${d.getFullYear()}`, items };
+    });
+  }
+
+  const screens = {
+    dates: () => {
+      const now = Date.now();
+      const future = DATES.filter(d => new Date(d.date).getTime() >= now - 86400000)
+                          .sort((a,b) => new Date(a.date) - new Date(b.date));
+      const featured = future.find(d => d.featured) || future[0];
+      const rest = future.filter(d => d.id !== (featured && featured.id));
+      const grouped = groupByMonth(rest);
+
+      let html = `
+        <div class="eyebrow">THE WORLD OF QUEEN</div>
+        <div class="h1">L'Éternelle Légende.</div>
+      `;
+      if (featured) {
+        html += `
+          <div class="hero" onclick="window.open('${featured.tm}', '_blank')">
+            <div class="hero-tags">
+              <span class="tag tag-crimson">Prochaine date</span>
+              ${featured.jaugePct ? `<span class="tag tag-outline">${featured.jaugePct}% rempli</span>` : ''}
+            </div>
+            <div class="hero-venue">${featured.venue}</div>
+            <div class="hero-date">${featured.city} · ${fmtDate(featured.date)} · ${featured.hour}</div>
+            <div style="margin-top:14px;">
+              <span class="btn-gold">Réserver — dès ${featured.priceFrom} €</span>
+            </div>
+          </div>
+        `;
+      }
+      grouped.forEach(g => {
+        html += `<div class="section-title" style="margin-top:18px;">${g.label}</div>`;
+        g.items.forEach(d => {
+          const dm = dayMonth(d.date);
+          html += `
+            <div class="date-card${d.featured ? ' featured' : ''}" onclick="window.open('${d.tm}', '_blank')">
+              <div class="dt"><div class="day">${dm.day}</div><div class="mo">${dm.mo}</div></div>
+              <div class="info">
+                <div class="city">${d.city}</div>
+                <div class="venue">${d.venue}${d.priceFrom ? ' · dès ' + d.priceFrom + ' €' : ''}</div>
+              </div>
+              <div class="arrow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
+            </div>
+          `;
+        });
+      });
+      html += `
+        <div style="text-align:center; margin-top:20px;">
+          <span class="btn-outline" onclick="alert('Carte des dates — bientôt disponible')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Voir la carte des dates
+          </span>
+        </div>
+      `;
+      return html;
+    },
+
+    show: () => `
+      <div class="eyebrow">PHOTOS & VIDÉOS</div>
+      <div class="h1">Le show.</div>
+
+      <div class="video-thumb" onclick="window.open('https://www.youtube.com/channel/UCwyb6LJpE6kDfI3Wx7wP4Xg', '_blank')">
+        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div style="color:var(--cream); font-size:14px; font-weight:500;">Bohemian Rhapsody — Dôme de Paris 2024</div>
+      <div class="mut" style="margin-top:2px;">4 min 28 · 2,4 M vues</div>
+
+      <div class="section-eyebrow">GALERIE PHOTOS</div>
+      <div class="section-title">+ 1 200 photos du show</div>
+      <div class="gallery-grid">
+        ${Array(9).fill(0).map(() => '<div class="gallery-item"></div>').join('')}
+      </div>
+      <div style="text-align:center; margin-top:16px;">
+        <span class="btn-outline" onclick="alert('Galerie — bientôt')">Voir toute la galerie →</span>
+      </div>
+
+      <div class="section-eyebrow">RÉSEAUX SOCIAUX</div>
+      <div class="section-title">Suivez-nous</div>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.theworldofqueen.com" target="_blank" class="artist-card">
+        <div class="av" style="background:#1877F2; border-color:#1877F2; color:#fff;">f</div>
+        <div class="info"><div class="nm">Facebook officiel</div><div class="rl">64 000 abonnés</div></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+      <a href="https://www.instagram.com/theworldofqueenofficiel/" target="_blank" class="artist-card">
+        <div class="av" style="background:#E1306C; border-color:#E1306C; color:#fff;">📷</div>
+        <div class="info"><div class="nm">Instagram officiel</div><div class="rl">@theworldofqueenofficiel</div></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+      <a href="https://www.youtube.com/channel/UCwyb6LJpE6kDfI3Wx7wP4Xg" target="_blank" class="artist-card">
+        <div class="av" style="background:#FF0000; border-color:#FF0000; color:#fff;">▶</div>
+        <div class="info"><div class="nm">YouTube</div><div class="rl">Concerts, behind the scenes</div></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    `,
+
+    artistes: () => `
+      <div class="eyebrow">L'ÉQUIPE</div>
+      <div class="h1">Artistes.</div>
+
+      <div class="fred-cover">
+        <div class="legend">
+          <div class="name">Fred Caramia</div>
+          <div class="role">VOIX OFFICIELLE TWOQ</div>
+        </div>
+      </div>
+
+      <div style="color:var(--cream); font-size:13px; line-height:1.7; padding: 0 2px;">
+        Voix française n°1 pour incarner Freddie Mercury. Plus d'1,2 million de spectateurs séduits. M6, W9, RFM — la presse unanime.
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-num">8</div><div class="stat-lab">SOLD OUT</div></div>
+        <div class="stat-box"><div class="stat-num">1,2M</div><div class="stat-lab">SPECTATEURS</div></div>
+        <div class="stat-box"><div class="stat-num">N°1</div><div class="stat-lab">HOMMAGE FR</div></div>
+      </div>
+
+      <div class="section-eyebrow">LE GROUPE</div>
+      <div class="section-title">Sur scène</div>
+
+      <div class="artist-card">
+        <div class="av">F</div>
+        <div class="info"><div class="nm">Fred Caramia</div><div class="rl">Lead vocal</div></div>
+      </div>
+      <div class="artist-card">
+        <div class="av">C</div>
+        <div class="info"><div class="nm">Claire Lairy</div><div class="rl">Soprano · invitée</div></div>
+      </div>
+      <div class="artist-card">
+        <div class="av">F</div>
+        <div class="info"><div class="nm">Fanny Crouet</div><div class="rl">Soprano · invitée</div></div>
+      </div>
+      <div class="artist-card">
+        <div class="av">G</div>
+        <div class="info"><div class="nm">Le groupe TWOQ</div><div class="rl">Guitares, basse, batterie, claviers</div></div>
+      </div>
+
+      <div class="section-eyebrow">EN COULISSES</div>
+      <div class="section-title">À découvrir</div>
+      <div class="card">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
+          <div style="flex:1;">
+            <div style="color:var(--cream); font-size:13px; font-weight:500;">Making-of de la tournée</div>
+            <div class="mut">Vidéo exclusive 12 min</div>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--smoke)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M4 22V2l4 4 4-4 4 4 4-4v20l-4-4-4 4-4-4z"/><path d="M8 7h8M8 12h4"/></svg>
+          <div style="flex:1;">
+            <div style="color:var(--cream); font-size:13px; font-weight:500;">Interview M6</div>
+            <div class="mut">"Le meilleur de la France"</div>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--smoke)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </div>
+    `,
+
+    fanzone: () => `
+      <div class="eyebrow">FAN ZONE</div>
+      <div class="h1">Pour les fans.</div>
+
+      <div class="contest-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <span class="tag tag-gold">CONCOURS ACTIF</span>
+          <span class="mut" style="font-size:10px;">Fin dans 3j</span>
+        </div>
+        <div style="color:var(--cream); font-size:16px; font-weight:500; font-family:var(--serif);">Backstage Fred Caramia</div>
+        <div class="mut" style="margin-top:6px; font-size:12px;">2 places + rencontre avec Fred au Dôme de Paris · 28 nov.</div>
+        <div class="contest-progress"><div style="width:62%;"></div></div>
+        <div style="display:flex; justify-content:space-between; margin-top:8px;">
+          <span class="mut" style="font-size:11px;">312 / 500 participants</span>
+          <button class="btn-gold" style="padding:6px 12px; font-size:11px;" onclick="alert('Inscription concours — bientôt')">Je participe →</button>
+        </div>
+      </div>
+
+      <div class="section-eyebrow">SONDAGE EXCLUSIF</div>
+      <div class="section-title">Quelle chanson au Dôme de Paris ?</div>
+      <div class="card">
+        <div class="poll-option selected" onclick="selectPoll(event, 0)">
+          <span>Bohemian Rhapsody</span><span class="pct">62%</span>
+        </div>
+        <div class="poll-option" onclick="selectPoll(event, 1)">
+          <span>Show Must Go On</span><span class="pct">24%</span>
+        </div>
+        <div class="poll-option" onclick="selectPoll(event, 2)">
+          <span>Don't Stop Me Now</span><span class="pct">14%</span>
+        </div>
+      </div>
+
+      <div class="section-eyebrow">CONCOURS PASSÉS</div>
+      <div class="card" style="opacity:0.6;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="color:var(--cream); font-size:13px;">Vinyle signé édition limitée</div>
+            <div class="mut" style="font-size:11px;">Gagnant : Sophie L. (Lyon)</div>
+          </div>
+          <span class="tag tag-outline">TERMINÉ</span>
+        </div>
+      </div>
+
+      <div class="section-eyebrow">PROCHAINEMENT</div>
+      <div class="card" style="border-style:dashed;">
+        <div style="text-align:center; padding: 8px;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" style="margin-bottom:8px;"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          <div style="color:var(--cream); font-size:13px;">Sondages, votes setlist, contenus exclusifs</div>
+          <div class="mut" style="margin-top:4px;">Disponible bientôt</div>
+        </div>
+      </div>
+    `,
+
+    boutique: () => `
+      <div class="eyebrow">BOUTIQUE</div>
+      <div class="h1">Le merch officiel.</div>
+
+      <div class="card" style="background:linear-gradient(135deg, #2a1a1a 0%, #141414 100%); border-color: var(--gold);" onclick="alert('Lien Fan Avenue à configurer')">
+        <div style="display:flex; gap:14px; align-items:center;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 11-8 0"/></svg>
+          <div style="flex:1;">
+            <div style="color:var(--cream); font-size:14px; font-weight:500;">Boutique officielle Fan Avenue</div>
+            <div class="mut" style="margin-top:2px;">T-shirts, posters, vinyles, sweats</div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+        </div>
+      </div>
+
+      <div class="section-eyebrow">TOP VENTES</div>
+      <div class="product-grid">
+        <div class="product-tile">
+          <div class="product-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg></div>
+          <div class="product-name">T-shirt Tour 2026</div>
+          <div class="product-price">29,90 €</div>
+        </div>
+        <div class="product-tile">
+          <div class="product-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <div class="product-name">Vinyle signé Fred</div>
+          <div class="product-price">49,00 €</div>
+        </div>
+        <div class="product-tile">
+          <div class="product-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+          <div class="product-name">Affiche Dôme de Paris</div>
+          <div class="product-price">19,90 €</div>
+        </div>
+        <div class="product-tile">
+          <div class="product-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg></div>
+          <div class="product-name">Sweat Royal</div>
+          <div class="product-price">59,00 €</div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:18px;">
+        <span class="btn-gold" onclick="alert('Lien Fan Avenue à configurer')">
+          Voir toute la boutique →
+        </span>
+      </div>
+    `,
+
+    moi: () => `
+      <div style="text-align:center; padding-top:12px;">
+        <div class="avatar-circle">?</div>
+        <div style="font-family:var(--serif); font-size:18px; color:var(--cream);">Bienvenue</div>
+        <div style="color:var(--gold); font-size:10px; letter-spacing:2px; margin-top:4px;">CONNECTE-TOI POUR DÉBLOQUER</div>
+      </div>
+
+      <div style="margin: 20px 0;">
+        <button class="btn-gold" style="width:100%; justify-content:center;" onclick="alert('Inscription — bientôt')">
+          Créer un compte gratuit
+        </button>
+        <div style="text-align:center; margin-top:10px;">
+          <span style="color:var(--smoke); font-size:12px;">ou </span>
+          <a onclick="alert('Connexion — bientôt')" style="font-size:12px;">se connecter</a>
+        </div>
+      </div>
+
+      <div class="section-eyebrow">AVANTAGES DU COMPTE</div>
+      <div class="card">
+        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Mes dates favorites</div><div class="mut">Notifications avant chaque show</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Tirages au sort exclusifs</div><div class="mut">Backstage, places offertes, merch</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Précommande prioritaire</div><div class="mut">Accès aux billets avant tout le monde</div></div>
+        </div>
+      </div>
+
+      <div class="section-eyebrow">L'APP</div>
+      <div class="menu-row" onclick="alert('Notifications — bientôt')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="lbl">Notifications</span>
+        <span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+      <div class="menu-row" onclick="alert('Partage — bientôt')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+        <span class="lbl">Partager l'app</span>
+        <span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+      <div class="menu-row" onclick="window.open('mailto:regis.ohmyprod@gmail.com')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span class="lbl">Contact</span>
+        <span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+      <div class="menu-row" onclick="window.open('https://www.theworldofqueen.com', '_blank')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        <span class="lbl">Site web officiel</span>
+        <span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></span>
+      </div>
+      <div class="menu-row" onclick="alert('Version 1.0 — Mai 2026\\nThe World of Queen © Oh My Prod')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span class="lbl">À propos</span>
+        <span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+      </div>
+    `
+  };
+
+  function selectPoll(e, idx) {
+    document.querySelectorAll('.poll-option').forEach(o => o.classList.remove('selected'));
+    e.currentTarget.classList.add('selected');
+  }
+
+  function show(name) {
+    const screen = document.getElementById('screen');
+    screen.innerHTML = screens[name]();
+    screen.scrollTop = 0;
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === name);
+    });
+  }
+
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => show(t.dataset.tab));
+  });
+
+  show('dates');
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+    });
+  }
+</script>
+
+</body>
+</html>
