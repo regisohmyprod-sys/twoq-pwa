@@ -358,17 +358,19 @@
     }
 
     /* === PAGE SHOW : ajouts === */
-    .page-title-twoq {
-      font-family: var(--serif);
-      color: var(--gold);
-      font-size: 24px;
-      font-weight: 500;
-      letter-spacing: 4px;
+    .show-logo-wrap {
       text-align: center;
-      margin: 8px 0 18px;
+      margin: 4px 0 18px;
       padding-bottom: 14px;
       border-bottom: 1px solid rgba(212, 175, 55, 0.25);
-      text-shadow: 0 0 22px rgba(212, 175, 55, 0.35);
+    }
+    .show-logo {
+      max-width: 75%;
+      max-height: 120px;
+      height: auto;
+      width: auto;
+      display: inline-block;
+      filter: drop-shadow(0 0 18px rgba(212, 175, 55, 0.35));
     }
     .stat-stars {
       color: var(--gold);
@@ -1191,7 +1193,9 @@
     },
 
     show: () => `
-      <div class="page-title-twoq">THE WORLD OF QUEEN</div>
+      <div class="show-logo-wrap">
+        <img src="./icons/logo-twoq-titre.png" alt="The World of Queen" class="show-logo">
+      </div>
       <div class="eyebrow">PHOTOS & VIDÉOS</div>
       <div class="h1">Le show.</div>
 
