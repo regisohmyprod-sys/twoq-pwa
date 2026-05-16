@@ -360,17 +360,17 @@
     /* === PAGE SHOW : ajouts === */
     .show-logo-wrap {
       text-align: center;
-      margin: 4px 0 18px;
-      padding-bottom: 14px;
+      margin: 4px 0 22px;
+      padding-bottom: 18px;
       border-bottom: 1px solid rgba(212, 175, 55, 0.25);
     }
     .show-logo {
-      max-width: 75%;
-      max-height: 120px;
+      max-width: 100%;
+      max-height: 200px;
       height: auto;
       width: auto;
       display: inline-block;
-      filter: drop-shadow(0 0 18px rgba(212, 175, 55, 0.35));
+      filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.45));
     }
     .stat-stars {
       color: var(--gold);
@@ -1196,10 +1196,24 @@
       <div class="show-logo-wrap">
         <img src="./icons/logo-twoq-titre.png" alt="The World of Queen" class="show-logo">
       </div>
-      <div class="eyebrow">PHOTOS & VIDÉOS</div>
-      <div class="h1">Le show.</div>
+      <div class="h1">Le show</div>
 
-      <div class="stat-row" style="margin-top:18px;">
+      <div class="section-eyebrow" style="margin-top:18px;">TEASER OFFICIEL</div>
+      <div class="section-title">Le nouveau spectacle</div>
+      <div class="video-player-wrap">
+        <video id="teaserVideo" class="video-player" autoplay playsinline preload="auto" controls loop>
+          <source src="assets/TEASER1.mp4" type="video/mp4">
+          Votre navigateur ne supporte pas la vidéo HTML5.
+        </video>
+        <button id="unmuteBtn" class="unmute-btn" onclick="enableTeaserSound()" style="display:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/></svg>
+          <span>Activer le son</span>
+        </button>
+      </div>
+      <div style="color:var(--cream); font-size:14px; font-weight:500; margin-top:10px;">Teaser The World of Queen</div>
+      <div class="mut" style="margin-top:2px;">Nouveau spectacle — L'Éternelle Légende</div>
+
+      <div class="stat-row" style="margin-top:24px;">
         <div class="stat-box"><div class="stat-num">1,3M</div><div class="stat-lab">SPECTATEURS</div></div>
         <div class="stat-box"><div class="stat-num">N°1</div><div class="stat-lab">VENTES FRANCE</div></div>
         <div class="stat-box"><div class="stat-num">N°1</div><div class="stat-lab">HOMMAGE QUEEN</div></div>
@@ -1219,21 +1233,6 @@
           <div class="stat-lab">AVIS PUBLIC</div>
         </div>
       </div>
-
-      <div class="section-eyebrow" style="margin-top:24px;">TEASER OFFICIEL</div>
-      <div class="section-title">Le nouveau spectacle</div>
-      <div class="video-player-wrap">
-        <video id="teaserVideo" class="video-player" autoplay playsinline preload="auto" controls loop>
-          <source src="assets/TEASER1.mp4" type="video/mp4">
-          Votre navigateur ne supporte pas la vidéo HTML5.
-        </video>
-        <button id="unmuteBtn" class="unmute-btn" onclick="enableTeaserSound()" style="display:none;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/></svg>
-          <span>Activer le son</span>
-        </button>
-      </div>
-      <div style="color:var(--cream); font-size:14px; font-weight:500; margin-top:10px;">Teaser The World of Queen</div>
-      <div class="mut" style="margin-top:2px;">Nouveau spectacle — L'Éternelle Légende</div>
 
       <div class="section-eyebrow" style="margin-top:24px;">GALERIE PHOTOS</div>
       <div class="section-title">+ 1 200 photos du show</div>
