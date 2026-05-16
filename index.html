@@ -357,6 +357,69 @@
       font-weight: 500;
     }
 
+    /* === PAGE SHOW : ajouts === */
+    .page-title-twoq {
+      font-family: var(--serif);
+      color: var(--gold);
+      font-size: 24px;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-align: center;
+      margin: 8px 0 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+      text-shadow: 0 0 22px rgba(212, 175, 55, 0.35);
+    }
+    .stat-stars {
+      color: var(--gold);
+      font-size: 16px;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+    }
+    .video-player-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px rgba(212, 175, 55, 0.1);
+      margin: 12px 0 0;
+    }
+    .video-player {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #000;
+    }
+    .unmute-btn {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(212, 175, 55, 0.95);
+      color: #0A0A0A;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(212, 175, 55, 0.4);
+      animation: pulseGold 2s ease-in-out infinite;
+      z-index: 10;
+    }
+    .unmute-btn:hover { background: var(--gold); }
+    @keyframes pulseGold {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
     .stat-row { display: flex; gap: 8px; margin: 14px 0; }
     .stat-box {
       flex: 1;
@@ -1128,16 +1191,47 @@
     },
 
     show: () => `
+      <div class="page-title-twoq">THE WORLD OF QUEEN</div>
       <div class="eyebrow">PHOTOS & VIDÉOS</div>
       <div class="h1">Le show.</div>
 
-      <div class="video-thumb" onclick="window.open('https://www.youtube.com/channel/UCwyb6LJpE6kDfI3Wx7wP4Xg', '_blank')">
-        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="stat-row" style="margin-top:18px;">
+        <div class="stat-box"><div class="stat-num">1,3M</div><div class="stat-lab">SPECTATEURS</div></div>
+        <div class="stat-box"><div class="stat-num">N°1</div><div class="stat-lab">VENTES FRANCE</div></div>
+        <div class="stat-box"><div class="stat-num">N°1</div><div class="stat-lab">HOMMAGE QUEEN</div></div>
       </div>
-      <div style="color:var(--cream); font-size:14px; font-weight:500;">Bohemian Rhapsody — Dôme de Paris 2024</div>
-      <div class="mut" style="margin-top:2px;">4 min 28 · 2,4 M vues</div>
 
-      <div class="section-eyebrow">GALERIE PHOTOS</div>
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-stars">★★★★★</div>
+          <div class="stat-lab">TICKETMASTER</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-stars">★★★★★</div>
+          <div class="stat-lab">GOOGLE</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-stars">★★★★★</div>
+          <div class="stat-lab">AVIS PUBLIC</div>
+        </div>
+      </div>
+
+      <div class="section-eyebrow" style="margin-top:24px;">TEASER OFFICIEL</div>
+      <div class="section-title">Le nouveau spectacle</div>
+      <div class="video-player-wrap">
+        <video id="teaserVideo" class="video-player" autoplay playsinline preload="auto" controls loop>
+          <source src="assets/TEASER1.mp4" type="video/mp4">
+          Votre navigateur ne supporte pas la vidéo HTML5.
+        </video>
+        <button id="unmuteBtn" class="unmute-btn" onclick="enableTeaserSound()" style="display:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/></svg>
+          <span>Activer le son</span>
+        </button>
+      </div>
+      <div style="color:var(--cream); font-size:14px; font-weight:500; margin-top:10px;">Teaser The World of Queen</div>
+      <div class="mut" style="margin-top:2px;">Nouveau spectacle — L'Éternelle Légende</div>
+
+      <div class="section-eyebrow" style="margin-top:24px;">GALERIE PHOTOS</div>
       <div class="section-title">+ 1 200 photos du show</div>
       <div class="gallery-grid">
         ${Array(9).fill(0).map(() => '<div class="gallery-item"></div>').join('')}
@@ -1145,24 +1239,6 @@
       <div style="text-align:center; margin-top:16px;">
         <span class="btn-outline" onclick="alert('Galerie — bientôt')">Voir toute la galerie →</span>
       </div>
-
-      <div class="section-eyebrow">RÉSEAUX SOCIAUX</div>
-      <div class="section-title">Suivez-nous</div>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.theworldofqueen.com" target="_blank" class="artist-card">
-        <div class="av" style="background:#1877F2; border-color:#1877F2; color:#fff;">f</div>
-        <div class="info"><div class="nm">Facebook officiel</div><div class="rl">64 000 abonnés</div></div>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
-      <a href="https://www.instagram.com/theworldofqueenofficiel/" target="_blank" class="artist-card">
-        <div class="av" style="background:#E1306C; border-color:#E1306C; color:#fff;">📷</div>
-        <div class="info"><div class="nm">Instagram officiel</div><div class="rl">@theworldofqueenofficiel</div></div>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
-      <a href="https://www.youtube.com/channel/UCwyb6LJpE6kDfI3Wx7wP4Xg" target="_blank" class="artist-card">
-        <div class="av" style="background:#FF0000; border-color:#FF0000; color:#fff;">▶</div>
-        <div class="info"><div class="nm">YouTube</div><div class="rl">Concerts, behind the scenes</div></div>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-      </a>
     `,
 
     artistes: () => `
@@ -1468,6 +1544,39 @@
     document.querySelectorAll('.tab').forEach(t => {
       t.classList.toggle('active', t.dataset.tab === name);
     });
+
+    // === AUTOPLAY TEASER avec fallback son ===
+    if (name === 'show') {
+      const v = document.getElementById('teaserVideo');
+      const btn = document.getElementById('unmuteBtn');
+      if (v && btn) {
+        // 1ère tentative : autoplay AVEC son
+        v.muted = false;
+        v.volume = 1.0;
+        const p = v.play();
+        if (p !== undefined) {
+          p.catch(() => {
+            // Navigateur a bloqué l'autoplay avec son
+            // Fallback : on lance en muet ET on affiche le bouton "Activer le son"
+            v.muted = true;
+            v.play().catch(() => {});
+            btn.style.display = 'flex';
+          });
+        }
+      }
+    }
+  }
+
+  // Active le son du teaser au 1er clic (fallback navigateur)
+  function enableTeaserSound() {
+    const v = document.getElementById('teaserVideo');
+    const btn = document.getElementById('unmuteBtn');
+    if (v) {
+      v.muted = false;
+      v.volume = 1.0;
+      v.play().catch(() => {});
+    }
+    if (btn) btn.style.display = 'none';
   }
 
   document.querySelectorAll('.tab').forEach(t => {
