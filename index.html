@@ -430,7 +430,7 @@
       background: linear-gradient(180deg, rgba(28, 22, 14, 0.6), rgba(15, 12, 8, 0.4));
       border: 1px solid rgba(212, 175, 55, 0.35);
       border-radius: 16px;
-      padding: 22px 18px;
+      padding: 20px 16px;
       margin-top: 14px;
       box-shadow: 0 0 32px rgba(212, 175, 55, 0.08), inset 0 1px 0 rgba(212, 175, 55, 0.1);
       position: relative;
@@ -448,11 +448,11 @@
     }
     .pitch-intro {
       color: var(--smoke);
-      font-size: 12px;
-      letter-spacing: 1.5px;
+      font-size: 10.5px;
+      letter-spacing: 1.3px;
       text-transform: uppercase;
       text-align: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       position: relative;
       z-index: 1;
     }
@@ -460,21 +460,21 @@
       display: block;
       color: var(--gold);
       font-family: var(--serif);
-      font-size: 14px;
-      letter-spacing: 1px;
-      margin-top: 6px;
+      font-size: 12.5px;
+      letter-spacing: 0.8px;
+      margin-top: 5px;
       text-transform: none;
       font-style: italic;
     }
     .pitch-quote {
       color: var(--cream);
       font-family: var(--serif);
-      font-size: 15px;
+      font-size: 13px;
       font-style: italic;
       line-height: 1.55;
-      padding: 14px 0 14px 14px;
+      padding: 10px 0 10px 12px;
       border-left: 2px solid var(--gold);
-      margin: 0 0 18px;
+      margin: 0 0 14px;
       position: relative;
       z-index: 1;
     }
@@ -485,96 +485,125 @@
     }
     .pitch-body {
       color: var(--cream);
-      font-size: 13.5px;
+      font-size: 12px;
       line-height: 1.65;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       position: relative;
       z-index: 1;
     }
     .pitch-body strong {
-      color: var(--gold-pale, #F0D77A);
+      color: #F0D77A;
       font-weight: 600;
     }
     .pitch-body em {
-      color: var(--gold-pale, #F0D77A);
+      color: #F0D77A;
       font-style: italic;
     }
-    .pitch-songs {
-      margin: 20px 0 18px;
-      padding: 16px;
-      background: rgba(212, 175, 55, 0.06);
-      border-radius: 10px;
+
+    /* === SETLIST style affiche spectacle === */
+    .pitch-setlist {
+      margin: 16px 0 14px;
+      padding: 12px 0;
       border-top: 1px solid rgba(212, 175, 55, 0.2);
       border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      text-align: center;
       position: relative;
       z-index: 1;
     }
-    .pitch-songs-label {
+    .pitch-setlist-label {
       color: var(--gold);
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-align: center;
-      margin-bottom: 10px;
+      font-size: 9px;
+      letter-spacing: 2.5px;
+      margin-bottom: 8px;
       font-weight: 600;
     }
-    .pitch-songs-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      justify-content: center;
-    }
-    .pitch-songs-list span {
-      color: var(--cream);
-      font-size: 11.5px;
-      padding: 5px 10px;
-      background: rgba(212, 175, 55, 0.1);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      border-radius: 999px;
-      letter-spacing: 0.3px;
-      white-space: nowrap;
-    }
-    .pitch-tagline {
-      text-align: center;
+    .pitch-setlist-text {
       color: var(--cream);
       font-family: var(--serif);
-      font-size: 16px;
+      font-size: 12px;
       font-style: italic;
-      line-height: 1.5;
-      padding: 18px 0 12px;
+      line-height: 1.7;
+      letter-spacing: 0.2px;
+    }
+    .pitch-setlist-text .dot {
+      color: var(--gold);
+      font-weight: 700;
+      margin: 0 4px;
+      font-style: normal;
+    }
+    .pitch-setlist-more {
+      color: var(--smoke);
+      font-size: 10.5px;
+      font-style: italic;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+
+    /* === PUNCHLINE 5 LIGNES === */
+    .pitch-tagline {
+      text-align: center;
+      padding: 16px 0 6px;
       position: relative;
       z-index: 1;
     }
-    .pitch-tagline strong {
+    .pt-line-1 {
       color: var(--gold);
-      font-style: normal;
-      font-size: 18px;
-      letter-spacing: 1px;
-      display: inline-block;
-      margin-top: 4px;
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      margin-bottom: 8px;
+      text-shadow: 0 0 14px rgba(212, 175, 55, 0.3);
     }
-    .pitch-tagline-sub {
+    .pt-line-2 {
+      color: var(--cream);
+      font-family: var(--serif);
+      font-size: 12px;
+      font-style: italic;
+      letter-spacing: 0.3px;
+      margin-bottom: 10px;
+    }
+    .pt-line-3 {
+      color: var(--gold);
+      font-family: var(--serif);
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: 3.5px;
+      margin-bottom: 12px;
+      text-shadow: 0 0 18px rgba(212, 175, 55, 0.45);
+    }
+    .pt-line-4 {
+      color: #F0D77A;
+      font-family: var(--serif);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+    .pt-line-5 {
       color: var(--smoke);
+      font-family: var(--serif);
       font-size: 11px;
-      letter-spacing: 1.5px;
-      font-style: normal;
-      margin-top: 10px;
-      font-family: var(--sans);
+      font-style: italic;
+      letter-spacing: 1px;
     }
+
     .pitch-credit {
       text-align: center;
       color: var(--smoke);
-      font-size: 10px;
-      letter-spacing: 2px;
+      font-size: 9.5px;
+      letter-spacing: 1.8px;
       text-transform: uppercase;
       margin-top: 14px;
-      padding-top: 14px;
+      padding-top: 12px;
       border-top: 1px solid rgba(212, 175, 55, 0.15);
       position: relative;
       z-index: 1;
+      white-space: nowrap;
     }
     .pitch-credit strong {
       color: var(--gold);
-      letter-spacing: 2.5px;
+      letter-spacing: 2px;
     }
 
     /* === LISTE VIDÉOS YOUTUBE === */
@@ -1632,25 +1661,24 @@
           Un nouveau show de <strong>plus de deux heures</strong>, conçu comme un véritable voyage au cœur de l'héritage de <strong>Freddie Mercury</strong> et de <strong>Queen</strong>, porté par une <em>mise en scène immersive</em>, enrichi de <em>nouveaux décors</em> et d'une <em>création technique époustouflante</em>.
         </div>
 
-        <div class="pitch-songs">
-          <div class="pitch-songs-label">AU PROGRAMME</div>
-          <div class="pitch-songs-list">
-            <span>Bohemian Rhapsody</span>
-            <span>We Will Rock You</span>
-            <span>The Show Must Go On</span>
-            <span>I Want To Break Free</span>
-            <span>Don't Stop Me Now</span>
-            <span>+ bien d'autres surprises…</span>
+        <div class="pitch-setlist">
+          <div class="pitch-setlist-label">AU PROGRAMME</div>
+          <div class="pitch-setlist-text">
+            Bohemian&nbsp;Rhapsody <span class="dot">·</span> We&nbsp;Will&nbsp;Rock&nbsp;You <span class="dot">·</span> The&nbsp;Show&nbsp;Must&nbsp;Go&nbsp;On <span class="dot">·</span> I&nbsp;Want&nbsp;To&nbsp;Break&nbsp;Free <span class="dot">·</span> Don't&nbsp;Stop&nbsp;Me&nbsp;Now
           </div>
+          <div class="pitch-setlist-more">… et bien d'autres surprises encore</div>
         </div>
 
         <div class="pitch-tagline">
-          THE WORLD OF QUEEN n'imite pas, ne copie pas,<br><strong>il célèbre.</strong>
-          <div class="pitch-tagline-sub">— Freddie Mercury, l'éternelle légende —</div>
+          <div class="pt-line-1">THE WORLD OF QUEEN</div>
+          <div class="pt-line-2">Pas de copie, pas d'imitation</div>
+          <div class="pt-line-3">IL CÉLÈBRE</div>
+          <div class="pt-line-4">FREDDIE MERCURY</div>
+          <div class="pt-line-5">L'éternelle légende</div>
         </div>
 
         <div class="pitch-credit">
-          Production exclusive · <strong>OH MY PROD</strong>
+          Production exclusive · <strong>OH MY PROD !</strong>
         </div>
       </div>
 
