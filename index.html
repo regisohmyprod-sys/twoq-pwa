@@ -454,61 +454,235 @@
     .artist-card .nm { color: var(--cream); font-size: 13px; font-weight: 500; }
     .artist-card .rl { color: var(--smoke); font-size: 11px; margin-top: 2px; }
 
+    /* ================================================
+       SPLASH CINÉMATOGRAPHIQUE TWOQ
+       Ciel étoilé + nébuleuse + étoile Freddie + logo
+       ================================================ */
     .splash {
       position: fixed;
       inset: 0;
       background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+      overflow: hidden;
       z-index: 9999;
-      transition: opacity 0.6s ease, visibility 0.6s ease;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
     }
-    .splash.hidden { opacity: 0; visibility: hidden; }
-    .splash .crown {
-      width: 120px;
-      height: 120px;
-      animation: crownPulse 2.5s ease-in-out infinite;
+    .splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    /* Nébuleuse de fond — radial gradient or/bleu */
+    .nebula {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 45%, rgba(212,175,55,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 70% at 50% 50%, rgba(91,163,245,0.08) 0%, transparent 70%),
+        radial-gradient(circle at 75% 25%, rgba(212,175,55,0.10) 0%, transparent 40%),
+        #000000;
     }
-    @keyframes crownPulse {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(212,175,55,0.3)); }
-      50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(212,175,55,0.6)); }
+
+    /* Petites étoiles scintillantes */
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 0 4px rgba(255,255,255,0.6);
+      animation: twinkle 3s ease-in-out infinite;
+      opacity: 0;
     }
-    .splash .label {
-      margin-top: 24px;
-      font-family: var(--serif);
-      letter-spacing: 4px;
-      color: var(--cream);
-      font-size: 12px;
-      font-weight: 500;
-      text-transform: uppercase;
+    .star.gold { background: var(--gold-pale); box-shadow: 0 0 6px var(--gold); }
+    .star.blue { background: #5BA3F5; box-shadow: 0 0 5px rgba(91,163,245,0.8); }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.15; transform: scale(0.7); }
+      50% { opacity: 1; transform: scale(1.2); }
     }
-    .splash .title {
-      margin-top: 8px;
-      font-family: var(--serif);
-      letter-spacing: 2px;
-      color: var(--gold);
-      font-size: 22px;
-      font-weight: 900;
+
+    /* Étoile filante */
+    .shooting-star {
+      position: absolute;
+      width: 80px;
+      height: 1.5px;
+      background: linear-gradient(to right, transparent, #F5F1E8, var(--gold-pale));
+      border-radius: 1px;
+      box-shadow: 0 0 8px var(--gold-pale);
+      transform: rotate(30deg);
+      opacity: 0;
     }
-    .splash .sub {
-      margin-top: 6px;
-      font-family: var(--serif);
+    .shooting-star.s1 {
+      top: 20%;
+      animation: shoot 5s ease-in 1.2s infinite;
+    }
+    .shooting-star.s2 {
+      top: 35%;
+      animation: shoot 6s ease-in 3.5s infinite;
+    }
+    .shooting-star.s3 {
+      top: 55%;
+      animation: shoot 7s ease-in 5.8s infinite;
+    }
+    @keyframes shoot {
+      0% { left: -100px; opacity: 0; }
+      10% { opacity: 1; }
+      45% { opacity: 1; }
+      60% { opacity: 0; left: 120vw; }
+      100% { left: 120vw; opacity: 0; }
+    }
+
+    /* L'ÉTOILE FREDDIE — étoile à 4 rayons en haut à droite */
+    .freddie-star {
+      position: absolute;
+      top: 15%;
+      right: 15%;
+      width: 110px;
+      height: 110px;
+      animation: freddieFade 2.5s ease-out 0.4s both;
+    }
+    @keyframes freddieFade {
+      0% { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .freddie-halo {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(212,175,55,0.4) 0%, rgba(212,175,55,0.15) 40%, transparent 70%);
+      animation: haloPulse 3s ease-in-out infinite;
+    }
+    @keyframes haloPulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+    .freddie-rays {
+      position: absolute;
+      inset: 0;
+      animation: raysRotate 18s linear infinite;
+    }
+    .freddie-rays svg { width: 100%; height: 100%; }
+    @keyframes raysRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .freddie-core {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      margin: -4px 0 0 -4px;
+      border-radius: 50%;
+      background: var(--cream);
+      box-shadow: 0 0 12px var(--gold-pale), 0 0 24px var(--gold);
+      animation: corePulse 2s ease-in-out infinite;
+    }
+    @keyframes corePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.5); }
+    }
+
+    /* Logo TWOQ centré */
+    .splash-logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%) scale(0.85);
+      width: 78%;
+      max-width: 380px;
+      opacity: 0;
+      animation: logoEnter 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+      z-index: 10;
+      filter: drop-shadow(0 0 30px rgba(212,175,55,0.4));
+    }
+    @keyframes logoEnter {
+      0% { opacity: 0; transform: translate(-50%, -55%) scale(0.85); }
+      100% { opacity: 1; transform: translate(-50%, -55%) scale(1); }
+    }
+
+    /* Bouton ENTRER */
+    .splash-button-wrap {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      opacity: 0;
+      animation: buttonEnter 1s ease-out 2.4s forwards;
+      z-index: 20;
+    }
+    @keyframes buttonEnter {
+      0% { opacity: 0; transform: translate(-50%, 20px) scale(0.85); }
+      100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    }
+    .splash-button {
+      background: var(--gold);
+      color: #0A0A0A;
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 6px;
+      padding: 16px 56px;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 0 30px rgba(212,175,55,0.6);
+      transition: transform 0.15s, background 0.15s;
+      animation: buttonPulse 2.4s ease-in-out 3.5s infinite;
+    }
+    .splash-button:active {
+      background: var(--gold-pale);
+      transform: scale(0.97);
+    }
+    @keyframes buttonPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(212,175,55,0.6); }
+      50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(212,175,55,0.9); }
+    }
+    .splash-hint {
+      margin-top: 16px;
       font-style: italic;
-      letter-spacing: 3px;
-      color: var(--gold-pale);
-      font-size: 9px;
+      letter-spacing: 1.5px;
+      color: var(--cream);
+      opacity: 0.5;
+      font-size: 11px;
     }
   </style>
 </head>
 <body>
 
 <div id="splash" class="splash">
-  <img src="./icons/icon-512.png" alt="" class="crown">
-  <div class="label">THE WORLD OF</div>
-  <div class="title">QUEEN</div>
-  <div class="sub">L'ÉTERNELLE LÉGENDE</div>
+  <div class="nebula"></div>
+
+  <!-- Étoiles scintillantes (générées en JS) -->
+  <div id="stars"></div>
+
+  <!-- Étoiles filantes -->
+  <div class="shooting-star s1"></div>
+  <div class="shooting-star s2"></div>
+  <div class="shooting-star s3"></div>
+
+  <!-- ÉTOILE FREDDIE (en haut à droite) -->
+  <div class="freddie-star">
+    <div class="freddie-halo"></div>
+    <div class="freddie-rays">
+      <svg viewBox="0 0 110 110">
+        <defs>
+          <radialGradient id="rayGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#F5F1E8" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#D4AF37" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <path d="M 55 13 L 58 55 L 55 97 L 52 55 Z" fill="url(#rayGrad)" opacity="0.85"/>
+        <path d="M 13 55 L 55 58 L 97 55 L 55 52 Z" fill="url(#rayGrad)" opacity="0.85"/>
+        <path d="M 25 25 L 56 54 L 85 85 L 54 56 Z" fill="url(#rayGrad)" opacity="0.5"/>
+        <path d="M 85 25 L 54 56 L 25 85 L 56 54 Z" fill="url(#rayGrad)" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="freddie-core"></div>
+  </div>
+
+  <!-- LOGO TWOQ officiel -->
+  <img src="./icons/logo-twoq-titre.png" alt="The World of Queen — L'Éternelle Légende" class="splash-logo">
+
+  <!-- Bouton ENTRER -->
+  <div class="splash-button-wrap">
+    <button class="splash-button" id="splashEnterBtn">ENTRER</button>
+    <div class="splash-hint">Touchez pour commencer l'expérience</div>
+  </div>
 </div>
 
 <div class="app">
@@ -543,7 +717,36 @@
 
 <script src="./dates.js"></script>
 <script>
-  setTimeout(() => document.getElementById('splash').classList.add('hidden'), 1600);
+  // ================================================
+  // SPLASH SCREEN : génération étoiles + bouton ENTRER
+  // ================================================
+  function generateStars() {
+    const container = document.getElementById('stars');
+    if (!container) return;
+    const count = 60;
+    let html = '';
+    for (let i = 0; i < count; i++) {
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      const size = Math.random() * 2 + 0.8;
+      const delay = Math.random() * 3;
+      const duration = 2 + Math.random() * 2.5;
+      // 70% blanc, 20% or, 10% bleu
+      const r = Math.random();
+      const type = r < 0.7 ? '' : (r < 0.9 ? ' gold' : ' blue');
+      html += `<div class="star${type}" style="left:${x}%;top:${y}%;width:${size}px;height:${size}px;animation-delay:${delay}s;animation-duration:${duration}s;"></div>`;
+    }
+    container.innerHTML = html;
+  }
+  generateStars();
+
+  const splash = document.getElementById('splash');
+  const enterBtn = document.getElementById('splashEnterBtn');
+  if (enterBtn) {
+    enterBtn.addEventListener('click', () => {
+      splash.classList.add('hidden');
+    });
+  }
 
   const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
   const MONTHS_SHORT = ['JAN','FÉV','MAR','AVR','MAI','JUI','JUL','AOÛ','SEP','OCT','NOV','DÉC'];
