@@ -604,6 +604,14 @@
       border: 1px solid rgba(212, 175, 55, 0.3);
       box-shadow: 0 0 40px rgba(212, 175, 55, 0.2);
     }
+    /* Mode reel vertical 9:16 */
+    .video-modal-content.vertical {
+      width: auto;
+      max-width: 100%;
+      height: 100%;
+      max-height: calc(100vh - 40px);
+      aspect-ratio: 9 / 16;
+    }
     .video-modal-content iframe {
       width: 100%;
       height: 100%;
@@ -1456,7 +1464,7 @@
       <div class="section-eyebrow">VIDÉOS</div>
       <div class="section-title">À voir et revoir</div>
       <div class="video-list">
-        <a href="#" onclick="event.preventDefault(); openVideo(\'Q6VOdTNU9mE\')" class="video-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('Q6VOdTNU9mE', 'video')" class="video-card">
           <div class="video-thumb-sm" style="background-image:url('https://img.youtube.com/vi/Q6VOdTNU9mE/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="play-btn-sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
@@ -1465,7 +1473,7 @@
             <div class="video-meta">M6 · YouTube</div>
           </div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'ipjg7xsZcx8\')" class="video-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('ipjg7xsZcx8', 'video')" class="video-card">
           <div class="video-thumb-sm" style="background-image:url('https://img.youtube.com/vi/ipjg7xsZcx8/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="play-btn-sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
@@ -1474,7 +1482,7 @@
             <div class="video-meta">TWOQ · YouTube</div>
           </div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'khyyP4NIBQ4\')" class="video-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('khyyP4NIBQ4', 'video')" class="video-card">
           <div class="video-thumb-sm" style="background-image:url('https://img.youtube.com/vi/khyyP4NIBQ4/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="play-btn-sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
@@ -1483,7 +1491,7 @@
             <div class="video-meta">TWOQ · YouTube</div>
           </div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'OIo40mWmRII\')" class="video-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('OIo40mWmRII', 'video')" class="video-card">
           <div class="video-thumb-sm" style="background-image:url('https://img.youtube.com/vi/OIo40mWmRII/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="play-btn-sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
@@ -1492,7 +1500,7 @@
             <div class="video-meta">TWOQ · YouTube</div>
           </div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'aYgoOJWT6Bg\')" class="video-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('aYgoOJWT6Bg', 'video')" class="video-card">
           <div class="video-thumb-sm" style="background-image:url('https://img.youtube.com/vi/aYgoOJWT6Bg/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="play-btn-sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
@@ -1501,7 +1509,7 @@
             <div class="video-meta">TWOQ · YouTube</div>
           </div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'DmWIfaYm2L0\')" class="video-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('DmWIfaYm2L0', 'video')" class="video-card">
           <div class="video-thumb-sm" style="background-image:url('https://img.youtube.com/vi/DmWIfaYm2L0/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="play-btn-sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
@@ -1510,7 +1518,7 @@
             <div class="video-meta">TWOQ · YouTube</div>
           </div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'B9lPjOJjRuQ\')" class="video-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('B9lPjOJjRuQ', 'video')" class="video-card">
           <div class="video-thumb-sm" style="background-image:url('https://img.youtube.com/vi/B9lPjOJjRuQ/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="play-btn-sm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
           </div>
@@ -1527,56 +1535,56 @@
       <div class="section-eyebrow" style="margin-top:28px;">REELS</div>
       <div class="section-title">Les moments forts</div>
       <div class="reels-scroll">
-        <a href="#" onclick="event.preventDefault(); openVideo(\'yoFYxLacJlc\')" class="reel-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('yoFYxLacJlc', 'reel')" class="reel-card">
           <div class="reel-thumb" style="background-image:url('https://img.youtube.com/vi/yoFYxLacJlc/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="reel-platform">▶</div>
           </div>
           <div class="reel-caption">Quand la scène s'enflamme</div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'DfbSREMEgio\')" class="reel-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('DfbSREMEgio', 'reel')" class="reel-card">
           <div class="reel-thumb" style="background-image:url('https://img.youtube.com/vi/DfbSREMEgio/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="reel-platform">▶</div>
           </div>
           <div class="reel-caption">Des balances au live</div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'GhSKNMFzlMs\')" class="reel-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('GhSKNMFzlMs', 'reel')" class="reel-card">
           <div class="reel-thumb" style="background-image:url('https://img.youtube.com/vi/GhSKNMFzlMs/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="reel-platform">▶</div>
           </div>
           <div class="reel-caption">Quand tout devient crazy !!</div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'jZSqzuP7A5o\')" class="reel-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('jZSqzuP7A5o', 'reel')" class="reel-card">
           <div class="reel-thumb" style="background-image:url('https://img.youtube.com/vi/jZSqzuP7A5o/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="reel-platform">▶</div>
           </div>
           <div class="reel-caption">Notre plus belle vue c'est vous !</div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'tuAwkGunrM0\')" class="reel-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('tuAwkGunrM0', 'reel')" class="reel-card">
           <div class="reel-thumb" style="background-image:url('https://img.youtube.com/vi/tuAwkGunrM0/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="reel-platform">▶</div>
           </div>
           <div class="reel-caption">T'étais pas prêt pour cette note</div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'g1wHig3iBOM\')" class="reel-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('g1wHig3iBOM', 'reel')" class="reel-card">
           <div class="reel-thumb" style="background-image:url('https://img.youtube.com/vi/g1wHig3iBOM/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="reel-platform">▶</div>
           </div>
           <div class="reel-caption">Quand le public te défie sur scène</div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'JhE2YZaTAs4\')" class="reel-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('JhE2YZaTAs4', 'reel')" class="reel-card">
           <div class="reel-thumb" style="background-image:url('https://img.youtube.com/vi/JhE2YZaTAs4/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="reel-platform">▶</div>
           </div>
           <div class="reel-caption">Don't Lose Your Head — Live</div>
         </a>
-        <a href="#" onclick="event.preventDefault(); openVideo(\'wQEHlQAs_ME\')" class="reel-card">
+        <a href="#" onclick="event.preventDefault(); openVideo('wQEHlQAs_ME', 'reel')" class="reel-card">
           <div class="reel-thumb" style="background-image:url('https://img.youtube.com/vi/wQEHlQAs_ME/hqdefault.jpg'); background-size:cover; background-position:center;">
             <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="reel-platform">▶</div>
@@ -1960,9 +1968,17 @@
   }
 
   // === LECTEUR VIDÉO YOUTUBE INTÉGRÉ ===
-  function openVideo(videoId) {
+  // type: 'video' (horizontal 16:9) ou 'reel' (vertical 9:16)
+  function openVideo(videoId, type) {
     const modal = document.getElementById('videoModal');
+    const content = document.getElementById('videoModalContent');
     const iframe = document.getElementById('videoIframe');
+    // Adapter le format de la modal
+    if (type === 'reel') {
+      content.classList.add('vertical');
+    } else {
+      content.classList.remove('vertical');
+    }
     // autoplay=1 pour démarrer direct, rel=0 pour limiter les suggestions
     iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
     modal.classList.add('active');
@@ -1982,7 +1998,7 @@
   <button class="video-modal-close" onclick="closeVideo()" aria-label="Fermer">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
-  <div class="video-modal-content">
+  <div class="video-modal-content" id="videoModalContent">
     <iframe id="videoIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
 </div>
