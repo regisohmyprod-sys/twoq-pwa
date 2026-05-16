@@ -719,9 +719,6 @@
       display: block;
     }
   </style>
-
-  <!-- Supabase SDK pour récupérer les dates de tournée en temps réel -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -802,36 +799,35 @@
   const SUPABASE_URL = 'https://nhxqcavianozskxgfcbt.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oeHFjYXZpYW5venNreGdmY2J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyOTE0NjMsImV4cCI6MjA5MDg2NzQ2M30.sul93O7NFiIni3VnTkSld9HM6J73dnAYrnOT8PqFFW4';
 
-  let supabaseClient = null;
   let TWOQ_DATES_LIVE = null;   // Dates récupérées depuis Supabase (null = pas encore chargé)
   let TWOQ_FEATURED_LIVE = null; // La prochaine date publique chronologique
 
-  // Initialisation du client Supabase
-  try {
-    if (window.supabase && window.supabase.createClient) {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    }
-  } catch (e) {
-    console.warn('Supabase init failed, fallback to static dates:', e);
-  }
-
   // Charge la prochaine date publique + toutes les dates depuis Supabase
   async function loadTwoqDatesFromSupabase() {
-    if (!supabaseClient) return null;
     try {
       const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-      const { data, error } = await supabaseClient
-        .from('public_dates_twoq')
-        .select('*')
-        .neq('statut_public', 'residence')
-        .gte('date_concert', today)
-        .order('date_concert', { ascending: true });
+      // Appel REST direct (pas besoin du SDK) — plus fiable, moins de dépendances
+      const url = SUPABASE_URL + '/rest/v1/public_dates_twoq'
+        + '?select=*'
+        + '&tournee_id=eq.22222222-2222-2222-2222-222222222222'  // Nouvelle tournée TWOQ uniquement
+        + '&statut_public=neq.residence'
+        + '&date_concert=gte.' + today
+        + '&order=date_concert.asc';
 
-      if (error) {
-        console.warn('Supabase fetch error:', error);
+      const response = await fetch(url, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+
+      if (!response.ok) {
+        console.warn('Supabase fetch error:', response.status, response.statusText);
         return null;
       }
-      return data || [];
+      const data = await response.json();
+      console.log('[TWOQ] Dates Supabase chargées:', data.length, 'dates');
+      return data;
     } catch (e) {
       console.warn('Supabase exception:', e);
       return null;
