@@ -819,7 +819,25 @@
 
       let html = `
         <div class="eyebrow">THE WORLD OF QUEEN</div>
-        <div class="h1">L'Éternelle Légende.</div>
+        <div style="text-align:center; font-size:13px; letter-spacing:2px; color:var(--gold-pale); margin:8px 0 16px; font-weight:500;">BIENVENUE DANS L'UNIVERS QUEEN</div>
+        
+        <!-- BLOC ANNONCE -->
+        <div style="background:var(--charcoal); border-radius:12px; overflow:hidden; margin-bottom:24px;">
+          <img src="./icons/affiche-show.jpg" alt="The World of Queen - L'Éternelle Légende" style="width:100%; display:block;">
+          <div style="padding:16px 20px;">
+            <div style="color:var(--cream); font-size:15px; font-weight:500; line-height:1.4; margin-bottom:12px;">
+              Le grand lancement de la nouvelle tournée et du nouveau show !
+            </div>
+            <div style="color:var(--gold); font-size:13px; font-weight:600; letter-spacing:1px; margin-bottom:4px;">PROCHAINE DATE</div>
+            <div style="color:var(--cream); font-size:14px; font-weight:500; margin-bottom:2px;">NARBONNE ARENA</div>
+            <div style="color:var(--smoke); font-size:13px; margin-bottom:14px;">19 septembre 2026 · 20h30</div>
+            <div style="text-align:center;">
+              <span class="btn-gold" onclick="window.open('https://www.ticketmaster.fr/fr/artiste/the-world-of-queen/idartiste/33538', '_blank')">RÉSERVER</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="h1">Toutes les dates.</div>
       `;
       if (featured) {
         html += `
