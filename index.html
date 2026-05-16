@@ -661,18 +661,38 @@
     /* Message de bienvenue doré clignotant */
     @keyframes welcomeShine {
       0%, 100% {
-        color: #D4AF37;
-        text-shadow: 0 0 4px rgba(212, 175, 55, 0.3);
-        opacity: 0.85;
+        color: #8B6914;
+        text-shadow: 0 0 4px rgba(212, 175, 55, 0.2);
+        opacity: 0.6;
       }
       50% {
         color: #F0D77A;
-        text-shadow: 0 0 12px rgba(240, 215, 122, 0.8), 0 0 20px rgba(212, 175, 55, 0.4);
+        text-shadow: 0 0 14px rgba(240, 215, 122, 0.9), 0 0 24px rgba(212, 175, 55, 0.6);
         opacity: 1;
       }
     }
     .welcome-shine {
-      animation: welcomeShine 2.4s ease-in-out infinite;
+      animation: welcomeShine 1.6s ease-in-out infinite;
+    }
+
+    /* Séparateur doré étoilé */
+    .gold-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 22px 0;
+    }
+    .gold-divider .line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 30%, rgba(212,175,55,0.85) 50%, rgba(212,175,55,0.5) 70%, transparent 100%);
+    }
+    .gold-divider .star {
+      color: var(--gold);
+      font-size: 12px;
+      line-height: 1;
+      filter: drop-shadow(0 0 4px rgba(212,175,55,0.6));
     }
   </style>
 </head>
@@ -839,7 +859,7 @@
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:12px;">
           <div style="flex:1; min-width:0;">
             <div style="font-family:var(--serif); font-size:21px; font-weight:700; color:#FFFFFF; letter-spacing:0.5px; line-height:1.1;">THE WORLD OF QUEEN</div>
-            <div class="welcome-shine" style="font-size:12px; color:var(--gold); margin-top:6px; font-weight:600; letter-spacing:0.3px;">Bienvenue dans l'univers magique de Queen !</div>
+            <div class="welcome-shine" style="font-size:11px; color:var(--gold); margin-top:6px; font-weight:600; letter-spacing:0.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Bienvenue dans l'univers magique de Queen !</div>
           </div>
           <div style="display:flex; gap:8px; flex-shrink:0;">
             <button onclick="hardRefresh()" aria-label="Actualiser" style="background:var(--charcoal); border:1px solid var(--border); color:var(--cream); width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;">
@@ -852,9 +872,12 @@
         </div>
 
         <!-- Bloc lancement nouvelle tournée -->
-        <div style="background:var(--charcoal); border-radius:12px; overflow:hidden; margin-bottom:24px; position:relative;">
+        <div style="background:var(--charcoal); border-radius:12px; overflow:hidden; margin-bottom:4px; position:relative;">
           <img src="./icons/affiche-show.jpg" alt="The World of Queen - L'Éternelle Légende" style="width:100%; display:block;">
           <div style="padding:18px 20px;">
+            <div class="gold-divider" style="margin:0 0 16px;">
+              <span class="line"></span><span class="star">✦</span><span class="line"></span>
+            </div>
             <div style="font-size:13px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:4px;">THE WORLD OF QUEEN</div>
             <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; margin-bottom:12px;">L'Éternelle Légende</div>
             <div style="font-size:14px; color:var(--smoke); line-height:1.5; margin-bottom:16px;">
@@ -867,6 +890,11 @@
               </span>
             </div>
           </div>
+        </div>
+
+        <!-- Séparateur doré étoilé -->
+        <div class="gold-divider">
+          <span class="line"></span><span class="star">✦</span><span class="line"></span>
         </div>
 
         <!-- Section "Prochains concerts" -->
