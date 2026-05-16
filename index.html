@@ -494,6 +494,85 @@
       letter-spacing: 0.5px;
     }
 
+    /* === CARROUSEL REELS VERTICAUX === */
+    .reels-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 12px 0 4px;
+      margin: 0 -16px;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    .reels-scroll::-webkit-scrollbar { display: none; }
+    .reels-scroll { scrollbar-width: none; }
+    .reel-card {
+      flex: 0 0 auto;
+      width: 130px;
+      scroll-snap-align: start;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s;
+    }
+    .reel-card:hover { transform: translateY(-2px); }
+    .reel-thumb {
+      position: relative;
+      width: 130px;
+      height: 230px; /* ratio 9:16 */
+      background: linear-gradient(135deg, #2a1a1a, #0a0a0a 70%);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .reel-play {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 18px rgba(212, 175, 55, 0.6);
+    }
+    .reel-play svg {
+      width: 18px;
+      height: 18px;
+      color: #0A0A0A;
+      margin-left: 3px;
+    }
+    .reel-platform {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      backdrop-filter: blur(4px);
+    }
+    .reel-caption {
+      color: var(--cream);
+      font-size: 11px;
+      font-weight: 500;
+      margin-top: 6px;
+      text-align: center;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .stat-row { display: flex; gap: 8px; margin: 14px 0; }
     .stat-box {
       flex: 1;
@@ -1356,6 +1435,67 @@
       </div>
       <div style="text-align:center; margin-top:14px;">
         <a href="https://www.youtube.com/@theworldofqueenofficiel" target="_blank" class="btn-outline" style="text-decoration:none;">Voir toutes les vidéos →</a>
+      </div>
+
+      <div class="section-eyebrow" style="margin-top:28px;">REELS</div>
+      <div class="section-title">Les moments forts</div>
+      <div class="reels-scroll">
+        <a href="https://www.instagram.com/theworldofqueenofficiel/" target="_blank" class="reel-card">
+          <div class="reel-thumb">
+            <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel-platform">📷</div>
+          </div>
+          <div class="reel-caption">Backstage Dôme</div>
+        </a>
+        <a href="https://www.tiktok.com/@theworldofqueen" target="_blank" class="reel-card">
+          <div class="reel-thumb">
+            <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel-platform">🎵</div>
+          </div>
+          <div class="reel-caption">Fred — Hot Stuff</div>
+        </a>
+        <a href="https://www.instagram.com/theworldofqueenofficiel/" target="_blank" class="reel-card">
+          <div class="reel-thumb">
+            <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel-platform">📷</div>
+          </div>
+          <div class="reel-caption">Public en folie</div>
+        </a>
+        <a href="https://www.instagram.com/theworldofqueenofficiel/" target="_blank" class="reel-card">
+          <div class="reel-thumb">
+            <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel-platform">📷</div>
+          </div>
+          <div class="reel-caption">Soundcheck</div>
+        </a>
+        <a href="https://www.tiktok.com/@theworldofqueen" target="_blank" class="reel-card">
+          <div class="reel-thumb">
+            <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel-platform">🎵</div>
+          </div>
+          <div class="reel-caption">Bohemian solo</div>
+        </a>
+        <a href="https://www.instagram.com/theworldofqueenofficiel/" target="_blank" class="reel-card">
+          <div class="reel-thumb">
+            <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel-platform">📷</div>
+          </div>
+          <div class="reel-caption">Loge artistes</div>
+        </a>
+        <a href="https://www.tiktok.com/@theworldofqueen" target="_blank" class="reel-card">
+          <div class="reel-thumb">
+            <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel-platform">🎵</div>
+          </div>
+          <div class="reel-caption">Pyro Zénith</div>
+        </a>
+        <a href="https://www.instagram.com/theworldofqueenofficiel/" target="_blank" class="reel-card">
+          <div class="reel-thumb">
+            <div class="reel-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel-platform">📷</div>
+          </div>
+          <div class="reel-caption">Voir plus →</div>
+        </a>
       </div>
 
       <div class="section-eyebrow" style="margin-top:24px;">GALERIE PHOTOS</div>
