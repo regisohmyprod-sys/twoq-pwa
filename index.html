@@ -818,26 +818,54 @@
       const grouped = groupByMonth(rest);
 
       let html = `
-        <div class="eyebrow">THE WORLD OF QUEEN</div>
-        <div style="text-align:center; font-size:13px; letter-spacing:2px; color:var(--gold-pale); margin:8px 0 16px; font-weight:500;">BIENVENUE DANS L'UNIVERS QUEEN</div>
-        
-        <!-- BLOC ANNONCE -->
-        <div style="background:var(--charcoal); border-radius:12px; overflow:hidden; margin-bottom:24px;">
+        <!-- En-tête personnalisé -->
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+          <div>
+            <div style="font-size:11px; letter-spacing:2px; color:var(--smoke); margin-bottom:4px;">THE WORLD OF QUEEN</div>
+            <div style="font-family:var(--serif); font-size:24px; font-weight:500; color:var(--cream);">Bonjour.</div>
+          </div>
+          <div style="background:var(--gold); color:#0A0A0A; padding:6px 14px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:1px; display:flex; align-items:center; gap:4px;">
+            🏅 ROYAL
+          </div>
+        </div>
+
+        <!-- Bloc PROCHAIN SHOW -->
+        <div style="background:var(--charcoal); border-radius:12px; overflow:hidden; margin-bottom:24px; position:relative;">
+          <div style="position:absolute; top:12px; left:12px; background:var(--gold); color:#0A0A0A; padding:6px 14px; border-radius:6px; font-size:10px; font-weight:700; letter-spacing:1.5px; z-index:2;">
+            PROCHAIN SHOW
+          </div>
           <img src="./icons/affiche-show.jpg" alt="The World of Queen - L'Éternelle Légende" style="width:100%; display:block;">
           <div style="padding:16px 20px;">
-            <div style="color:var(--cream); font-size:15px; font-weight:500; line-height:1.4; margin-bottom:12px;">
-              Le grand lancement de la nouvelle tournée et du nouveau show !
+            <div style="font-size:11px; letter-spacing:1.5px; color:var(--smoke); margin-bottom:6px;">NARBONNE • FRANCE</div>
+            <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; margin-bottom:8px;">L'Éternelle Légende</div>
+            <div style="font-size:13px; color:var(--smoke); line-height:1.5; margin-bottom:14px;">
+              Le grand lancement de la nouvelle tournée. Une nuit. Une légende.
             </div>
-            <div style="color:var(--gold); font-size:13px; font-weight:600; letter-spacing:1px; margin-bottom:4px;">PROCHAINE DATE</div>
-            <div style="color:var(--cream); font-size:14px; font-weight:500; margin-bottom:2px;">NARBONNE ARENA</div>
-            <div style="color:var(--smoke); font-size:13px; margin-bottom:14px;">19 septembre 2026 · 20h30</div>
-            <div style="text-align:center;">
-              <span class="btn-gold" onclick="window.open('https://www.ticketmaster.fr/fr/artiste/the-world-of-queen/idartiste/33538', '_blank')">RÉSERVER</span>
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; font-size:13px; color:var(--cream);">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Narbonne Arena
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                20:30
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <span class="btn-gold" onclick="window.open('https://www.ticketmaster.fr/fr/artiste/the-world-of-queen/idartiste/33538', '_blank')" style="display:flex; align-items:center; gap:6px;">
+                Réserver
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+              <div style="font-size:15px; font-weight:600; color:var(--cream);">dès 75 €</div>
             </div>
           </div>
         </div>
 
-        <div class="h1">Toutes les dates.</div>
+        <!-- Section "Prochains concerts" -->
+        <div style="margin-bottom:8px;">
+          <div style="font-size:11px; letter-spacing:1.5px; color:var(--gold); font-weight:600; margin-bottom:6px;">L'ÉTERNELLE LÉGENDE</div>
+          <div style="font-family:var(--serif); font-size:22px; font-weight:500; color:var(--cream);">Prochains concerts</div>
+        </div>
       `;
       if (featured) {
         html += `
