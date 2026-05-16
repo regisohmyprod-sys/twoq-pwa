@@ -675,6 +675,24 @@
       animation: welcomeShine 1.6s ease-in-out infinite;
     }
 
+    /* Tag "Prochaine date" qui clignote pour attirer l'œil */
+    @keyframes tagBlink {
+      0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 0 rgba(139,0,0,0);
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.85;
+        box-shadow: 0 0 14px rgba(139,0,0,0.8), 0 0 22px rgba(212,175,55,0.35);
+        transform: scale(1.05);
+      }
+    }
+    .tag-blink {
+      animation: tagBlink 1.4s ease-in-out infinite;
+      display: inline-block;
+    }
+
     /* Séparateur doré étoilé */
     .gold-divider {
       display: flex;
@@ -689,10 +707,9 @@
       background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 30%, rgba(212,175,55,0.85) 50%, rgba(212,175,55,0.5) 70%, transparent 100%);
     }
     .gold-divider .star {
-      color: var(--gold);
-      font-size: 12px;
+      font-size: 16px;
       line-height: 1;
-      filter: drop-shadow(0 0 4px rgba(212,175,55,0.6));
+      filter: drop-shadow(0 0 6px rgba(212,175,55,0.7));
     }
   </style>
 </head>
@@ -875,7 +892,7 @@
 
         <!-- Séparateur doré étoilé (avant photo) -->
         <div class="gold-divider" style="margin:0 0 14px;">
-          <span class="line"></span><span class="star">✦</span><span class="line"></span>
+          <span class="line"></span><span class="star">👑</span><span class="line"></span>
         </div>
 
         <!-- Bloc lancement nouvelle tournée -->
@@ -883,7 +900,7 @@
           <img src="./icons/affiche-show.jpg" alt="The World of Queen - L'Éternelle Légende" style="width:100%; display:block;">
           <div style="padding:18px 20px;">
             <div class="gold-divider" style="margin:0 0 16px;">
-              <span class="line"></span><span class="star">✦</span><span class="line"></span>
+              <span class="line"></span><span class="star">👑</span><span class="line"></span>
             </div>
             <div style="font-size:13px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:4px;">THE WORLD OF QUEEN</div>
             <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; margin-bottom:12px;">L'Éternelle Légende</div>
@@ -901,7 +918,7 @@
 
         <!-- Séparateur doré étoilé -->
         <div class="gold-divider">
-          <span class="line"></span><span class="star">✦</span><span class="line"></span>
+          <span class="line"></span><span class="star">👑</span><span class="line"></span>
         </div>
 
         <!-- Section "Prochains concerts" -->
@@ -915,13 +932,16 @@
         html += `
           <div class="hero" onclick="window.open('${featured.tm}', '_blank')">
             <div class="hero-tags">
-              <span class="tag tag-crimson">Prochaine date</span>
+              <span class="tag tag-crimson tag-blink">Prochaine date</span>
             </div>
             <div class="hero-venue">${featured.venue}</div>
             <div class="hero-date">${featured.city} · ${fmtDate(featured.date)} · ${featured.hour}</div>
             <div style="margin-top:14px;">
               <span class="btn-gold">Réserver — dès ${featured.priceFrom} €</span>
             </div>
+          </div>
+          <div class="gold-divider">
+            <span class="line"></span><span class="star">👑</span><span class="line"></span>
           </div>
         `;
       }
@@ -1228,13 +1248,17 @@
   }
 
   function hardRefresh() {
-    // Vide le cache du Service Worker si présent puis recharge
-    if ('caches' in window) {
-      caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))))
-        .finally(() => location.reload(true));
-    } else {
-      location.reload(true);
+    // Animation visuelle sur le bouton
+    var btn = event && event.currentTarget;
+    if (btn) {
+      btn.style.transform = 'rotate(360deg)';
+      btn.style.transition = 'transform 0.6s ease';
+      setTimeout(function() { btn.style.transform = ''; }, 700);
     }
+    // Re-render de l'écran courant (sans toucher au HTML statique de la tabbar)
+    var activeTab = document.querySelector('.tab.active');
+    var name = activeTab ? activeTab.dataset.tab : 'dates';
+    show(name);
   }
 
   function openAuth() {
