@@ -597,7 +597,7 @@
     /* Logo TWOQ centré */
     .splash-logo {
       position: absolute;
-      top: 50%;
+      top: 42%;
       left: 50%;
       transform: translate(-50%, -55%) scale(0.85);
       width: 78%;
@@ -767,9 +767,9 @@
       // Angle aléatoire 0-360°
       const angle = Math.random() * 360;
       // Délai aléatoire pour que les étoiles ne partent pas toutes en même temps
-      const delay = Math.random() * 4;
+      const delay = Math.random() * 7;
       // Durée variable pour donner de la profondeur (étoiles loin = lentes, près = rapides)
-      const duration = 2.5 + Math.random() * 2.5;
+      const duration = 5 + Math.random() * 4;
       html += `<div class="hyper-star" style="--angle:${angle}deg; animation: hyperWarp ${duration}s linear ${delay}s infinite;"></div>`;
     }
     container.innerHTML = html;
