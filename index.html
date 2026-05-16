@@ -496,35 +496,52 @@
       50% { opacity: 1; transform: scale(1.2); }
     }
 
-    /* Étoile filante */
-    .shooting-star {
+    /* Étoile filante (hyperdrive) — part du centre et grossit vers l'utilisateur */
+    .hyper-star {
       position: absolute;
-      width: 80px;
-      height: 1.5px;
-      background: linear-gradient(to right, transparent, #F5F1E8, var(--gold-pale));
-      border-radius: 1px;
-      box-shadow: 0 0 8px var(--gold-pale);
-      transform: rotate(30deg);
+      top: 50%;
+      left: 50%;
+      width: 2px;
+      height: 2px;
+      background: var(--gold-pale);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--gold), 0 0 12px var(--gold-pale);
+      transform-origin: center;
+      will-change: transform, opacity;
       opacity: 0;
     }
-    .shooting-star.s1 {
-      top: 20%;
-      animation: shoot 5s ease-in 1.2s infinite;
+    /* Chaque étoile a son angle (--angle) et son délai (--delay) injectés en inline-style */
+    @keyframes hyperWarp {
+      0% {
+        opacity: 0;
+        transform: rotate(var(--angle, 0deg)) translateX(0) scale(0.5);
+        box-shadow: 0 0 2px var(--gold-pale);
+      }
+      15% {
+        opacity: 1;
+        box-shadow: 0 0 6px var(--gold), 0 0 12px var(--gold-pale);
+      }
+      85% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: rotate(var(--angle, 0deg)) translateX(80vmax) scale(2.5);
+        box-shadow: 0 0 14px var(--gold), 0 0 30px var(--gold-pale);
+      }
     }
-    .shooting-star.s2 {
-      top: 35%;
-      animation: shoot 6s ease-in 3.5s infinite;
-    }
-    .shooting-star.s3 {
-      top: 55%;
-      animation: shoot 7s ease-in 5.8s infinite;
-    }
-    @keyframes shoot {
-      0% { left: -100px; opacity: 0; }
-      10% { opacity: 1; }
-      45% { opacity: 1; }
-      60% { opacity: 0; left: 120vw; }
-      100% { left: 120vw; opacity: 0; }
+    /* Traînée derrière l'étoile (effet warp) */
+    .hyper-star::after {
+      content: '';
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      height: 1px;
+      width: 60px;
+      transform: translateY(-50%);
+      background: linear-gradient(to left, var(--gold-pale), transparent);
+      opacity: 0.85;
+      pointer-events: none;
     }
 
     /* L'ÉTOILE FREDDIE — étoile à 4 rayons en haut à droite */
@@ -650,10 +667,8 @@
   <!-- Étoiles scintillantes (générées en JS) -->
   <div id="stars"></div>
 
-  <!-- Étoiles filantes -->
-  <div class="shooting-star s1"></div>
-  <div class="shooting-star s2"></div>
-  <div class="shooting-star s3"></div>
+  <!-- Effet HYPERDRIVE : 60 étoiles dorées partent du centre -->
+  <div id="hyperdrive"></div>
 
   <!-- ÉTOILE FREDDIE (en haut à droite) -->
   <div class="freddie-star">
@@ -739,6 +754,27 @@
     container.innerHTML = html;
   }
   generateStars();
+
+  // ================================================
+  // HYPERDRIVE : 60 étoiles dorées qui foncent du centre vers toi
+  // ================================================
+  function generateHyperdrive() {
+    const container = document.getElementById('hyperdrive');
+    if (!container) return;
+    const count = 60;
+    let html = '';
+    for (let i = 0; i < count; i++) {
+      // Angle aléatoire 0-360°
+      const angle = Math.random() * 360;
+      // Délai aléatoire pour que les étoiles ne partent pas toutes en même temps
+      const delay = Math.random() * 4;
+      // Durée variable pour donner de la profondeur (étoiles loin = lentes, près = rapides)
+      const duration = 2.5 + Math.random() * 2.5;
+      html += `<div class="hyper-star" style="--angle:${angle}deg; animation: hyperWarp ${duration}s linear ${delay}s infinite;"></div>`;
+    }
+    container.innerHTML = html;
+  }
+  generateHyperdrive();
 
   const splash = document.getElementById('splash');
   const enterBtn = document.getElementById('splashEnterBtn');
