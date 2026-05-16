@@ -657,6 +657,23 @@
       opacity: 0.5;
       font-size: 11px;
     }
+
+    /* Message de bienvenue doré clignotant */
+    @keyframes welcomeShine {
+      0%, 100% {
+        color: #D4AF37;
+        text-shadow: 0 0 4px rgba(212, 175, 55, 0.3);
+        opacity: 0.85;
+      }
+      50% {
+        color: #F0D77A;
+        text-shadow: 0 0 12px rgba(240, 215, 122, 0.8), 0 0 20px rgba(212, 175, 55, 0.4);
+        opacity: 1;
+      }
+    }
+    .welcome-shine {
+      animation: welcomeShine 2.4s ease-in-out infinite;
+    }
   </style>
 </head>
 <body>
@@ -821,8 +838,8 @@
         <!-- En-tête : THE WORLD OF QUEEN + refresh/connexion -->
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:12px;">
           <div style="flex:1; min-width:0;">
-            <div style="font-family:var(--serif); font-size:26px; font-weight:700; color:#FFFFFF; letter-spacing:0.5px; line-height:1.1;">THE WORLD OF QUEEN</div>
-            <div style="font-size:13px; color:var(--smoke); margin-top:4px;">Bonjour.</div>
+            <div style="font-family:var(--serif); font-size:21px; font-weight:700; color:#FFFFFF; letter-spacing:0.5px; line-height:1.1;">THE WORLD OF QUEEN</div>
+            <div class="welcome-shine" style="font-size:12px; color:var(--gold); margin-top:6px; font-weight:600; letter-spacing:0.3px;">Bienvenue dans l'univers magique de Queen !</div>
           </div>
           <div style="display:flex; gap:8px; flex-shrink:0;">
             <button onclick="hardRefresh()" aria-label="Actualiser" style="background:var(--charcoal); border:1px solid var(--border); color:var(--cream); width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;">
@@ -844,7 +861,7 @@
               Le grand lancement de la nouvelle tournée et du nouveau show !
             </div>
             <div>
-              <span class="btn-gold" onclick="window.open('https://www.theworldofqueen.com', '_blank')" style="display:inline-flex; align-items:center; gap:6px;">
+              <span class="btn-gold" style="display:inline-flex; align-items:center; gap:6px; cursor:default; opacity:0.85;">
                 Infos
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </span>
@@ -854,9 +871,9 @@
 
         <!-- Section "Prochains concerts" -->
         <div style="margin-bottom:8px;">
-          <div style="font-size:13px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:4px;">THE WORLD OF QUEEN</div>
-          <div style="font-size:11px; letter-spacing:1.5px; color:var(--gold); font-weight:600; margin-bottom:6px;">L'ÉTERNELLE LÉGENDE</div>
-          <div style="font-family:var(--serif); font-size:22px; font-weight:500; color:var(--cream);">Prochains concerts</div>
+          <div style="font-family:var(--serif); font-size:22px; font-weight:500; color:var(--cream); margin-bottom:6px;">Prochains concerts</div>
+          <div style="font-size:13px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:2px;">THE WORLD OF QUEEN</div>
+          <div style="font-size:11px; letter-spacing:1.5px; color:var(--gold); font-weight:600;">L'ÉTERNELLE LÉGENDE</div>
         </div>
       `;
       if (featured) {
