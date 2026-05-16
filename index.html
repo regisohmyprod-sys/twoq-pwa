@@ -425,6 +425,58 @@
       50% { transform: scale(1.05); }
     }
 
+    /* === BANDEAU CRITIQUES SPECTATEURS — défilement auto === */
+    .reviews-marquee {
+      margin: 14px -16px 0;
+      padding: 8px 0;
+      overflow: hidden;
+      mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+    }
+    .reviews-track {
+      display: flex;
+      gap: 12px;
+      animation: reviewsScroll 90s linear infinite;
+      width: max-content;
+    }
+    .reviews-marquee:hover .reviews-track {
+      animation-play-state: paused;
+    }
+    @keyframes reviewsScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .review-bubble {
+      flex: 0 0 auto;
+      width: 260px;
+      background: linear-gradient(180deg, rgba(28, 22, 14, 0.7), rgba(15, 12, 8, 0.5));
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      border-radius: 12px;
+      padding: 12px 14px;
+      position: relative;
+    }
+    .review-stars {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      text-shadow: 0 0 8px rgba(212, 175, 55, 0.35);
+    }
+    .review-text {
+      color: var(--cream);
+      font-family: var(--serif);
+      font-size: 12.5px;
+      font-style: italic;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .review-author {
+      color: var(--smoke);
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+      text-align: right;
+    }
+
     /* === BLOC PITCH SPECTACLE === */
     .pitch-card {
       background: linear-gradient(180deg, rgba(28, 22, 14, 0.6), rgba(15, 12, 8, 0.4));
@@ -604,6 +656,21 @@
     .pitch-credit strong {
       color: var(--gold);
       letter-spacing: 2px;
+    }
+    /* === SIGNATURE OH MY PROD couleurs officielles === */
+    .omp-logo {
+      font-family: var(--sans);
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: 0.5px;
+      text-transform: none;
+    }
+    .omp-logo .omp-r {
+      color: #E11D2A; /* rouge OMP */
+    }
+    .omp-big {
+      font-size: 1.15em;
+      letter-spacing: 1px;
     }
 
     /* === LISTE VIDÉOS YOUTUBE === */
@@ -1642,11 +1709,68 @@
         <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
       </div>
 
-      <div class="section-eyebrow">LE PITCH</div>
+      <div class="section-eyebrow">CRITIQUES SPECTATEURS</div>
+      <div class="section-title">Ils ont vu le show</div>
+      <div class="reviews-marquee">
+        <div class="reviews-track" id="reviewsTrack">
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« Un super hommage à Freddie, j'en ai eu les larmes aux yeux. Vous êtes tous merveilleux. »</div>
+            <div class="review-author">— Béatrice C.</div>
+          </div>
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« Sans aucun doute, le meilleur du meilleur des hommages à notre cher Freddy. Quel spectacle, quelle émotion, quelle ambiance. Merciii ! »</div>
+            <div class="review-author">— Lauren P.</div>
+          </div>
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« Je préfère 1000 fois votre interprétation des chansons de Queen et de Freddie Mercury. Continuez à nous donner toujours autant de plaisir ! »</div>
+            <div class="review-author">— Dodo47</div>
+          </div>
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« Fan absolue, je vous garantis que ce sont les meilleurs et que Freddie est là à chaque concert ! »</div>
+            <div class="review-author">— Mag 06</div>
+          </div>
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« Allez-y, vous ne le regretterez pas !!! C'est génial !! »</div>
+            <div class="review-author">— Sylvie V.</div>
+          </div>
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« Si les fans veulent vraiment du spectacle et entendre le sosie vocal de Freddie, y a pas photo : c'est The World Of Queen qu'il faut aller voir. Vous êtes les meilleurs ! »</div>
+            <div class="review-author">— Chris67</div>
+          </div>
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« Freddy était parmi nous ce soir… Merci de nous avoir transportés à lui. »</div>
+            <div class="review-author">— Delphine C.</div>
+          </div>
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« Magnifique spectacle et quel duo avec la soprano ! Brillantissime !!! »</div>
+            <div class="review-author">— Decoptatines</div>
+          </div>
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« Vu à Caen, j'ai adoré. Ils m'ont fait pleurer avec les photos de Freddie, Love of My Life et Barcelona magnifique. J'en ai eu des frissons. Bravo The World of Queen, vous allez vous éclater ! »</div>
+            <div class="review-author">— Steliahuor</div>
+          </div>
+          <div class="review-bubble">
+            <div class="review-stars">★★★★★</div>
+            <div class="review-text">« C'est tout simplement époustouflant… Un show grandiose et une précision millimétrée. »</div>
+            <div class="review-author">— Philinath</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-eyebrow" style="margin-top:24px;">LE PITCH</div>
       <div class="section-title">L'Éternelle Légende</div>
       <div class="pitch-card">
         <div class="pitch-intro">
-          OH MY PROD ! présente <span class="pitch-show-name">THE WORLD OF QUEEN — « L'Éternelle Légende »</span>
+          <span class="omp-logo"><span class="omp-r">O</span>h my prod<span class="omp-r"> !</span></span> présente <span class="pitch-show-name">THE WORLD OF QUEEN — « L'Éternelle Légende »</span>
         </div>
 
         <div class="pitch-quote">
@@ -1678,7 +1802,7 @@
         </div>
 
         <div class="pitch-credit">
-          Production exclusive · <strong>OH MY PROD !</strong>
+          Production exclusive · <span class="omp-logo omp-big"><span class="omp-r">O</span>h my prod<span class="omp-r"> !</span></span>
         </div>
       </div>
 
@@ -2146,6 +2270,12 @@
             btn.style.display = 'flex';
           });
         }
+      }
+      // === CRITIQUES SPECTATEURS : duplique pour défilement infini ===
+      const track = document.getElementById('reviewsTrack');
+      if (track && !track.dataset.cloned) {
+        track.innerHTML += track.innerHTML; // duplique le contenu une fois
+        track.dataset.cloned = '1';
       }
     }
   }
