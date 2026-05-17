@@ -3680,18 +3680,23 @@
     if (e.key === ' ') { e.preventDefault(); toggleLightboxAutoplay(); }
   });
   let touchStartX = 0;
+  let lightboxSwiped = false;
   document.addEventListener('touchstart', (e) => {
     const lb = document.getElementById('lightbox');
-    if (lb && lb.classList.contains('active')) touchStartX = e.touches[0].clientX;
+    if (lb && lb.classList.contains('active')) {
+      touchStartX = e.touches[0].clientX;
+      lightboxSwiped = false;
+    }
   }, { passive: true });
-  document.addEventListener('touchend', (e) => {
+  document.addEventListener('touchmove', (e) => {
     const lb = document.getElementById('lightbox');
-    if (!lb || !lb.classList.contains('active')) return;
-    const diff = e.changedTouches[0].clientX - touchStartX;
-    // Cache le hint au 1er swipe
-    const hint = document.getElementById('lightboxSwipeHint');
-    if (hint) hint.classList.add('hidden');
+    if (!lb || !lb.classList.contains('active') || lightboxSwiped) return;
+    const diff = e.touches[0].clientX - touchStartX;
+    // Déclenche dès 30px (sans attendre touchend)
     if (Math.abs(diff) > 30) {
+      lightboxSwiped = true;
+      const hint = document.getElementById('lightboxSwipeHint');
+      if (hint) hint.classList.add('hidden');
       if (diff > 0) lightboxPrev();
       else lightboxNext();
     }
@@ -3776,35 +3781,40 @@
   }
 
   // Swipe tactile : VERTICAL pour reels (TikTok-style), HORIZONTAL pour vidéos
+  // Détection sur touchmove pour réactivité maximale (comme Insta/TikTok)
   let videoTouchStartX = 0;
   let videoTouchStartY = 0;
+  let videoSwiped = false;
   document.addEventListener('touchstart', (e) => {
     const modal = document.getElementById('videoModal');
     if (modal && modal.classList.contains('active')) {
       videoTouchStartX = e.touches[0].clientX;
       videoTouchStartY = e.touches[0].clientY;
+      videoSwiped = false;
     }
   }, { passive: true });
-  document.addEventListener('touchend', (e) => {
+  document.addEventListener('touchmove', (e) => {
     const modal = document.getElementById('videoModal');
-    if (!modal || !modal.classList.contains('active')) return;
-    const diffX = e.changedTouches[0].clientX - videoTouchStartX;
-    const diffY = e.changedTouches[0].clientY - videoTouchStartY;
+    if (!modal || !modal.classList.contains('active') || videoSwiped) return;
+    const diffX = e.touches[0].clientX - videoTouchStartX;
+    const diffY = e.touches[0].clientY - videoTouchStartY;
     const threshold = 30;
-
-    // Cache le hint au 1er swipe
-    const hint = document.getElementById('videoSwipeHint');
-    if (hint) hint.classList.add('hidden');
 
     if (currentVideoType === 'reel') {
       // REELS : swipe VERTICAL (TikTok-style)
       if (Math.abs(diffY) > threshold && Math.abs(diffY) > Math.abs(diffX)) {
+        videoSwiped = true;
+        const hint = document.getElementById('videoSwipeHint');
+        if (hint) hint.classList.add('hidden');
         if (diffY < 0) videoNext(); // swipe haut → suivante
         else videoPrev();           // swipe bas → précédente
       }
     } else {
-      // VIDEOS : swipe HORIZONTAL classique
+      // VIDEOS : swipe HORIZONTAL
       if (Math.abs(diffX) > threshold && Math.abs(diffX) > Math.abs(diffY)) {
+        videoSwiped = true;
+        const hint = document.getElementById('videoSwipeHint');
+        if (hint) hint.classList.add('hidden');
         if (diffX > 0) videoPrev(); // swipe droite → précédente
         else videoNext();           // swipe gauche → suivante
       }
