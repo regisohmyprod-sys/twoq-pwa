@@ -1495,6 +1495,333 @@
       margin-top: 8px;
     }
 
+    /* Grille compacte des avantages du compte */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .benefit-mini {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(212, 175, 55, 0.06);
+      border: 0.5px solid rgba(212, 175, 55, 0.2);
+      border-radius: 10px;
+      padding: 10px 10px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .benefit-mini:hover {
+      background: rgba(212, 175, 55, 0.1);
+      border-color: rgba(212, 175, 55, 0.35);
+    }
+    .benefit-mini svg {
+      flex-shrink: 0;
+    }
+    .benefit-text {
+      color: var(--cream);
+      font-size: 11.5px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    .benefit-text-red {
+      color: #FF3030;
+      font-weight: 600;
+    }
+    .benefit-blink {
+      border-color: rgba(255, 48, 48, 0.4) !important;
+      animation: tarifsBlink 2s ease-in-out infinite;
+    }
+
+    /* === SYSTÈME NIVEAUX FAN === */
+    /* Card d'invitation dans FAN ZONE */
+    .join-card {
+      display: flex;
+      gap: 14px;
+      align-items: stretch;
+      background: linear-gradient(135deg, rgba(20, 17, 10, 0.85), rgba(10, 10, 10, 0.6));
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 16px;
+      padding: 16px 14px;
+      margin-bottom: 22px;
+      cursor: pointer;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .join-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      animation: joinShine 3s ease-in-out infinite;
+    }
+    @keyframes joinShine {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .join-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+    }
+    .join-card-left {
+      flex-shrink: 0;
+      display: flex;
+      align-items: flex-start;
+      padding-top: 4px;
+    }
+    .join-icon-big {
+      font-size: 38px;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 14px;
+    }
+    .join-card-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .join-card-tag {
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .join-card-title {
+      font-family: var(--serif);
+      color: var(--cream);
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .join-card-sub {
+      color: var(--smoke);
+      font-size: 11.5px;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+    .join-card-cta {
+      display: inline-block;
+      background: var(--gold);
+      color: #0A0A0A;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+    }
+    .join-card-mini-levels {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .mini-lvl {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+    .status-card {
+      background: linear-gradient(135deg, rgba(20, 17, 10, 0.6), rgba(10, 10, 10, 0.4));
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 16px;
+      padding: 16px 14px 12px;
+      margin-bottom: 18px;
+    }
+    .level-badges {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .level-badge {
+      position: relative;
+      background: var(--lvl-bg);
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      padding: 10px 4px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      opacity: 0.5;
+    }
+    .level-badge.active {
+      opacity: 1;
+      border-color: var(--lvl-color);
+      box-shadow: 0 0 18px var(--lvl-bg);
+      transform: translateY(-2px);
+    }
+    .level-badge.passed {
+      opacity: 0.85;
+    }
+    .level-badge:hover {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+    .level-icon {
+      font-size: 22px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .level-name {
+      color: var(--lvl-color);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+    }
+    .level-current {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--lvl-color);
+      color: #0A0A0A;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    }
+    .level-progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--smoke);
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .level-score {
+      color: var(--cream);
+      font-weight: 600;
+    }
+    .level-next-hint {
+      color: var(--smoke);
+      font-size: 10.5px;
+      flex: 1;
+      text-align: right;
+    }
+    .level-progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .level-progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.6s ease-out;
+      box-shadow: 0 0 10px currentColor;
+    }
+    .level-info-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      background: transparent;
+      border: 0.5px dashed rgba(212, 175, 55, 0.3);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 11px;
+      color: var(--gold);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .level-info-btn:hover {
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    /* Modal détail niveaux */
+    .level-detail-card {
+      background: var(--lvl-bg);
+      border: 1px solid var(--lvl-color);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .level-detail-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .level-detail-icon {
+      font-size: 30px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+    }
+    .level-detail-name {
+      color: var(--lvl-color);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .level-detail-desc {
+      color: var(--smoke);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+    .level-detail-benefits {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .level-detail-benefits li {
+      color: var(--cream);
+      font-size: 12px;
+      padding: 5px 0 5px 20px;
+      position: relative;
+      line-height: 1.4;
+    }
+    .level-detail-benefits li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      color: var(--lvl-color);
+      font-weight: 700;
+    }
+    .level-formula-box {
+      background: rgba(212, 175, 55, 0.08);
+      border: 0.5px solid rgba(212, 175, 55, 0.25);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 14px;
+    }
+    .level-formula-title {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .level-formula-body {
+      color: var(--cream);
+      font-size: 11.5px;
+      line-height: 1.7;
+    }
+
     /* === FIN MOI === */
 
     /* === MODALS INSCRIPTION FAN === */
@@ -3764,6 +4091,8 @@
         <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
       </div>
 
+      ${renderJoinCommunityCard()}
+
       <div class="section-eyebrow">CONCOURS DU MOIS</div>
       <div class="contest-card contest-featured">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
@@ -4212,74 +4541,56 @@
       return `
       ${headerHTML}
 
+      ${renderStatusSection(fan)}
+
       <div class="section-eyebrow">MES DATES FAVORITES ${favs.length > 0 ? `<span style="color:#E11D2A; margin-left:4px;">❤ ${favs.length}</span>` : ''}</div>
       <div id="favListContainer">${favsHTML}</div>
 
       <div class="section-eyebrow" style="margin-top:22px;">AVANTAGES DU COMPTE</div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Mes dates favorites</div><div class="mut">Notifications avant chaque show</div></div>
+      <div class="benefits-grid">
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <div class="benefit-text">Dates favorites</div>
         </div>
-      </div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Jeux concours exclusifs</div><div class="mut">Accès backstage, places offertes, rencontres artistes</div></div>
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <div class="benefit-text">Jeux concours</div>
         </div>
-      </div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Précommande prioritaire</div><div class="mut">Accès aux billets avant tout le monde</div></div>
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div class="benefit-text">Précommande prioritaire</div>
         </div>
-      </div>
-      <div class="card tarifs-reduits-card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF3030" stroke-width="1.5" class="tarif-icon"><path d="M20 12V8H6a2 2 0 010-4h12v4M4 6v12a2 2 0 002 2h14v-4M18 12a2 2 0 100 4h4v-4z"/></svg>
-          <div style="flex:1;"><div class="tarif-title">Tarifs réduits</div><div class="mut">Réductions membres + surclassement possible</div></div>
+        <div class="benefit-mini benefit-blink">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3030" stroke-width="1.5"><path d="M20 12V8H6a2 2 0 010-4h12v4M4 6v12a2 2 0 002 2h14v-4M18 12a2 2 0 100 4h4v-4z"/></svg>
+          <div class="benefit-text benefit-text-red">Tarifs réduits</div>
         </div>
-      </div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Newsletter VIP</div><div class="mut">Coulisses, infos en avant-première, photos exclusives</div></div>
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          <div class="benefit-text">Newsletter VIP</div>
         </div>
-      </div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Contenus inédits</div><div class="mut">Photos & vidéos coulisses réservés aux fans</div></div>
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <div class="benefit-text">Contenus inédits</div>
         </div>
-      </div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Alerte report ou changement</div><div class="mut">Tu es prévenu en premier en cas de modification</div></div>
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="benefit-text">Alertes changements</div>
         </div>
-      </div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Sondages exclusifs</div><div class="mut">Vote pour les chansons, la setlist, les villes</div></div>
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
+          <div class="benefit-text">Sondages exclusifs</div>
         </div>
-      </div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Communauté de fans</div><div class="mut">Wall of Fans, partage de photos & témoignages</div></div>
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <div class="benefit-text">Communauté fans</div>
         </div>
-      </div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Cadeau anniversaire 🎂</div><div class="mut">Une surprise chaque année pour ton anniversaire</div></div>
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>
+          <div class="benefit-text">Cadeau anniversaire 🎂</div>
         </div>
-      </div>
-      <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-          <div style="flex:1;"><div style="color:var(--cream); font-size:13px; font-weight:500;">Statut Super-fan</div><div class="mut">Score fan-o-mètre + badges exclusifs</div></div>
+        <div class="benefit-mini">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          <div class="benefit-text">Statut Super-fan</div>
         </div>
       </div>
 
@@ -5268,6 +5579,260 @@
     if (typeof show === 'function') show('moi');
   }
 
+  // === CARD INVITATION DANS FAN ZONE ===
+  function renderJoinCommunityCard() {
+    const fan = getFan();
+    if (fan) {
+      // CONNECTÉ : montre le statut actuel + lien vers MOI
+      const currentLevel = getFanLevel(fan);
+      const score = fan.fan_score || 0;
+      const nextLevel = getNextLevel(currentLevel);
+      let progressMsg = '';
+      if (currentLevel.key === 'fan') {
+        progressMsg = `🎁 Complète ton profil pour devenir VIP`;
+      } else if (nextLevel) {
+        const pts = Math.max(0, nextLevel.min - score);
+        progressMsg = `🎯 ${pts} pts pour devenir ${nextLevel.label}`;
+      } else {
+        progressMsg = `👑 Niveau maximum atteint !`;
+      }
+      return `
+        <div class="join-card join-card-connected" onclick="show('moi')">
+          <div class="join-card-left">
+            <div class="join-icon-big">${currentLevel.icon}</div>
+          </div>
+          <div class="join-card-content">
+            <div class="join-card-tag" style="color:${currentLevel.color};">TON STATUT ACTUEL</div>
+            <div class="join-card-title" style="color:${currentLevel.color};">${currentLevel.label}</div>
+            <div class="join-card-sub">${score}/100 pts · ${progressMsg}</div>
+            <div class="join-card-cta">Voir ma progression →</div>
+          </div>
+        </div>
+      `;
+    } else {
+      // DÉCONNECTÉ : invitation à rejoindre + explication niveaux
+      return `
+        <div class="join-card join-card-disconnected" onclick="show('moi')">
+          <div class="join-card-left">
+            <div class="join-icon-big">👑</div>
+          </div>
+          <div class="join-card-content">
+            <div class="join-card-tag">REJOINS LA COMMUNAUTÉ</div>
+            <div class="join-card-title">Deviens fan officiel TWOQ</div>
+            <div class="join-card-sub">Inscris-toi gratuitement et grimpe dans 4 niveaux d'avantages exclusifs : FAN, VIP, OR, PLATINE</div>
+            <div class="join-card-mini-levels">
+              <span class="mini-lvl" style="background:rgba(136,136,136,0.2); color:#999;">👤 FAN</span>
+              <span class="mini-lvl" style="background:rgba(212,175,55,0.18); color:#D4AF37;">⭐ VIP</span>
+              <span class="mini-lvl" style="background:rgba(255,215,0,0.2); color:#FFD700;">🥇 OR</span>
+              <span class="mini-lvl" style="background:rgba(229,228,226,0.2); color:#E5E4E2;">💎 PLATINE</span>
+            </div>
+            <div class="join-card-cta">M'inscrire gratuitement →</div>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // === SYSTÈME DE NIVEAUX FAN ===
+  // 4 niveaux : Fan (0-39) / VIP (profil complet) / Or (70-89) / Platine (90+)
+  const FAN_LEVELS = [
+    {
+      key: 'fan',
+      label: 'FAN',
+      color: '#888888',
+      bg: 'rgba(136, 136, 136, 0.15)',
+      min: 0,
+      max: 69,
+      condition: (fan) => !fan?.profil_complete,
+      icon: '👤',
+      desc: 'Inscription email',
+      benefits: ['Mes dates favorites', 'Notifications avant chaque show', 'Accès Fan Zone']
+    },
+    {
+      key: 'vip',
+      label: 'VIP',
+      color: '#D4AF37',
+      bg: 'rgba(212, 175, 55, 0.18)',
+      min: 0,
+      max: 69,
+      condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) < 70,
+      icon: '⭐',
+      desc: 'Profil 100% complet',
+      benefits: ['Tous les avantages FAN', 'Jeux concours exclusifs', 'Cadeau anniversaire 🎂', '+1 chance bonus dans les concours']
+    },
+    {
+      key: 'or',
+      label: 'OR',
+      color: '#FFD700',
+      bg: 'rgba(255, 215, 0, 0.2)',
+      min: 70,
+      max: 89,
+      condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) >= 70 && (fan?.fan_score || 0) < 90,
+      icon: '🥇',
+      desc: 'Score 70-89',
+      benefits: ['Tous les avantages VIP', 'Tarifs réduits -10%', 'Pré-réservation 48h avant', 'Invitations événements privés', 'Goodie surprise']
+    },
+    {
+      key: 'platine',
+      label: 'PLATINE',
+      color: '#E5E4E2',
+      bg: 'rgba(229, 228, 226, 0.2)',
+      min: 90,
+      max: 100,
+      condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) >= 90,
+      icon: '💎',
+      desc: 'Score 90+ (Légende)',
+      benefits: ['Tous les avantages OR', 'Tarifs réduits -15%', '1 place gratuite par an', 'Rencontre artistes garantie', 'Mention "Légende TWOQ"', 'Plaque souvenir personnalisée']
+    }
+  ];
+
+  function getFanLevel(fan) {
+    if (!fan) return null;
+    for (const lvl of FAN_LEVELS) {
+      if (lvl.condition(fan)) return lvl;
+    }
+    return FAN_LEVELS[0];
+  }
+
+  function getNextLevel(currentLevel) {
+    if (!currentLevel) return FAN_LEVELS[1]; // déconnecté → vise VIP
+    const idx = FAN_LEVELS.findIndex(l => l.key === currentLevel.key);
+    if (idx === -1 || idx >= FAN_LEVELS.length - 1) return null;
+    return FAN_LEVELS[idx + 1];
+  }
+
+  function renderStatusSection(fan) {
+    const isConnected = !!fan;
+    const currentLevel = isConnected ? getFanLevel(fan) : null;
+    const score = fan?.fan_score || 0;
+
+    // Génère les 4 badges
+    const badgesHTML = FAN_LEVELS.map(lvl => {
+      const isActive = currentLevel && currentLevel.key === lvl.key;
+      const isPassed = isConnected && currentLevel && FAN_LEVELS.findIndex(l => l.key === currentLevel.key) > FAN_LEVELS.findIndex(l => l.key === lvl.key);
+      return `
+        <div class="level-badge ${isActive ? 'active' : ''} ${isPassed ? 'passed' : ''}" onclick="openLevelDetail('${lvl.key}')" style="--lvl-color:${lvl.color}; --lvl-bg:${lvl.bg};">
+          <div class="level-icon">${lvl.icon}</div>
+          <div class="level-name">${lvl.label}</div>
+          ${isActive ? '<div class="level-current">ICI</div>' : ''}
+        </div>
+      `;
+    }).join('');
+
+    // Barre de progression + message
+    let progressHTML = '';
+    if (isConnected) {
+      const nextLevel = getNextLevel(currentLevel);
+      const progress = Math.min(score, 100);
+      let nextMsg = '';
+      if (currentLevel.key === 'fan') {
+        nextMsg = '🎁 Complète ton profil pour devenir <strong style="color:var(--gold);">VIP</strong>';
+      } else if (nextLevel) {
+        const pts = nextLevel.min - score;
+        nextMsg = `🎯 Plus que <strong style="color:${nextLevel.color};">${pts > 0 ? pts : 0} pts</strong> pour devenir <strong style="color:${nextLevel.color};">${nextLevel.label}</strong>`;
+      } else {
+        nextMsg = `👑 Tu es au <strong style="color:#E5E4E2;">niveau maximum</strong> ! Légende absolue.`;
+      }
+      progressHTML = `
+        <div class="level-progress-row">
+          <span class="level-score">${score}/100 pts</span>
+          <span class="level-next-hint">${nextMsg}</span>
+        </div>
+        <div class="level-progress-bar">
+          <div class="level-progress-fill" style="width:${progress}%; background:${currentLevel.color};"></div>
+        </div>
+      `;
+    } else {
+      progressHTML = `
+        <div style="text-align:center; padding:10px 4px 2px;">
+          <div style="color:var(--cream); font-size:12px; line-height:1.5;">
+            Crée ton compte pour débloquer <strong style="color:var(--gold);">4 niveaux d'avantages exclusifs</strong>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="section-eyebrow">${isConnected ? 'MON STATUT' : 'PROGRAMME DE FIDÉLITÉ'}</div>
+      <div class="status-card">
+        <div class="level-badges">${badgesHTML}</div>
+        ${progressHTML}
+        <button class="level-info-btn" onclick="openLevelDetail('all')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          En savoir plus sur les niveaux
+        </button>
+      </div>
+    `;
+  }
+
+  // Modal détail d'un niveau (ou de tous)
+  function openLevelDetail(key) {
+    const modal = document.getElementById('levelDetailModal');
+    const body = document.getElementById('levelDetailBody');
+    if (!modal || !body) return;
+
+    let contentHTML = '';
+    if (key === 'all') {
+      // Vue d'ensemble : tous les niveaux
+      contentHTML = `
+        <div class="signup-tag">PROGRAMME DE FIDÉLITÉ</div>
+        <div class="signup-title">Les 4 niveaux TWOQ</div>
+        <div class="signup-eyebrow">PLUS TU ES ACTIF, PLUS TU GAGNES</div>
+        <div style="margin-top:16px;">
+          ${FAN_LEVELS.map(lvl => `
+            <div class="level-detail-card" style="--lvl-color:${lvl.color}; --lvl-bg:${lvl.bg};">
+              <div class="level-detail-header">
+                <div class="level-detail-icon">${lvl.icon}</div>
+                <div style="flex:1;">
+                  <div class="level-detail-name">${lvl.label}</div>
+                  <div class="level-detail-desc">${lvl.desc}</div>
+                </div>
+              </div>
+              <ul class="level-detail-benefits">
+                ${lvl.benefits.map(b => `<li>${b}</li>`).join('')}
+              </ul>
+            </div>
+          `).join('')}
+        </div>
+        <div class="level-formula-box">
+          <div class="level-formula-title">💡 Comment ton score augmente :</div>
+          <div class="level-formula-body">
+            • 1 concert vu = <strong>+10 pts</strong><br/>
+            • 1 favori ❤ = <strong>+2 pts</strong><br/>
+            • 1 concours joué = <strong>+5 pts</strong><br/>
+            • Profil complet = <strong>+10 pts</strong><br/>
+            • Newsletter activée = <strong>+5 pts</strong><br/>
+            • Ancienneté = <strong>+1 pt/mois</strong> (max 12)
+          </div>
+        </div>
+      `;
+    } else {
+      // Vue détaillée d'un niveau spécifique
+      const lvl = FAN_LEVELS.find(l => l.key === key);
+      if (!lvl) return;
+      contentHTML = `
+        <div class="signup-tag">NIVEAU</div>
+        <div class="signup-title" style="color:${lvl.color};">${lvl.icon} ${lvl.label}</div>
+        <div class="signup-eyebrow">${lvl.desc.toUpperCase()}</div>
+        <div class="level-detail-card" style="--lvl-color:${lvl.color}; --lvl-bg:${lvl.bg}; margin-top:14px;">
+          <div style="color:var(--cream); font-size:13px; margin-bottom:10px; font-weight:500;">Avantages débloqués :</div>
+          <ul class="level-detail-benefits">
+            ${lvl.benefits.map(b => `<li>${b}</li>`).join('')}
+          </ul>
+        </div>
+        <button class="signup-skip" onclick="openLevelDetail('all')" style="margin-top:14px;">Voir tous les niveaux →</button>
+      `;
+    }
+    body.innerHTML = contentHTML;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLevelDetail() {
+    document.getElementById('levelDetailModal')?.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
   // === GALERIE CLOUDINARY ===
   const CLOUDINARY_CLOUD = 'dbxmuhf0u';
   const GALLERY_PHOTOS = [
@@ -5653,6 +6218,17 @@
   <div class="lightbox-swipe-hint" id="lightboxSwipeHint">
     <div class="swipe-hint-icon">←</div>
     <div class="swipe-hint-text">Swipe pour naviguer</div>
+  </div>
+</div>
+
+<!-- MODAL DÉTAIL NIVEAUX -->
+<div id="levelDetailModal" class="signup-modal" onclick="if(event.target===this) closeLevelDetail()">
+  <div class="signup-content">
+    <div class="signup-handle"></div>
+    <button class="signup-close" onclick="closeLevelDetail()" aria-label="Fermer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div id="levelDetailBody"></div>
   </div>
 </div>
 
