@@ -2201,13 +2201,32 @@
   const screens = {
     dates: () => {
       const now = Date.now();
-      const future = DATES.filter(d => new Date(d.date).getTime() >= now - 86400000)
-                          .sort((a,b) => new Date(a.date) - new Date(b.date));
-      // Si on a des données Supabase live → utiliser la prochaine date Supabase
-      // Sinon → fallback sur les données en dur (DATES)
       const featuredLive = TWOQ_FEATURED_LIVE;
-      const featured = future.find(d => d.featured) || future[0];
-      const rest = future.filter(d => d.id !== (featured && featured.id));
+      const liveDates = TWOQ_DATES_LIVE; // Toutes les dates futures depuis Supabase
+
+      // Si Supabase est dispo → utiliser SUPABASE pour tout (hero + liste)
+      // Sinon → fallback sur les données statiques DATES
+      let future, featured, rest;
+      if (liveDates && liveDates.length > 0) {
+        // Convertir le format Supabase → format attendu par le rendu liste
+        future = liveDates.map(d => ({
+          id: d.id,
+          date: d.date_concert,
+          city: prettifyCity(d.ville),
+          venue: cleanVenueName(d.nom_salle, d.ville),
+          tm: bestTicketLink(d) || '#',  // ← LE FIX : on prend le vrai lien Supabase
+          statut: d.statut_public,
+          _raw: d  // garde la donnée brute pour utilisation
+        }));
+        featured = future[0];
+        rest = future.slice(1);
+      } else {
+        // Fallback sur DATES (anciennes données statiques)
+        future = DATES.filter(d => new Date(d.date).getTime() >= now - 86400000)
+                            .sort((a,b) => new Date(a.date) - new Date(b.date));
+        featured = future.find(d => d.featured) || future[0];
+        rest = future.filter(d => d.id !== (featured && featured.id));
+      }
       const grouped = groupByMonth(rest);
 
       let html = `
@@ -2340,8 +2359,12 @@
         html += `<div class="section-title" style="margin-top:18px;">${g.label}</div>`;
         g.items.forEach(d => {
           const dm = dayMonth(d.date);
+          const tmLink = d.tm && d.tm !== '#' ? d.tm : '';
+          const clickAction = tmLink
+            ? `onclick="window.open('${tmLink}', '_blank')"`
+            : `onclick="alert('Billetterie bientôt disponible pour ${d.city.replace(/'/g,"\\'")}')"`;
           html += `
-            <div class="date-card${d.featured ? ' featured' : ''}" onclick="window.open('${d.tm}', '_blank')">
+            <div class="date-card${d.featured ? ' featured' : ''}" style="cursor:pointer;" ${clickAction}>
               <div class="dt"><div class="day">${dm.day}</div><div class="mo">${dm.mo}</div></div>
               <div class="info">
                 <div class="city">${d.city}</div>
