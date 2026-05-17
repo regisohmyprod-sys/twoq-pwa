@@ -261,6 +261,50 @@
     .date-card .arrow { color: var(--gold); }
     .date-card.featured { border-left-color: var(--crimson); }
 
+    /* Bouton cœur favoris */
+    .fav-btn {
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s, border-color 0.2s;
+      color: var(--gold);
+    }
+    .fav-btn:hover {
+      background: rgba(212, 175, 55, 0.2);
+      border-color: rgba(212, 175, 55, 0.5);
+    }
+    .fav-btn:active {
+      transform: scale(0.85);
+    }
+    .fav-btn.active {
+      background: linear-gradient(135deg, rgba(212, 30, 42, 0.25), rgba(139, 0, 0, 0.15));
+      border-color: rgba(212, 30, 42, 0.6);
+      color: #E11D2A;
+      animation: heartPop 0.4s ease-out;
+    }
+    .fav-btn svg {
+      width: 18px;
+      height: 18px;
+      transition: fill 0.2s;
+    }
+    .fav-btn.active svg {
+      fill: #E11D2A;
+    }
+    @keyframes heartPop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.3); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
     .video-thumb {
       aspect-ratio: 16/9;
       background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
@@ -1429,6 +1473,15 @@
       font-weight: 600;
       margin-bottom: 8px;
     }
+    /* Variante blanc clignotant */
+    .date-search-label.search-blink {
+      color: #FFFFFF;
+      animation: searchBlink 1.6s ease-in-out infinite;
+    }
+    @keyframes searchBlink {
+      0%, 100% { opacity: 1; text-shadow: 0 0 8px rgba(255,255,255,0.4); }
+      50% { opacity: 0.55; text-shadow: 0 0 14px rgba(255,255,255,0.7); }
+    }
     .date-search-input-wrap {
       position: relative;
       display: flex;
@@ -1496,6 +1549,60 @@
     }
     .date-month-group.hidden-by-search {
       display: none;
+    }
+
+    /* === FILTRE PAR RÉGION === */
+    .region-filter-wrap {
+      margin-top: 16px;
+    }
+    .region-filter-label {
+      color: var(--gold);
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-align: center;
+      opacity: 0.85;
+    }
+    .region-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .region-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--charcoal);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 999px;
+      padding: 9px 14px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      color: var(--cream);
+      font-size: 12.5px;
+      font-weight: 500;
+      text-align: left;
+      font-family: inherit;
+    }
+    .region-btn:hover {
+      border-color: rgba(212, 175, 55, 0.5);
+      transform: translateY(-1px);
+    }
+    .region-btn.active {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.1));
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+      color: var(--gold);
+    }
+    .region-icon {
+      font-size: 16px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .region-name {
+      flex: 1;
+      letter-spacing: 0.3px;
     }
 
     /* === FAN ZONE — NOUVEAUX MODULES === */
@@ -2709,16 +2816,12 @@
 
       // === Titre + filtre recherche avant la liste des dates ===
       html += `
-        <div class="gold-divider" style="margin:18px 0 14px;">
-          <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
-        </div>
-
         <div style="font-family:var(--serif); font-size:22px; font-weight:500; color:var(--cream); margin-bottom:6px;">Les dates de tournée</div>
         <div style="font-size:13px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:2px;">THE WORLD OF QUEEN</div>
         <div style="font-size:11px; letter-spacing:1.5px; color:var(--gold); font-weight:600; margin-bottom:14px;">L'ÉTERNELLE LÉGENDE</div>
 
-        <div class="date-search-wrap">
-          <div class="date-search-label">RECHERCHER MA DATE</div>
+        <div class="date-search-wrap" style="margin-top:32px;">
+          <div class="date-search-label search-blink">RECHERCHER MA DATE</div>
           <div class="date-search-input-wrap">
             <svg class="date-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" id="dateSearchInput" class="date-search-input" placeholder="Tape ta ville..." oninput="filterDates(this.value)" />
@@ -2727,6 +2830,36 @@
             </button>
           </div>
           <div class="date-search-empty" id="dateSearchEmpty" style="display:none;">Aucune date trouvée pour cette ville.</div>
+        </div>
+
+        <div class="region-filter-wrap">
+          <div class="region-filter-label">OU CHERCHE PAR RÉGION</div>
+          <div class="region-grid">
+            <button class="region-btn" data-region="nord" onclick="filterByRegion('nord')">
+              <span class="region-icon">🌾</span><span class="region-name">Nord</span>
+            </button>
+            <button class="region-btn" data-region="normandie" onclick="filterByRegion('normandie')">
+              <span class="region-icon">🌊</span><span class="region-name">Normandie</span>
+            </button>
+            <button class="region-btn" data-region="ouest" onclick="filterByRegion('ouest')">
+              <span class="region-icon">⚓</span><span class="region-name">Ouest</span>
+            </button>
+            <button class="region-btn" data-region="idf" onclick="filterByRegion('idf')">
+              <span class="region-icon">🗼</span><span class="region-name">Île-de-France</span>
+            </button>
+            <button class="region-btn" data-region="est" onclick="filterByRegion('est')">
+              <span class="region-icon">🍇</span><span class="region-name">Est</span>
+            </button>
+            <button class="region-btn" data-region="centre" onclick="filterByRegion('centre')">
+              <span class="region-icon">🏰</span><span class="region-name">Centre</span>
+            </button>
+            <button class="region-btn" data-region="sud-est" onclick="filterByRegion('sud-est')">
+              <span class="region-icon">☀️</span><span class="region-name">Sud-Est</span>
+            </button>
+            <button class="region-btn" data-region="sud-ouest" onclick="filterByRegion('sud-ouest')">
+              <span class="region-icon">🍷</span><span class="region-name">Sud-Ouest</span>
+            </button>
+          </div>
         </div>
       `;
 
@@ -2740,6 +2873,9 @@
           const clickAction = tmLink
             ? `onclick="window.open('${tmLink}', '_blank')"`
             : `onclick="alert('Billetterie bientôt disponible pour ${d.city.replace(/'/g,"\\'")}')"`;
+          const fav = isFav(d.id);
+          const escCity = (d.city || '').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+          const escVenue = (d.venue || '').replace(/'/g,"\\'").replace(/"/g,'&quot;');
           html += `
             <div class="date-card date-item${d.featured ? ' featured' : ''}" data-city="${d.city.toLowerCase()}" data-venue="${(d.venue||'').toLowerCase()}" style="cursor:pointer;" ${clickAction}>
               <div class="dt"><div class="day">${dm.day}</div><div class="mo">${dm.mo}</div></div>
@@ -2747,6 +2883,9 @@
                 <div class="city">${d.city}</div>
                 <div class="venue">${d.venue}</div>
               </div>
+              <button class="fav-btn${fav ? ' active' : ''}" onclick="toggleFav(event, '${d.id}', '${escCity}', '${escVenue}', '${d.date}', '${tmLink}')" aria-label="Favori">
+                <svg viewBox="0 0 24 24" fill="${fav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+              </button>
               <div class="arrow">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
               </div>
@@ -3490,7 +3629,41 @@
       </div>
     `,
 
-    moi: () => `
+    moi: () => {
+      // Récupère les favoris pour les afficher
+      const favs = getFavs();
+      const favsHTML = favs.length > 0
+        ? favs.map(f => {
+            const dm = dayMonth(f.date);
+            const tmLink = f.tm && f.tm !== '#' ? f.tm : '';
+            const clickAction = tmLink
+              ? `onclick="window.open('${tmLink}', '_blank')"`
+              : `onclick="alert('Billetterie bientôt disponible pour ${(f.city||'').replace(/'/g,"\\'")}')"`;
+            const escCity = (f.city || '').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+            const escVenue = (f.venue || '').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+            return `
+              <div class="date-card date-item" style="cursor:pointer;" ${clickAction}>
+                <div class="dt"><div class="day">${dm.day}</div><div class="mo">${dm.mo}</div></div>
+                <div class="info">
+                  <div class="city">${f.city}</div>
+                  <div class="venue">${f.venue || ''}</div>
+                </div>
+                <button class="fav-btn active" onclick="toggleFavInMoi(event, '${f.id}')" aria-label="Retirer des favoris">
+                  <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </button>
+                <div class="arrow">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+              </div>
+            `;
+          }).join('')
+        : `<div class="card" style="text-align:center; padding:18px; border-style:dashed; opacity:0.75;">
+             <div style="font-size:28px; margin-bottom:6px;">💔</div>
+             <div style="color:var(--cream); font-size:13px;">Aucune date favorite pour l'instant</div>
+             <div class="mut" style="margin-top:4px; font-size:11px;">Tape sur le cœur d'une date dans l'onglet DATES</div>
+           </div>`;
+
+      return `
       <div style="text-align:center; padding-top:12px;">
         <div class="avatar-circle">?</div>
         <div style="font-family:var(--serif); font-size:18px; color:var(--cream);">Bienvenue</div>
@@ -3507,7 +3680,10 @@
         </div>
       </div>
 
-      <div class="section-eyebrow">AVANTAGES DU COMPTE</div>
+      <div class="section-eyebrow">MES DATES FAVORITES ${favs.length > 0 ? `<span style="color:#E11D2A; margin-left:4px;">❤ ${favs.length}</span>` : ''}</div>
+      <div id="favListContainer">${favsHTML}</div>
+
+      <div class="section-eyebrow" style="margin-top:22px;">AVANTAGES DU COMPTE</div>
       <div class="card">
         <div style="display:flex; gap:12px; align-items:center; padding: 4px 0;">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
@@ -3535,7 +3711,7 @@
           </div>
           <div class="social-name">Facebook</div>
         </a>
-        <a class="social-card instagram" onclick="window.open('https://www.instagram.com/theworldofqueen_official', '_blank')">
+        <a class="social-card instagram" onclick="window.open('https://www.instagram.com/theworldofqueenofficiel/', '_blank')">
           <div class="social-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           </div>
@@ -3593,7 +3769,8 @@
         <span class="lbl">À propos</span>
         <span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
       </div>
-    `
+    `;
+    }
   };
 
   function selectPoll(e, idx) {
@@ -3601,9 +3778,112 @@
     e.currentTarget.classList.add('selected');
   }
 
+  // === SYSTÈME FAVORIS (localStorage) ===
+  const FAVS_KEY = 'twoq_favs';
+
+  function getFavs() {
+    try {
+      return JSON.parse(localStorage.getItem(FAVS_KEY) || '[]');
+    } catch (e) { return []; }
+  }
+  function setFavs(arr) {
+    try { localStorage.setItem(FAVS_KEY, JSON.stringify(arr)); } catch (e) {}
+  }
+  function isFav(id) {
+    return getFavs().some(f => f.id === id);
+  }
+  function toggleFav(ev, id, city, venue, date, tm) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    const favs = getFavs();
+    const idx = favs.findIndex(f => f.id === id);
+    if (idx >= 0) {
+      favs.splice(idx, 1);
+    } else {
+      favs.push({ id, city, venue, date, tm: tm || '' });
+    }
+    setFavs(favs);
+    // Met à jour l'apparence du bouton cliqué
+    const btn = ev.currentTarget;
+    btn.classList.toggle('active');
+  }
+
+  // Version pour la page MOI : re-render la page après changement
+  function toggleFavInMoi(ev, id) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    const favs = getFavs();
+    const idx = favs.findIndex(f => f.id === id);
+    if (idx >= 0) {
+      favs.splice(idx, 1);
+      setFavs(favs);
+      // Re-render la page MOI
+      if (typeof show === 'function') show('moi');
+    }
+  }
+
   // === FILTRE RECHERCHE DATES ===
-  function filterDates(query) {
-    const q = (query || '').trim().toLowerCase();
+  // Mapping ville → région (basé sur les villes de la tournée TWOQ)
+  const CITY_TO_REGION = {
+    // Hauts-de-France
+    'lille': 'nord', 'amiens': 'nord', 'boulogne-sur-mer': 'nord', 'beauvais': 'nord', 'arras': 'nord', 'dunkerque': 'nord', 'valenciennes': 'nord',
+    // Normandie
+    'le havre': 'normandie', 'caen': 'normandie', 'rouen': 'normandie', 'grand-quevilly': 'normandie', 'alençon': 'normandie', 'alencon': 'normandie',
+    // Bretagne
+    'brest': 'ouest', 'quimper': 'ouest', 'rennes': 'ouest', 'lorient': 'ouest', 'saint-brieuc': 'ouest', 'vannes': 'ouest',
+    // Pays de la Loire
+    'nantes': 'ouest', 'angers': 'ouest', 'mouilleron-le-captif': 'ouest', 'les sables d\'olonne': 'ouest', 'les sables-d\'olonne': 'ouest', 'le mans': 'ouest', 'laval': 'ouest', 'cholet': 'ouest', 'mouilleron': 'ouest',
+    // Île-de-France
+    'paris': 'idf', 'dôme de paris': 'idf', 'dome de paris': 'idf', 'versailles': 'idf', 'saint-denis': 'idf', 'bercy': 'idf',
+    // Grand Est
+    'reims': 'est', 'strasbourg': 'est', 'nancy': 'est', 'metz': 'est', 'mulhouse': 'est', 'troyes': 'est', 'montbéliard': 'est', 'montbeliard': 'est',
+    // Bourgogne / Centre
+    'dijon': 'centre', 'chartres': 'centre', 'bourges': 'centre', 'orléans': 'centre', 'orleans': 'centre', 'tours': 'centre',
+    // Auvergne-Rhône-Alpes
+    'lyon': 'sud-est', 'grenoble': 'sud-est', 'annecy': 'sud-est', 'chambéry': 'sud-est', 'chambery': 'sud-est', 'saint-étienne': 'sud-est', 'saint-etienne': 'sud-est', 'cournon-d\'auvergne': 'sud-est', 'cournon': 'sud-est', 'clermont-ferrand': 'sud-est', 'montélimar': 'sud-est', 'montelimar': 'sud-est',
+    // PACA
+    'marseille': 'sud-est', 'nice': 'sud-est', 'toulon': 'sud-est', 'cannes': 'sud-est', 'avignon': 'sud-est', 'aix-en-provence': 'sud-est', 'le silo': 'sud-est',
+    // Occitanie
+    'narbonne': 'sud-ouest', 'montpellier': 'sud-ouest', 'toulouse': 'sud-ouest', 'nîmes': 'sud-ouest', 'nimes': 'sud-ouest', 'perpignan': 'sud-ouest', 'carcassonne': 'sud-ouest', 'béziers': 'sud-ouest', 'beziers': 'sud-ouest',
+    // Nouvelle-Aquitaine
+    'bordeaux': 'sud-ouest', 'limoges': 'sud-ouest', 'pau': 'sud-ouest', 'bayonne': 'sud-ouest', 'la rochelle': 'sud-ouest', 'poitiers': 'sud-ouest', 'agen': 'sud-ouest', 'boulazac': 'sud-ouest', 'palio': 'sud-ouest',
+    // Corse
+    'ajaccio': 'corse', 'bastia': 'corse'
+  };
+
+  let currentRegionFilter = null;
+
+  function getRegionForCity(city) {
+    const c = (city || '').toLowerCase().trim();
+    // Match exact d'abord
+    if (CITY_TO_REGION[c]) return CITY_TO_REGION[c];
+    // Match partiel (au cas où le nom contient des suffixes type "ARENA", "Zénith de...")
+    for (const key of Object.keys(CITY_TO_REGION)) {
+      if (c.includes(key) || key.includes(c)) return CITY_TO_REGION[key];
+    }
+    return null;
+  }
+
+  function filterByRegion(region) {
+    // Toggle : si on re-clique sur la même région, on désactive
+    if (currentRegionFilter === region) {
+      currentRegionFilter = null;
+    } else {
+      currentRegionFilter = region;
+    }
+    // Met à jour l'état visuel des boutons
+    document.querySelectorAll('.region-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.region === currentRegionFilter);
+    });
+    // Vide le champ texte (les 2 filtres ne se cumulent pas)
+    const input = document.getElementById('dateSearchInput');
+    if (input) input.value = '';
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const input = document.getElementById('dateSearchInput');
+    const q = input ? input.value.trim().toLowerCase() : '';
     const clearBtn = document.getElementById('dateSearchClear');
     const emptyMsg = document.getElementById('dateSearchEmpty');
     const items = document.querySelectorAll('.date-item');
@@ -3611,27 +3891,25 @@
 
     if (clearBtn) clearBtn.style.display = q ? 'flex' : 'none';
 
-    if (!q) {
-      // Reset : tout afficher
-      items.forEach(it => it.classList.remove('hidden-by-search'));
-      groups.forEach(g => g.classList.remove('hidden-by-search'));
-      if (emptyMsg) emptyMsg.style.display = 'none';
-      return;
-    }
-
     let visibleCount = 0;
     items.forEach(it => {
       const city = it.dataset.city || '';
       const venue = it.dataset.venue || '';
-      if (city.includes(q) || venue.includes(q)) {
-        it.classList.remove('hidden-by-search');
-        visibleCount++;
-      } else {
-        it.classList.add('hidden-by-search');
+      const region = getRegionForCity(city);
+      let visible = true;
+
+      // Filtre par région
+      if (currentRegionFilter && region !== currentRegionFilter) visible = false;
+      // Filtre texte
+      if (visible && q) {
+        if (!city.includes(q) && !venue.includes(q)) visible = false;
       }
+
+      it.classList.toggle('hidden-by-search', !visible);
+      if (visible) visibleCount++;
     });
 
-    // Cache les groupes mois qui n'ont plus aucun élément visible
+    // Cache les groupes mois vides
     groups.forEach(g => {
       let next = g.nextElementSibling;
       let hasVisible = false;
@@ -3648,11 +3926,15 @@
     if (emptyMsg) emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
   }
 
+  function filterDates(query) {
+    applyFilters();
+  }
+
   function clearDateSearch() {
     const input = document.getElementById('dateSearchInput');
     if (input) {
       input.value = '';
-      filterDates('');
+      applyFilters();
       input.focus();
     }
   }
