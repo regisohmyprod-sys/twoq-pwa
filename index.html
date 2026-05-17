@@ -1551,23 +1551,53 @@
       display: none;
     }
 
-    /* === FILTRE PAR RÉGION === */
+    /* === FILTRE PAR RÉGION (ACCORDÉON) === */
     .region-filter-wrap {
       margin-top: 16px;
     }
-    .region-filter-label {
+    .region-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 8px 0;
+      font-family: inherit;
+      transition: opacity 0.2s;
+    }
+    .region-toggle:hover {
+      opacity: 0.8;
+    }
+    .region-toggle-label {
       color: var(--gold);
       font-size: 10px;
       letter-spacing: 2.5px;
       font-weight: 600;
-      margin-bottom: 10px;
-      text-align: center;
-      opacity: 0.85;
+    }
+    .region-toggle-arrow {
+      color: var(--gold);
+      transition: transform 0.3s ease;
+    }
+    .region-toggle.open .region-toggle-arrow {
+      transform: rotate(180deg);
     }
     .region-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, margin-top 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      margin-top: 0;
+    }
+    .region-grid.open {
+      max-height: 500px;
+      margin-top: 10px;
+      opacity: 1;
     }
     .region-btn {
       display: flex;
@@ -2833,8 +2863,11 @@
         </div>
 
         <div class="region-filter-wrap">
-          <div class="region-filter-label">OU CHERCHE PAR RÉGION</div>
-          <div class="region-grid">
+          <button class="region-toggle" onclick="toggleRegionPanel(event)">
+            <span class="region-toggle-label">OU CHERCHE PAR RÉGION</span>
+            <svg class="region-toggle-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="region-grid" id="regionGrid">
             <button class="region-btn" data-region="nord" onclick="filterByRegion('nord')">
               <span class="region-icon">🌾</span><span class="region-name">Nord</span>
             </button>
@@ -3937,6 +3970,16 @@
       applyFilters();
       input.focus();
     }
+  }
+
+  // Toggle accordéon "Cherche par région"
+  function toggleRegionPanel(ev) {
+    ev.stopPropagation();
+    const btn = ev.currentTarget;
+    const grid = document.getElementById('regionGrid');
+    if (!grid || !btn) return;
+    btn.classList.toggle('open');
+    grid.classList.toggle('open');
   }
 
   async function hardRefresh(ev) {
