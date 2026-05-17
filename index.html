@@ -441,6 +441,32 @@
       background: rgba(212, 175, 55, 0.15);
     }
 
+    /* Hint swipe pour la lightbox photos */
+    .lightbox-swipe-hint {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 16px;
+      padding: 16px 24px;
+      z-index: 9998;
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+      animation: swipeHintIn 0.4s ease-out, swipeHintFade 4s ease-in-out forwards;
+    }
+    .lightbox-swipe-hint.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
     .contest-card {
       background: var(--card);
       border: 1px solid var(--gold);
@@ -3595,6 +3621,14 @@
     lb.classList.add('active');
     document.body.style.overflow = 'hidden';
     showLightboxImage();
+    // Reset le hint swipe
+    const hint = document.getElementById('lightboxSwipeHint');
+    if (hint) {
+      hint.classList.remove('hidden');
+      hint.style.animation = 'none';
+      void hint.offsetWidth;
+      hint.style.animation = '';
+    }
   }
   function closeLightbox() {
     const lb = document.getElementById('lightbox');
@@ -3654,7 +3688,10 @@
     const lb = document.getElementById('lightbox');
     if (!lb || !lb.classList.contains('active')) return;
     const diff = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(diff) > 50) {
+    // Cache le hint au 1er swipe
+    const hint = document.getElementById('lightboxSwipeHint');
+    if (hint) hint.classList.add('hidden');
+    if (Math.abs(diff) > 30) {
       if (diff > 0) lightboxPrev();
       else lightboxNext();
     }
@@ -3753,7 +3790,7 @@
     if (!modal || !modal.classList.contains('active')) return;
     const diffX = e.changedTouches[0].clientX - videoTouchStartX;
     const diffY = e.changedTouches[0].clientY - videoTouchStartY;
-    const threshold = 50;
+    const threshold = 30;
 
     // Cache le hint au 1er swipe
     const hint = document.getElementById('videoSwipeHint');
@@ -3813,21 +3850,20 @@
   <button class="lightbox-close" onclick="closeLightbox()" aria-label="Fermer">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
-  <button class="lightbox-nav lightbox-prev" onclick="lightboxPrev()" aria-label="Précédente">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-  </button>
   <div class="lightbox-img-wrap">
     <img id="lightboxImg" class="lightbox-img" src="" alt="Photo TWOQ">
   </div>
-  <button class="lightbox-nav lightbox-next" onclick="lightboxNext()" aria-label="Suivante">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-  </button>
   <div class="lightbox-controls">
     <button class="lightbox-playpause" onclick="toggleLightboxAutoplay()" aria-label="Lecture/Pause">
       <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
       <svg id="pauseIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
     </button>
     <div class="lightbox-counter" id="lightboxCounter">1 / 49</div>
+  </div>
+  <!-- Hint d'animation au 1er affichage -->
+  <div class="lightbox-swipe-hint" id="lightboxSwipeHint">
+    <div class="swipe-hint-icon">←</div>
+    <div class="swipe-hint-text">Swipe pour naviguer</div>
   </div>
 </div>
 
