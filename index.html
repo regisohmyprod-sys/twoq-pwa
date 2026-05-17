@@ -1534,6 +1534,64 @@
       animation: tarifsBlink 2s ease-in-out infinite;
     }
 
+    /* Toast Members Only */
+    .members-only-toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #14110a, #0A0A0A);
+      border: 1px solid var(--gold);
+      padding: 12px 14px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.3);
+      z-index: 100000;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      width: calc(100% - 32px);
+      max-width: 420px;
+    }
+    .members-only-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .mo-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .mo-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .mo-title {
+      color: var(--gold);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .mo-sub {
+      color: var(--cream);
+      font-size: 11px;
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+    .mo-cta {
+      flex-shrink: 0;
+      background: var(--gold);
+      color: #0A0A0A;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      letter-spacing: 0.3px;
+    }
+
     /* === SYSTÈME NIVEAUX FAN === */
     /* Card d'invitation dans FAN ZONE */
     .join-card {
@@ -4129,38 +4187,25 @@
         <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
       </div>
 
-      <div class="section-eyebrow">SONDAGE</div>
-      <div class="section-title">Quelle chanson ce soir ?</div>
+      <div class="section-eyebrow">CONCERT INTERACTIF</div>
+      <div class="section-title">Choisis ta chanson</div>
       <div style="color:var(--smoke); font-size:12px; line-height:1.5; margin: 4px 0 12px; font-style:italic;">
-        Choisis la chanson que tu aimerais entendre ce soir !
+        La chanson qui remportera le + de votes sera interprétée ce soir par le groupe ! <span style="color:var(--gold); font-style:normal;">(hors set list habituelle)</span>
       </div>
       <div class="card">
-        <div class="poll-option selected" onclick="selectPoll(event, 0)">
-          <span>Bohemian Rhapsody</span><span class="pct">62%</span>
+        <div class="poll-option selected" onclick="handleVote(event, 0)">
+          <span>Somebody To Love</span>
         </div>
-        <div class="poll-option" onclick="selectPoll(event, 1)">
-          <span>The Show Must Go On</span><span class="pct">24%</span>
+        <div class="poll-option" onclick="handleVote(event, 1)">
+          <span>I Want It All</span>
         </div>
-        <div class="poll-option" onclick="selectPoll(event, 2)">
-          <span>Don't Stop Me Now</span><span class="pct">14%</span>
+        <div class="poll-option" onclick="handleVote(event, 2)">
+          <span>Killer Queen</span>
+        </div>
+        <div class="poll-option" onclick="handleVote(event, 3)">
+          <span>Living On My Own</span>
         </div>
         <div class="mut" style="font-size:10px; margin-top:10px; text-align:right;">2 847 votes</div>
-      </div>
-
-      <div class="card" style="margin-top:10px;">
-        <div style="color:var(--cream); font-size:13px; font-weight:500; margin-bottom:10px;">Le titre que tu veux absolument réentendre live ?</div>
-        <div class="poll-option" onclick="selectPoll(event, 0)">
-          <span>I Want To Break Free</span><span class="pct">38%</span>
-        </div>
-        <div class="poll-option" onclick="selectPoll(event, 1)">
-          <span>Somebody To Love</span><span class="pct">31%</span>
-        </div>
-        <div class="poll-option" onclick="selectPoll(event, 2)">
-          <span>Radio Ga Ga</span><span class="pct">19%</span>
-        </div>
-        <div class="poll-option" onclick="selectPoll(event, 3)">
-          <span>A Kind of Magic</span><span class="pct">12%</span>
-        </div>
       </div>
 
       <div class="gold-divider" style="margin:22px 0 18px;">
@@ -4170,18 +4215,18 @@
       <div class="section-eyebrow">WALL OF FANS</div>
       <div class="section-title">Vos plus belles photos</div>
       <div style="color:var(--smoke); font-size:12px; line-height:1.5; margin-bottom:12px;">
-        Partagez vos meilleurs souvenirs avec <strong style="color:var(--gold);">#TheWorldOfQueen</strong> — les plus belles sont publiées ici.
+        Partagez vos meilleurs souvenirs <strong style="color:var(--gold);">pendant les concerts</strong> avec <strong style="color:var(--gold);">#TheWorldOfQueen</strong> — les plus belles sont publiées ici.
       </div>
       <div class="wall-grid">
-        <div class="wall-item" onclick="alert('Wall of Fans — bientôt')"><div class="wall-placeholder">📸</div></div>
-        <div class="wall-item" onclick="alert('Wall of Fans — bientôt')"><div class="wall-placeholder">🎤</div></div>
-        <div class="wall-item" onclick="alert('Wall of Fans — bientôt')"><div class="wall-placeholder">🎸</div></div>
-        <div class="wall-item" onclick="alert('Wall of Fans — bientôt')"><div class="wall-placeholder">👑</div></div>
-        <div class="wall-item" onclick="alert('Wall of Fans — bientôt')"><div class="wall-placeholder">🎹</div></div>
-        <div class="wall-item" onclick="alert('Wall of Fans — bientôt')"><div class="wall-placeholder">🥁</div></div>
+        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">📸</div></div>
+        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎤</div></div>
+        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎸</div></div>
+        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">👑</div></div>
+        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎹</div></div>
+        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🥁</div></div>
       </div>
       <div style="text-align:center; margin-top:14px;">
-        <span class="btn-outline" onclick="alert('Envoi photo — bientôt')">📤 Envoyer ma photo</span>
+        <span class="btn-outline" onclick="openSendPhoto()">📤 Envoyer ma photo</span>
       </div>
 
       <div class="gold-divider" style="margin:22px 0 18px;">
@@ -4215,7 +4260,7 @@
         </div>
       </div>
       <div style="text-align:center; margin-top:14px;">
-        <span class="btn-outline" onclick="alert('Laisser un avis — bientôt')">✍️ Laisser mon avis</span>
+        <span class="btn-outline" onclick="openLeaveReview()">✍️ Laisser mon avis</span>
       </div>
 
       <div class="gold-divider" style="margin:22px 0 18px;">
@@ -4224,7 +4269,7 @@
 
       <div class="section-eyebrow">QUIZ TWOQ</div>
       <div class="section-title">Es-tu un vrai fan ?</div>
-      <div class="quiz-card" onclick="alert('Quiz — bientôt disponible')">
+      <div class="quiz-card" onclick="openQuiz()">
         <div class="quiz-cover"></div>
         <div class="quiz-overlay"></div>
         <div class="quiz-content">
@@ -4594,7 +4639,7 @@
         </div>
       </div>
 
-      <div class="section-eyebrow">SUIS-NOUS</div>
+      <div class="section-eyebrow">SUIVEZ-NOUS</div>
       <div class="socials-grid">
         <a class="social-card facebook" onclick="window.open('https://www.facebook.com/theworldofqueenofficiel', '_blank')">
           <div class="social-icon">
@@ -4673,6 +4718,78 @@
   function selectPoll(e, idx) {
     document.querySelectorAll('.poll-option').forEach(o => o.classList.remove('selected'));
     e.currentTarget.classList.add('selected');
+  }
+
+  // === ACTIONS FAN ZONE — réservées aux membres ===
+
+  // Vérifie que le fan est connecté avant une action membre
+  function requireMember(actionName) {
+    if (isFanConnected()) return true;
+    // Pas connecté → affiche le modal "rejoignez-nous"
+    showMembersOnlyToast(actionName);
+    return false;
+  }
+
+  function showMembersOnlyToast(actionName) {
+    // Toast informatif + redirection vers MOI
+    const toast = document.createElement('div');
+    toast.className = 'members-only-toast';
+    toast.innerHTML = `
+      <div class="mo-icon">👑</div>
+      <div class="mo-content">
+        <div class="mo-title">Réservé aux fans inscrits</div>
+        <div class="mo-sub">Inscris-toi gratuitement pour ${actionName}</div>
+      </div>
+      <button class="mo-cta" onclick="this.parentElement.remove(); show('moi');">M'inscrire →</button>
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 50);
+    setTimeout(() => {
+      if (toast.parentElement) {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }
+    }, 5000);
+  }
+
+  // Vote dans le sondage Concert Interactif
+  function handleVote(e, idx) {
+    if (!requireMember('voter')) return;
+    document.querySelectorAll('.poll-option').forEach(o => o.classList.remove('selected'));
+    e.currentTarget.classList.add('selected');
+    // Petit toast confirmation
+    const confirm = document.createElement('div');
+    confirm.className = 'signup-success-toast';
+    confirm.innerHTML = '👑 Vote enregistré !';
+    document.body.appendChild(confirm);
+    setTimeout(() => confirm.classList.add('show'), 50);
+    setTimeout(() => {
+      confirm.classList.remove('show');
+      setTimeout(() => confirm.remove(), 400);
+    }, 2000);
+  }
+
+  // Wall of Fans — voir photo (pas réservé : tout le monde peut regarder)
+  function openWallPhoto() {
+    alert('Galerie Wall of Fans — bientôt');
+  }
+
+  // Wall of Fans — envoyer photo (réservé membres)
+  function openSendPhoto() {
+    if (!requireMember('partager une photo')) return;
+    alert('📸 Envoi photo — fonctionnalité en cours de développement.\n\nBientôt : tu pourras envoyer tes photos directement depuis l\'app, qui seront modérées puis affichées dans le Wall of Fans !');
+  }
+
+  // Témoignages — laisser un avis (réservé membres)
+  function openLeaveReview() {
+    if (!requireMember('laisser un avis')) return;
+    alert('✍️ Laisser un avis — fonctionnalité en cours de développement.\n\nBientôt : tu pourras donner ton ressenti après chaque concert vu, avec note ★ et photo !');
+  }
+
+  // Quiz TWOQ — lancer le quiz (réservé membres pour valider le score)
+  function openQuiz() {
+    if (!requireMember('lancer le quiz')) return;
+    alert('🎯 Quiz TWOQ — fonctionnalité en cours de développement.\n\nBientôt : 15 questions sur Queen et l\'histoire du groupe. Score validé, classement entre fans !');
   }
 
   // === SYSTÈME FAVORIS (localStorage) ===
