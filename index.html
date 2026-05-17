@@ -2261,14 +2261,8 @@
             </div>
             <div style="font-size:13px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:4px;">THE WORLD OF QUEEN</div>
             <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; margin-bottom:12px;">L'Éternelle Légende</div>
-            <div style="font-size:14px; color:var(--smoke); line-height:1.5; margin-bottom:16px;">
+            <div style="font-size:14px; color:var(--smoke); line-height:1.5;">
               Le grand lancement de la nouvelle tournée et du nouveau show !
-            </div>
-            <div>
-              <span class="btn-gold" style="display:inline-flex; align-items:center; gap:6px; cursor:default; opacity:0.85;">
-                Infos
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </span>
             </div>
           </div>
         </div>
@@ -2301,12 +2295,12 @@
         if (statut === 'en_vente' || statut === 'dernieres_places') {
           const label = statut === 'dernieres_places' ? 'Dernières places' : 'Réserver';
           if (ticketLink) {
-            btnHTML = `<span class="btn-gold" onclick="event.stopPropagation(); window.open('${ticketLink}', '_blank')">${label}</span>`;
+            btnHTML = `<span class="btn-gold" style="cursor:pointer;" onclick="event.stopPropagation(); window.open('${ticketLink}', '_blank')">${label}</span>`;
           } else {
-            btnHTML = `<span class="btn-gold">${label}</span>`;
+            btnHTML = `<span class="btn-gold" style="cursor:pointer;" onclick="event.stopPropagation(); alert('Billetterie bientôt disponible')">${label}</span>`;
           }
         } else if (statut === 'bientot') {
-          btnHTML = `<span class="btn-gold" onclick="event.stopPropagation(); openSoonModal('${featuredLive.id}', '${city.replace(/'/g,"\\'")}', '${dateFR.replace(/'/g,"\\'")}')" style="opacity:0.92;">Bientôt — m'alerter</span>`;
+          btnHTML = `<span class="btn-gold" style="cursor:pointer;" onclick="event.stopPropagation(); openSoonModal('${featuredLive.id}', '${city.replace(/'/g,"\\'")}', '${dateFR.replace(/'/g,"\\'")}')">Bientôt — m'alerter</span>`;
         }
 
         const clickHandler = ticketLink ? `onclick="window.open('${ticketLink}', '_blank')"` : '';
@@ -2334,7 +2328,7 @@
             <div class="hero-venue">${featured.venue}</div>
             <div class="hero-date">${featured.city} · ${fmtDate(featured.date)} · ${featured.hour}</div>
             <div style="margin-top:14px;">
-              <span class="btn-gold">Réserver</span>
+              <span class="btn-gold" style="cursor:pointer;">Réserver</span>
             </div>
           </div>
           <div class="gold-divider">
