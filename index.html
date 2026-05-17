@@ -560,6 +560,41 @@
       font-size: 36px;
       font-family: var(--serif);
       font-weight: 500;
+      position: relative;
+    }
+    .avatar-clickable {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .avatar-clickable:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 24px rgba(212, 175, 55, 0.4);
+    }
+    .avatar-clickable:active {
+      transform: scale(0.96);
+    }
+    .avatar-camera-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #0A0A0A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #0A0A0A;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .avatar-uploading {
+      opacity: 0.6;
+      animation: avatarPulse 1s ease-in-out infinite;
+    }
+    @keyframes avatarPulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 0.9; }
     }
 
     /* === PAGE SHOW : ajouts === */
@@ -1574,6 +1609,27 @@
     }
     .signup-input::placeholder {
       color: rgba(245, 241, 232, 0.35);
+    }
+    /* Ligne des 3 selects de date de naissance */
+    .dob-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 100px;
+      gap: 8px;
+    }
+    .dob-select {
+      padding: 11px 8px;
+      font-size: 13px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3e%3cpath fill='none' stroke='%23D4AF37' stroke-width='1.5' d='M1 1l4 4 4-4'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+    .dob-select option {
+      background: #14110a;
+      color: var(--cream);
     }
     .signup-pills {
       display: flex;
@@ -4038,13 +4094,22 @@
       const fan = getFan();
       const isConnected = !!fan;
 
-      // En-tête : avatar avec initiales si connecté, ? sinon
+      // En-tête : avatar avec photo OU initiales si connecté, ? sinon
       let headerHTML = '';
       if (isConnected) {
         const initials = ((fan.prenom?.[0] || '') + (fan.nom?.[0] || '')).toUpperCase();
+        const avatarStyle = fan.avatar_url
+          ? `background:url('${fan.avatar_url}') center/cover, var(--card); color:transparent;`
+          : `background:var(--gold); color:#0A0A0A; font-weight:600;`;
         headerHTML = `
           <div style="text-align:center; padding-top:12px;">
-            <div class="avatar-circle" style="background:var(--gold); color:#0A0A0A; font-weight:600;">${initials}</div>
+            <div class="avatar-circle avatar-clickable" style="${avatarStyle}" onclick="openAvatarPicker()">
+              ${fan.avatar_url ? '' : initials}
+              <div class="avatar-camera-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </div>
+            </div>
+            <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
             <div style="font-family:var(--serif); font-size:18px; color:var(--cream); margin-top:8px;">Bonjour ${fan.prenom} !</div>
             <div style="color:var(--gold); font-size:10px; letter-spacing:2px; margin-top:4px;">FAN TWOQ${fan.profil_complete ? ' VIP ⭐' : ''}</div>
           </div>
@@ -4809,14 +4874,15 @@
     document.getElementById('signupStep2Welcome').textContent = `Bienvenue ${fan.prenom} ! 🎉`;
     document.getElementById('signupStep2').classList.add('active');
     document.body.style.overflow = 'hidden';
+    fillDobSelects();
   }
-  // (variante "later" = depuis le bouton "Compléter mon profil" plus tard)
   function openSignupStep2() {
     const fan = getFan();
     if (!fan) return;
     document.getElementById('signupStep2Welcome').textContent = `Complète ton profil`;
     document.getElementById('signupStep2').classList.add('active');
     document.body.style.overflow = 'hidden';
+    fillDobSelects();
   }
   function closeSignupStep2(skipped) {
     document.getElementById('signupStep2').classList.remove('active');
@@ -4838,17 +4904,38 @@
     event.preventDefault();
     const form = event.target;
     const submitBtn = form.querySelector('button[type="submit"]');
+    const errorBox = document.getElementById('signupError2');
     const fan = getFan();
     if (!fan) return;
 
-    const dob = form.date_naissance.value;
+    // Assemble la date depuis 3 selects (Jour/Mois/Année)
+    const dobDay = form.dob_day.value;
+    const dobMonth = form.dob_month.value;
+    const dobYear = form.dob_year.value;
+    let dob = null;
+    if (dobDay && dobMonth && dobYear) {
+      dob = `${dobYear}-${dobMonth}-${dobDay.padStart(2, '0')}`;
+    }
+
     const genre = form.querySelector('input[name="genre"]:checked')?.value || null;
     const concerts = form.querySelector('input[name="concerts"]:checked')?.value || null;
 
-    const data = {};
-    if (dob) data.date_naissance = dob;
+    // Validation : date de naissance OBLIGATOIRE
+    if (!dob) {
+      if (errorBox) {
+        errorBox.textContent = 'La date de naissance est requise. (Sinon clique "Plus tard, merci")';
+        errorBox.style.display = 'block';
+      }
+      return;
+    }
+    if (errorBox) errorBox.style.display = 'none';
+
+    const data = { date_naissance: dob };
     if (genre) data.genre = genre;
     if (concerts) data.concerts_vus = concerts;
+
+    // Profil VIP = TOUT rempli (date + genre + concerts)
+    data.profil_complete = !!(dob && genre && concerts);
 
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner-mini"></span> Validation...';
@@ -4860,16 +4947,147 @@
     closeSignupStep2(false);
   }
 
+  // Remplit les selects Jour et Année dynamiquement
+  function fillDobSelects() {
+    const daySelect = document.getElementById('dobDay');
+    const yearSelect = document.getElementById('dobYear');
+    if (daySelect && daySelect.options.length <= 1) {
+      for (let d = 1; d <= 31; d++) {
+        const opt = document.createElement('option');
+        opt.value = d.toString().padStart(2, '0');
+        opt.textContent = d;
+        daySelect.appendChild(opt);
+      }
+    }
+    if (yearSelect && yearSelect.options.length <= 1) {
+      const currentYear = new Date().getFullYear();
+      // De cette année à 100 ans en arrière, du plus récent au plus ancien
+      for (let y = currentYear; y >= currentYear - 100; y--) {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        yearSelect.appendChild(opt);
+      }
+    }
+  }
+
   function showSignupSuccess() {
     const toast = document.createElement('div');
     toast.className = 'signup-success-toast';
-    toast.innerHTML = '🎉 Bienvenue dans la famille TWOQ !';
+    toast.innerHTML = '👑 Bienvenue dans le Royaume TWOQ !';
     document.body.appendChild(toast);
     setTimeout(() => toast.classList.add('show'), 50);
     setTimeout(() => {
       toast.classList.remove('show');
       setTimeout(() => toast.remove(), 400);
     }, 3000);
+  }
+
+  // === UPLOAD AVATAR ===
+  function openAvatarPicker() {
+    const input = document.getElementById('avatarFileInput');
+    if (input) input.click();
+  }
+
+  async function handleAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const fan = getFan();
+    if (!fan) return;
+
+    // Vérifications de base
+    if (!file.type.startsWith('image/')) {
+      alert('Merci de choisir une image (JPG, PNG ou WebP).');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image trop grosse (max 10 Mo). Choisis une photo plus légère.');
+      return;
+    }
+
+    // Visuel : avatar en mode "uploading"
+    const avatarEl = document.querySelector('.avatar-circle');
+    if (avatarEl) avatarEl.classList.add('avatar-uploading');
+
+    try {
+      // 1. Compresser + recadrer en carré 500x500
+      const compressedBlob = await compressAndCropSquare(file, 500);
+
+      // 2. Upload sur Supabase Storage
+      const fileName = `${fan.id}-${Date.now()}.jpg`;
+      const uploadUrl = SUPABASE_URL + '/storage/v1/object/fan-avatars/' + fileName;
+
+      const uploadRes = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'image/jpeg',
+          'x-upsert': 'true'
+        },
+        body: compressedBlob
+      });
+
+      if (!uploadRes.ok) {
+        const errText = await uploadRes.text();
+        throw new Error('Upload Supabase échoué : ' + errText);
+      }
+
+      // 3. URL publique
+      const publicUrl = SUPABASE_URL + '/storage/v1/object/public/fan-avatars/' + fileName;
+
+      // 4. Mettre à jour le fan avec la nouvelle URL
+      const updateResult = await updateFan(fan.id, { avatar_url: publicUrl });
+      if (updateResult.ok) {
+        setFan(updateResult.data);
+      } else {
+        // Au moins on stocke localement
+        setFan({ ...fan, avatar_url: publicUrl });
+      }
+
+      // 5. Re-render la page MOI
+      if (typeof show === 'function') show('moi');
+
+    } catch (err) {
+      console.error('Avatar upload error:', err);
+      alert('Impossible d\'envoyer la photo. Réessaie dans un instant.');
+      if (avatarEl) avatarEl.classList.remove('avatar-uploading');
+    }
+
+    // Reset l'input pour pouvoir re-uploader la même photo
+    event.target.value = '';
+  }
+
+  // Compresse et recadre une image en carré
+  function compressAndCropSquare(file, targetSize) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          // Recadrage carré (centré)
+          const size = Math.min(img.width, img.height);
+          const sx = (img.width - size) / 2;
+          const sy = (img.height - size) / 2;
+          // Canvas pour redimensionner
+          const canvas = document.createElement('canvas');
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, sx, sy, size, size, 0, 0, targetSize, targetSize);
+          // Export en JPEG qualité 0.85 (~50-80 ko)
+          canvas.toBlob((blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error('Échec compression'));
+          }, 'image/jpeg', 0.85);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
   // === GALERIE CLOUDINARY ===
@@ -5328,9 +5546,33 @@
     </div>
 
     <form id="signupForm2" onsubmit="submitSignupStep2(event)">
+      <div class="signup-error" id="signupError2"></div>
+
       <div class="signup-field">
-        <div class="signup-label">DATE DE NAISSANCE</div>
-        <input class="signup-input" name="date_naissance" type="date" max="2026-12-31"/>
+        <div class="signup-label">DATE DE NAISSANCE *</div>
+        <div class="dob-row">
+          <select class="signup-select dob-select" name="dob_day" id="dobDay">
+            <option value="">Jour</option>
+          </select>
+          <select class="signup-select dob-select" name="dob_month" id="dobMonth">
+            <option value="">Mois</option>
+            <option value="01">Janvier</option>
+            <option value="02">Février</option>
+            <option value="03">Mars</option>
+            <option value="04">Avril</option>
+            <option value="05">Mai</option>
+            <option value="06">Juin</option>
+            <option value="07">Juillet</option>
+            <option value="08">Août</option>
+            <option value="09">Septembre</option>
+            <option value="10">Octobre</option>
+            <option value="11">Novembre</option>
+            <option value="12">Décembre</option>
+          </select>
+          <select class="signup-select dob-select" name="dob_year" id="dobYear">
+            <option value="">Année</option>
+          </select>
+        </div>
       </div>
 
       <div class="signup-field">
