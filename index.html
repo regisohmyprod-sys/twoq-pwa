@@ -4137,7 +4137,7 @@
             </button>
             <div style="text-align:center; margin-top:10px;">
               <span style="color:var(--smoke); font-size:12px;">ou </span>
-              <a onclick="alert('Connexion — bientôt')" style="font-size:12px;">se connecter</a>
+              <a onclick="openLoginModal()" style="font-size:12px; cursor:pointer;">se connecter</a>
             </div>
           </div>
         `;
@@ -4268,6 +4268,12 @@
         <span class="lbl">À propos</span>
         <span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
       </div>
+      ${isConnected ? `
+      <div class="menu-row" onclick="logoutFan()" style="margin-top:14px; border-color: rgba(212,30,42,0.3);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#E11D2A" stroke-width="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span class="lbl" style="color:#E11D2A;">Se déconnecter</span>
+      </div>
+      ` : ''}
     `;
     }
   };
@@ -5090,6 +5096,97 @@
     });
   }
 
+  // === CONNEXION PAR EMAIL ===
+  function openLoginModal() {
+    document.getElementById('loginModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('loginForm').reset();
+    document.getElementById('loginError').style.display = 'none';
+    setTimeout(() => {
+      const emailInput = document.querySelector('#loginForm input[name="email"]');
+      if (emailInput) emailInput.focus();
+    }, 300);
+  }
+  function closeLoginModal() {
+    document.getElementById('loginModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  async function submitLogin(event) {
+    event.preventDefault();
+    const form = event.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const errorBox = document.getElementById('loginError');
+    const email = form.email.value.trim().toLowerCase();
+
+    // Validation
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errorBox.textContent = 'Cet email ne semble pas valide.';
+      errorBox.style.display = 'block';
+      return;
+    }
+
+    errorBox.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-mini"></span> Connexion...';
+
+    try {
+      // Recherche le fan par email dans Supabase
+      const response = await fetch(SUPABASE_URL + '/rest/v1/fans?email=eq.' + encodeURIComponent(email) + '&select=*', {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+
+      if (response.ok) {
+        const fans = await response.json();
+        if (fans.length > 0) {
+          // Compte trouvé !
+          setFan(fans[0]);
+          closeLoginModal();
+          // Toast de bienvenue
+          setTimeout(() => showLoginSuccess(fans[0].prenom), 300);
+          // Re-render page MOI
+          setTimeout(() => {
+            if (typeof show === 'function') show('moi');
+          }, 400);
+        } else {
+          // Aucun compte avec cet email
+          errorBox.innerHTML = 'Aucun compte trouvé avec cet email. <a onclick="closeLoginModal(); openSignupStep1();" style="color:var(--gold); text-decoration:underline; cursor:pointer;">Créer un compte ?</a>';
+          errorBox.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Se connecter →';
+        }
+      } else {
+        throw new Error('Erreur Supabase');
+      }
+    } catch (err) {
+      errorBox.textContent = 'Erreur de connexion. Réessaie dans un instant.';
+      errorBox.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Se connecter →';
+    }
+  }
+
+  function showLoginSuccess(prenom) {
+    const toast = document.createElement('div');
+    toast.className = 'signup-success-toast';
+    toast.innerHTML = `👑 Re-bienvenue ${prenom} !`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 50);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+    }, 2500);
+  }
+
+  function logoutFan() {
+    if (!confirm('Tu veux vraiment te déconnecter ?')) return;
+    clearFan();
+    if (typeof show === 'function') show('moi');
+  }
+
   // === GALERIE CLOUDINARY ===
   const CLOUDINARY_CLOUD = 'dbxmuhf0u';
   const GALLERY_PHOTOS = [
@@ -5475,6 +5572,34 @@
   <div class="lightbox-swipe-hint" id="lightboxSwipeHint">
     <div class="swipe-hint-icon">←</div>
     <div class="swipe-hint-text">Swipe pour naviguer</div>
+  </div>
+</div>
+
+<!-- MODAL CONNEXION -->
+<div id="loginModal" class="signup-modal" onclick="if(event.target===this) closeLoginModal()">
+  <div class="signup-content" style="max-width:480px;">
+    <div class="signup-handle"></div>
+    <button class="signup-close" onclick="closeLoginModal()" aria-label="Fermer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="signup-tag">CONNEXION</div>
+    <div class="signup-title">Bon retour !</div>
+    <div class="signup-eyebrow">TAPE TON EMAIL POUR TE RECONNECTER</div>
+
+    <form id="loginForm" onsubmit="submitLogin(event)">
+      <div class="signup-error" id="loginError"></div>
+
+      <div class="signup-field">
+        <div class="signup-label">EMAIL</div>
+        <input class="signup-input" name="email" type="email" placeholder="ton@email.com" required autocomplete="email" autofocus/>
+      </div>
+
+      <button type="submit" class="signup-submit">Se connecter →</button>
+      <div style="text-align:center; margin-top:14px;">
+        <span style="color:var(--smoke); font-size:12px;">Pas encore de compte ? </span>
+        <a onclick="closeLoginModal(); setTimeout(openSignupStep1, 300);" style="color:var(--gold); font-size:12px; cursor:pointer;">S'inscrire</a>
+      </div>
+    </form>
   </div>
 </div>
 
