@@ -293,18 +293,153 @@
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 6px;
+      margin-top: 14px;
     }
     .gallery-item {
       aspect-ratio: 1;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2a1a1a 100%);
       border-radius: 8px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .gallery-item:nth-child(2) { background: linear-gradient(135deg, #1a1a2a 0%, #1a1a1a 100%); }
-    .gallery-item:nth-child(4) { background: linear-gradient(135deg, #2a1a1a 0%, #1a1a1a 100%); }
-    .gallery-item:nth-child(5) { background: linear-gradient(135deg, #1a1a1a 0%, #0a1a2a 100%); }
-    .gallery-item:nth-child(6) { background: linear-gradient(135deg, #2a2a1a 0%, #1a1a1a 100%); }
-    .gallery-item:nth-child(8) { background: linear-gradient(135deg, #1a1a2a 0%, #2a1a2a 100%); }
-    .gallery-item:nth-child(9) { background: linear-gradient(135deg, #2a1a1a 0%, #1a2a1a 100%); }
+    .gallery-item:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 16px rgba(212, 175, 55, 0.25);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .gallery-item img.loaded {
+      opacity: 1;
+    }
+
+    /* === LIGHTBOX GALERIE === */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.98);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      touch-action: pan-y;
+    }
+    .lightbox.active {
+      display: flex;
+      animation: lightboxFadeIn 0.3s ease-out;
+    }
+    @keyframes lightboxFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .lightbox-img-wrap {
+      position: relative;
+      max-width: 96%;
+      max-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 80vh;
+      width: auto;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 0 32px rgba(212, 175, 55, 0.2);
+      animation: lightboxImgIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes lightboxImgIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.95);
+      color: #0A0A0A;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      z-index: 10000;
+    }
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10000;
+      transition: background 0.2s;
+    }
+    .lightbox-nav:hover {
+      background: rgba(212, 175, 55, 0.2);
+    }
+    .lightbox-prev { left: 12px; }
+    .lightbox-next { right: 12px; }
+    .lightbox-controls {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(0,0,0,0.65);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 999px;
+      padding: 8px 18px;
+      z-index: 10000;
+      backdrop-filter: blur(8px);
+    }
+    .lightbox-counter {
+      color: var(--cream);
+      font-size: 13px;
+      letter-spacing: 1px;
+      font-family: var(--serif);
+      min-width: 60px;
+      text-align: center;
+    }
+    .lightbox-playpause {
+      background: transparent;
+      border: none;
+      color: var(--gold);
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+    .lightbox-playpause:hover {
+      background: rgba(212, 175, 55, 0.15);
+    }
 
     .contest-card {
       background: var(--card);
@@ -2510,12 +2645,10 @@
       </div>
 
       <div class="section-eyebrow">GALERIE PHOTOS</div>
-      <div class="section-title">+ 1 200 photos du show</div>
-      <div class="gallery-grid">
-        ${Array(9).fill(0).map(() => '<div class="gallery-item"></div>').join('')}
-      </div>
+      <div class="section-title">Photos du show</div>
+      <div class="gallery-grid" id="galleryGrid"></div>
       <div style="text-align:center; margin-top:16px;">
-        <span class="btn-outline" onclick="alert('Galerie — bientôt')">Voir toute la galerie →</span>
+        <span class="mut" style="font-size:11px; letter-spacing:1px;">Touche une photo pour la voir en grand · diaporama auto</span>
       </div>
     `,
 
@@ -2685,6 +2818,11 @@
         track.dataset.cloned = '1';
       }
     }
+
+    // === GALERIE CLOUDINARY (page MÉDIAS) ===
+    if (name === 'boutique') {
+      buildGallery();
+    }
   }
 
   // Active le son du teaser au 1er clic (fallback navigateur)
@@ -2725,6 +2863,154 @@
     });
   }
 
+  // === GALERIE CLOUDINARY ===
+  const CLOUDINARY_CLOUD = 'dbxmuhf0u';
+  const GALLERY_PHOTOS = [
+    '_Z6D1414-NEF_copie_-_Copie_lc0u52',
+    '_Z6D3472_copie_nlfywb',
+    '_Z6D3555_copie_pmlf0o',
+    '_Z6D3592_copie_albq8q',
+    '_Z6D3634_copie_idypit',
+    '_Z6D3656_copie_ybo9hs',
+    '_Z6D3719_copie_drlei8',
+    '_Z6D3728_copie_bdpqkd',
+    '_Z6D3739_copie_g7dueu',
+    '_Z6D3766_copie_gkh6uw',
+    '_Z6D3886_copie_g8zed1',
+    '_Z6D3903_copie_ssoyj0',
+    '_Z6D3914_copie_gmm0ca',
+    '_Z6D3918_copie_k95xfa',
+    '_Z6D3921_copie_eviydi',
+    '_Z6D3932_copie_ccwcmz',
+    '_Z6D3934_copie_c2jyaf',
+    '_Z6D3956_copie_jnevcw',
+    '_Z6D4441_copie_moq0wi',
+    '_Z6D4506_copie_zsgqxb',
+    '_Z6D4530_copie_rr4sta',
+    '_Z6D4574_copie_giuexv',
+    '_Z6D4611_copie_fp3cay',
+    '_Z6D4772_copie_fkgogb',
+    '_Z6D4836_copie_z4jlcw',
+    '_Z6D9177_copie_jo0cx9',
+    '_Z6D9233_copie_xkucfy',
+    '_Z6D9264_copie_qbtwbe',
+    '_Z6D9269_copie_uxqx9x',
+    '_Z6D9276_copie_zan2xf',
+    '_Z6D9328_copie_hxsvsa',
+    '_Z6D9357_copie_phg3ee',
+    '_Z6D9367_copie_kjscxq',
+    '_Z6D9379_copie_n5xka4',
+    '_Z6D9386_copie_vuxcf3',
+    '_Z6D9451_copie_wjoedx',
+    '_Z6D9492_copie_r8lyl5',
+    '_Z6D9523_copie_uquzen',
+    'A1_A_aoidyz',
+    'A1_qygquk',
+    'A1CQ1_hvtsyh',
+    'A2_vt3qp0',
+    'A7_sanjrd',
+    'A9_yx7sdv',
+    'A14_ozlst1',
+    'A7400039_eddisg',
+    'A7400626_xqq9mx',
+    'ATWOQ11_cjc2oc',
+    'ATWOQ45_-_Copie_yey1v1',
+    'ATWOQ412_-_Copie_rpwv3b'
+  ];
+  // URLs Cloudinary : miniature (carrée 400px) et grande (1200px) — Cloudinary transforme automatiquement
+  function thumbUrl(id) {
+    return `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/upload/c_fill,w_400,h_400,q_auto,f_auto/${encodeURIComponent(id)}`;
+  }
+  function fullUrl(id) {
+    return `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/upload/w_1600,q_auto,f_auto/${encodeURIComponent(id)}`;
+  }
+
+  function buildGallery() {
+    const grid = document.getElementById('galleryGrid');
+    if (!grid) return;
+    grid.innerHTML = GALLERY_PHOTOS.map((id, i) => `
+      <div class="gallery-item" onclick="openLightbox(${i})">
+        <img src="${thumbUrl(id)}" alt="Photo ${i+1}" loading="lazy" onload="this.classList.add('loaded')">
+      </div>
+    `).join('');
+  }
+
+  // === LIGHTBOX avec swipe + autoplay ===
+  let lightboxIndex = 0;
+  let lightboxAutoplay = false;
+  let lightboxTimer = null;
+
+  function openLightbox(index) {
+    lightboxIndex = index;
+    const lb = document.getElementById('lightbox');
+    lb.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    showLightboxImage();
+  }
+  function closeLightbox() {
+    const lb = document.getElementById('lightbox');
+    lb.classList.remove('active');
+    document.body.style.overflow = '';
+    stopLightboxAutoplay();
+  }
+  function showLightboxImage() {
+    const img = document.getElementById('lightboxImg');
+    const counter = document.getElementById('lightboxCounter');
+    img.src = fullUrl(GALLERY_PHOTOS[lightboxIndex]);
+    counter.textContent = `${lightboxIndex + 1} / ${GALLERY_PHOTOS.length}`;
+  }
+  function lightboxPrev() {
+    lightboxIndex = (lightboxIndex - 1 + GALLERY_PHOTOS.length) % GALLERY_PHOTOS.length;
+    showLightboxImage();
+  }
+  function lightboxNext() {
+    lightboxIndex = (lightboxIndex + 1) % GALLERY_PHOTOS.length;
+    showLightboxImage();
+  }
+  function toggleLightboxAutoplay() {
+    if (lightboxAutoplay) stopLightboxAutoplay();
+    else startLightboxAutoplay();
+  }
+  function startLightboxAutoplay() {
+    lightboxAutoplay = true;
+    document.getElementById('playIcon').style.display = 'none';
+    document.getElementById('pauseIcon').style.display = 'block';
+    lightboxTimer = setInterval(lightboxNext, 3500);
+  }
+  function stopLightboxAutoplay() {
+    lightboxAutoplay = false;
+    if (lightboxTimer) clearInterval(lightboxTimer);
+    lightboxTimer = null;
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+    if (playIcon) playIcon.style.display = 'block';
+    if (pauseIcon) pauseIcon.style.display = 'none';
+  }
+
+  // Swipe tactile + touches clavier pour la lightbox
+  document.addEventListener('keydown', (e) => {
+    const lb = document.getElementById('lightbox');
+    if (!lb || !lb.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') lightboxPrev();
+    if (e.key === 'ArrowRight') lightboxNext();
+    if (e.key === ' ') { e.preventDefault(); toggleLightboxAutoplay(); }
+  });
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => {
+    const lb = document.getElementById('lightbox');
+    if (lb && lb.classList.contains('active')) touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const lb = document.getElementById('lightbox');
+    if (!lb || !lb.classList.contains('active')) return;
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) lightboxPrev();
+      else lightboxNext();
+    }
+  }, { passive: true });
+
   // === LECTEUR VIDÉO YOUTUBE INTÉGRÉ ===
   // type: 'video' (horizontal 16:9) ou 'reel' (vertical 9:16)
   function openVideo(videoId, type) {
@@ -2758,6 +3044,29 @@
   </button>
   <div class="video-modal-content" id="videoModalContent">
     <iframe id="videoIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- LIGHTBOX GALERIE -->
+<div id="lightbox" class="lightbox" onclick="if(event.target===this) closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Fermer">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <button class="lightbox-nav lightbox-prev" onclick="lightboxPrev()" aria-label="Précédente">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="lightbox-img-wrap">
+    <img id="lightboxImg" class="lightbox-img" src="" alt="Photo TWOQ">
+  </div>
+  <button class="lightbox-nav lightbox-next" onclick="lightboxNext()" aria-label="Suivante">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <div class="lightbox-controls">
+    <button class="lightbox-playpause" onclick="toggleLightboxAutoplay()" aria-label="Lecture/Pause">
+      <svg id="playIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="pauseIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+    </button>
+    <div class="lightbox-counter" id="lightboxCounter">1 / 49</div>
   </div>
 </div>
 
