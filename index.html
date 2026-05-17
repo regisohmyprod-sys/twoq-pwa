@@ -1462,6 +1462,296 @@
 
     /* === FIN MOI === */
 
+    /* === MODALS INSCRIPTION FAN === */
+    .signup-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 9996;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .signup-modal.active {
+      display: flex;
+      animation: signupFadeIn 0.3s ease-out;
+    }
+    @keyframes signupFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .signup-content {
+      background: linear-gradient(180deg, #14110a 0%, #0a0a0a 100%);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-bottom: none;
+      border-radius: 24px 24px 0 0;
+      width: 100%;
+      max-width: 560px;
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 24px 20px 28px;
+      animation: signupSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    @keyframes signupSlide {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .signup-handle {
+      width: 40px;
+      height: 4px;
+      background: rgba(212, 175, 55, 0.4);
+      border-radius: 999px;
+      margin: 0 auto 18px;
+    }
+    .signup-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .signup-tag {
+      color: var(--gold);
+      font-size: 9.5px;
+      letter-spacing: 2.5px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .signup-title {
+      font-family: var(--serif);
+      color: var(--cream);
+      font-size: 22px;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .signup-eyebrow {
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 18px;
+      font-weight: 500;
+    }
+    .signup-field {
+      margin-bottom: 14px;
+    }
+    .signup-label {
+      font-size: 9.5px;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .signup-input, .signup-select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 14px;
+      color: var(--cream);
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      box-sizing: border-box;
+    }
+    .signup-input:focus, .signup-select:focus {
+      border-color: var(--gold);
+      background: rgba(212, 175, 55, 0.05);
+    }
+    .signup-input::placeholder {
+      color: rgba(245, 241, 232, 0.35);
+    }
+    .signup-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .signup-pill-label {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 999px;
+      padding: 9px 6px;
+      font-size: 12px;
+      color: var(--cream);
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+    }
+    .signup-pill-label:hover {
+      border-color: rgba(212, 175, 55, 0.6);
+    }
+    .signup-pill-input {
+      display: none;
+    }
+    .signup-pill-input:checked + .signup-pill-label {
+      background: rgba(212, 175, 55, 0.18);
+      color: var(--gold);
+      border-color: var(--gold);
+      font-weight: 500;
+    }
+    .signup-consent {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      padding: 12px;
+      margin: 14px 0;
+      font-size: 11.5px;
+      color: var(--smoke);
+      line-height: 1.5;
+    }
+    .signup-consent label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 7px;
+      cursor: pointer;
+    }
+    .signup-consent label:last-child {
+      margin-bottom: 0;
+    }
+    .signup-consent input[type="checkbox"] {
+      margin: 2px 0 0 0;
+      accent-color: var(--gold);
+      flex-shrink: 0;
+    }
+    .signup-submit {
+      width: 100%;
+      background: var(--gold);
+      color: #0A0A0A;
+      border: none;
+      border-radius: 999px;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+    }
+    .signup-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+    }
+    .signup-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .signup-skip {
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+      color: var(--smoke);
+      font-size: 11.5px;
+      font-style: italic;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      padding: 6px;
+      font-family: inherit;
+    }
+    .signup-skip:hover {
+      color: var(--cream);
+    }
+    .signup-error {
+      background: rgba(212, 30, 42, 0.15);
+      border: 1px solid rgba(212, 30, 42, 0.4);
+      color: #ff8888;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .signup-gift-banner {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(139, 0, 0, 0.15));
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .signup-gift-icon {
+      font-size: 26px;
+      margin-bottom: 6px;
+    }
+    .signup-gift-text {
+      font-size: 11.5px;
+      color: #F0D77A;
+      line-height: 1.5;
+    }
+    .spinner-mini {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(10, 10, 10, 0.2);
+      border-top-color: #0A0A0A;
+      border-radius: 50%;
+      animation: spinMini 0.7s linear infinite;
+    }
+    @keyframes spinMini {
+      to { transform: rotate(360deg); }
+    }
+    .signup-success-toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: linear-gradient(135deg, #D4AF37, #F0D77A);
+      color: #0A0A0A;
+      padding: 14px 22px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.5);
+      z-index: 100000;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .signup-success-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Bannière "complète ton profil" sur la page MOI */
+    .profile-incomplete-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(139, 0, 0, 0.12));
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 16px 0;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .profile-incomplete-banner:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
     /* === RECHERCHE DATES === */
     .date-search-wrap {
       margin-bottom: 12px;
@@ -3744,6 +4034,50 @@
     `,
 
     moi: () => {
+      // Récupère le fan connecté (s'il y en a un)
+      const fan = getFan();
+      const isConnected = !!fan;
+
+      // En-tête : avatar avec initiales si connecté, ? sinon
+      let headerHTML = '';
+      if (isConnected) {
+        const initials = ((fan.prenom?.[0] || '') + (fan.nom?.[0] || '')).toUpperCase();
+        headerHTML = `
+          <div style="text-align:center; padding-top:12px;">
+            <div class="avatar-circle" style="background:var(--gold); color:#0A0A0A; font-weight:600;">${initials}</div>
+            <div style="font-family:var(--serif); font-size:18px; color:var(--cream); margin-top:8px;">Bonjour ${fan.prenom} !</div>
+            <div style="color:var(--gold); font-size:10px; letter-spacing:2px; margin-top:4px;">FAN TWOQ${fan.profil_complete ? ' VIP ⭐' : ''}</div>
+          </div>
+          ${!fan.profil_complete ? `
+            <div class="profile-incomplete-banner" onclick="openSignupStep2()">
+              <div style="flex:1;">
+                <div style="color:var(--gold); font-size:11px; font-weight:600; letter-spacing:1px;">🎁 COMPLÈTE TON PROFIL</div>
+                <div style="color:var(--cream); font-size:12px; margin-top:3px;">+1 chance bonus dans nos concours</div>
+              </div>
+              <div style="color:var(--gold); font-size:18px;">→</div>
+            </div>
+          ` : ''}
+        `;
+      } else {
+        headerHTML = `
+          <div style="text-align:center; padding-top:12px;">
+            <div class="avatar-circle">?</div>
+            <div style="font-family:var(--serif); font-size:18px; color:var(--cream);">Bienvenue</div>
+            <div style="color:var(--gold); font-size:10px; letter-spacing:2px; margin-top:4px;">CONNECTE-TOI POUR DÉBLOQUER</div>
+          </div>
+
+          <div style="margin: 20px 0;">
+            <button class="btn-gold" style="width:100%; justify-content:center;" onclick="openSignupStep1()">
+              Créer un compte gratuit
+            </button>
+            <div style="text-align:center; margin-top:10px;">
+              <span style="color:var(--smoke); font-size:12px;">ou </span>
+              <a onclick="alert('Connexion — bientôt')" style="font-size:12px;">se connecter</a>
+            </div>
+          </div>
+        `;
+      }
+
       // Récupère les favoris pour les afficher
       const favs = getFavs();
       const favsHTML = favs.length > 0
@@ -3778,21 +4112,7 @@
            </div>`;
 
       return `
-      <div style="text-align:center; padding-top:12px;">
-        <div class="avatar-circle">?</div>
-        <div style="font-family:var(--serif); font-size:18px; color:var(--cream);">Bienvenue</div>
-        <div style="color:var(--gold); font-size:10px; letter-spacing:2px; margin-top:4px;">CONNECTE-TOI POUR DÉBLOQUER</div>
-      </div>
-
-      <div style="margin: 20px 0;">
-        <button class="btn-gold" style="width:100%; justify-content:center;" onclick="alert('Inscription — bientôt')">
-          Créer un compte gratuit
-        </button>
-        <div style="text-align:center; margin-top:10px;">
-          <span style="color:var(--smoke); font-size:12px;">ou </span>
-          <a onclick="alert('Connexion — bientôt')" style="font-size:12px;">se connecter</a>
-        </div>
-      </div>
+      ${headerHTML}
 
       <div class="section-eyebrow">MES DATES FAVORITES ${favs.length > 0 ? `<span style="color:#E11D2A; margin-left:4px;">❤ ${favs.length}</span>` : ''}</div>
       <div id="favListContainer">${favsHTML}</div>
@@ -3894,6 +4214,77 @@
 
   // === SYSTÈME FAVORIS (localStorage) ===
   const FAVS_KEY = 'twoq_favs';
+
+  // === SYSTÈME COMPTE FAN ===
+  const FAN_KEY = 'twoq_fan';
+
+  function getFan() {
+    try {
+      return JSON.parse(localStorage.getItem(FAN_KEY) || 'null');
+    } catch (e) { return null; }
+  }
+  function setFan(fan) {
+    try { localStorage.setItem(FAN_KEY, JSON.stringify(fan)); } catch (e) {}
+  }
+  function clearFan() {
+    try { localStorage.removeItem(FAN_KEY); } catch (e) {}
+  }
+  function isFanConnected() {
+    return !!getFan();
+  }
+
+  // Crée un fan dans Supabase (étape 1)
+  async function createFan(data) {
+    try {
+      const response = await fetch(SUPABASE_URL + '/rest/v1/fans', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(data)
+      });
+      if (response.ok) {
+        const result = await response.json();
+        return { ok: true, data: result[0] };
+      } else {
+        const err = await response.json();
+        // Email déjà existant ?
+        if (err.code === '23505' || (err.message || '').toLowerCase().includes('duplicate')) {
+          return { ok: false, error: 'duplicate', message: 'Cet email est déjà inscrit. Tu as déjà un compte !' };
+        }
+        return { ok: false, error: 'unknown', message: err.message || 'Erreur lors de l\'inscription' };
+      }
+    } catch (e) {
+      return { ok: false, error: 'network', message: 'Erreur réseau. Vérifie ta connexion.' };
+    }
+  }
+
+  // Met à jour un fan (étape 2 : date naissance, genre, concerts vus)
+  async function updateFan(fanId, data) {
+    try {
+      const response = await fetch(SUPABASE_URL + '/rest/v1/fans?id=eq.' + fanId, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({ ...data, profil_complete: true })
+      });
+      if (response.ok) {
+        const result = await response.json();
+        return { ok: true, data: result[0] };
+      }
+      return { ok: false };
+    } catch (e) {
+      return { ok: false };
+    }
+  }
+
 
   // === BASE GPS VILLES FRANÇAISES ===
   // Coordonnées (lat, lon) des ~100 plus grandes villes + villes de tournée
@@ -4345,6 +4736,142 @@
     });
   }
 
+  // === INSCRIPTION FAN — Étape 1 ===
+  function openSignupStep1() {
+    document.getElementById('signupStep1').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    // Reset le formulaire
+    document.getElementById('signupForm1').reset();
+    document.getElementById('signupError1').style.display = 'none';
+  }
+  function closeSignupStep1() {
+    document.getElementById('signupStep1').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  async function submitSignupStep1(event) {
+    event.preventDefault();
+    const form = event.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const errorBox = document.getElementById('signupError1');
+    const data = {
+      prenom: form.prenom.value.trim(),
+      nom: form.nom.value.trim(),
+      email: form.email.value.trim().toLowerCase(),
+      ville: form.ville.value.trim(),
+      telephone: form.telephone.value.trim() || null,
+      consentement_rgpd: form.rgpd.checked,
+      consentement_newsletter: form.newsletter.checked,
+      source: 'direct_app'
+    };
+    // Validation
+    if (!data.prenom || !data.nom || !data.email || !data.ville) {
+      errorBox.textContent = 'Merci de remplir tous les champs obligatoires.';
+      errorBox.style.display = 'block';
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      errorBox.textContent = 'Cet email ne semble pas valide.';
+      errorBox.style.display = 'block';
+      return;
+    }
+    if (!data.consentement_rgpd) {
+      errorBox.textContent = 'Tu dois accepter la politique de confidentialité.';
+      errorBox.style.display = 'block';
+      return;
+    }
+    // Submit
+    errorBox.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-mini"></span> Création...';
+
+    const result = await createFan(data);
+
+    if (result.ok) {
+      // Sauvegarde locale
+      setFan(result.data);
+      // Bascule sur l'étape 2
+      closeSignupStep1();
+      setTimeout(() => openSignupStep2Inline(), 350);
+    } else {
+      errorBox.textContent = result.message || 'Erreur, réessaie plus tard.';
+      errorBox.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Créer mon profil →';
+    }
+  }
+
+  // === INSCRIPTION FAN — Étape 2 ===
+  // (variante "inline" = après l'étape 1, transition fluide)
+  function openSignupStep2Inline() {
+    const fan = getFan();
+    if (!fan) return;
+    document.getElementById('signupStep2Welcome').textContent = `Bienvenue ${fan.prenom} ! 🎉`;
+    document.getElementById('signupStep2').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  // (variante "later" = depuis le bouton "Compléter mon profil" plus tard)
+  function openSignupStep2() {
+    const fan = getFan();
+    if (!fan) return;
+    document.getElementById('signupStep2Welcome').textContent = `Complète ton profil`;
+    document.getElementById('signupStep2').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSignupStep2(skipped) {
+    document.getElementById('signupStep2').classList.remove('active');
+    document.body.style.overflow = '';
+    // Re-render la page MOI pour afficher le nouvel état
+    setTimeout(() => {
+      if (typeof show === 'function') {
+        const tab = document.querySelector('.tab.active');
+        if (tab && tab.dataset.tab === 'moi') show('moi');
+      }
+      if (!skipped) {
+        // Petite anim de succès
+        showSignupSuccess();
+      }
+    }, 300);
+  }
+
+  async function submitSignupStep2(event) {
+    event.preventDefault();
+    const form = event.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const fan = getFan();
+    if (!fan) return;
+
+    const dob = form.date_naissance.value;
+    const genre = form.querySelector('input[name="genre"]:checked')?.value || null;
+    const concerts = form.querySelector('input[name="concerts"]:checked')?.value || null;
+
+    const data = {};
+    if (dob) data.date_naissance = dob;
+    if (genre) data.genre = genre;
+    if (concerts) data.concerts_vus = concerts;
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-mini"></span> Validation...';
+
+    const result = await updateFan(fan.id, data);
+    if (result.ok) {
+      setFan(result.data);
+    }
+    closeSignupStep2(false);
+  }
+
+  function showSignupSuccess() {
+    const toast = document.createElement('div');
+    toast.className = 'signup-success-toast';
+    toast.innerHTML = '🎉 Bienvenue dans la famille TWOQ !';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 50);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+    }, 3000);
+  }
+
   // === GALERIE CLOUDINARY ===
   const CLOUDINARY_CLOUD = 'dbxmuhf0u';
   const GALLERY_PHOTOS = [
@@ -4730,6 +5257,113 @@
   <div class="lightbox-swipe-hint" id="lightboxSwipeHint">
     <div class="swipe-hint-icon">←</div>
     <div class="swipe-hint-text">Swipe pour naviguer</div>
+  </div>
+</div>
+
+<!-- MODAL INSCRIPTION ÉTAPE 1 -->
+<div id="signupStep1" class="signup-modal" onclick="if(event.target===this) closeSignupStep1()">
+  <div class="signup-content">
+    <div class="signup-handle"></div>
+    <button class="signup-close" onclick="closeSignupStep1()" aria-label="Fermer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="signup-tag">ÉTAPE 1 / 2 · 30 SEC</div>
+    <div class="signup-title">Rejoins l'aventure</div>
+    <div class="signup-eyebrow">DEVIENS FAN OFFICIEL TWOQ</div>
+
+    <form id="signupForm1" onsubmit="submitSignupStep1(event)">
+      <div class="signup-error" id="signupError1"></div>
+
+      <div class="signup-field">
+        <div class="signup-label">PRÉNOM *</div>
+        <input class="signup-input" name="prenom" type="text" placeholder="Régis" required autocomplete="given-name"/>
+      </div>
+      <div class="signup-field">
+        <div class="signup-label">NOM *</div>
+        <input class="signup-input" name="nom" type="text" placeholder="Dupont" required autocomplete="family-name"/>
+      </div>
+      <div class="signup-field">
+        <div class="signup-label">EMAIL *</div>
+        <input class="signup-input" name="email" type="email" placeholder="ton@email.com" required autocomplete="email"/>
+      </div>
+      <div class="signup-field">
+        <div class="signup-label">VILLE *</div>
+        <input class="signup-input" name="ville" type="text" placeholder="Paris, Lyon, Bordeaux..." required autocomplete="address-level2"/>
+      </div>
+      <div class="signup-field">
+        <div class="signup-label">TÉLÉPHONE (FACULTATIF)</div>
+        <input class="signup-input" name="telephone" type="tel" placeholder="06 12 34 56 78" autocomplete="tel"/>
+      </div>
+
+      <div class="signup-consent">
+        <label>
+          <input type="checkbox" name="rgpd" required>
+          <span>J'accepte la politique de confidentialité et le traitement de mes données par Oh My Prod !</span>
+        </label>
+        <label>
+          <input type="checkbox" name="newsletter" checked>
+          <span>Je veux recevoir les newsletters TWOQ (concerts, concours, offres)</span>
+        </label>
+      </div>
+
+      <button type="submit" class="signup-submit">Créer mon profil →</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL INSCRIPTION ÉTAPE 2 -->
+<div id="signupStep2" class="signup-modal" onclick="if(event.target===this) closeSignupStep2(true)">
+  <div class="signup-content">
+    <div class="signup-handle"></div>
+    <button class="signup-close" onclick="closeSignupStep2(true)" aria-label="Fermer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="signup-tag">ÉTAPE 2 / 2 · 20 SEC</div>
+    <div class="signup-title" id="signupStep2Welcome">Complète ton profil</div>
+    <div class="signup-eyebrow">DEVIENS FAN VIP</div>
+
+    <div class="signup-gift-banner">
+      <div class="signup-gift-icon">🎁</div>
+      <div class="signup-gift-text"><strong style="color:var(--gold);">+1 chance bonus</strong> dans tous nos concours<br/>+ <strong style="color:var(--gold);">cadeau d'anniversaire</strong> chaque année !</div>
+    </div>
+
+    <form id="signupForm2" onsubmit="submitSignupStep2(event)">
+      <div class="signup-field">
+        <div class="signup-label">DATE DE NAISSANCE</div>
+        <input class="signup-input" name="date_naissance" type="date" max="2026-12-31"/>
+      </div>
+
+      <div class="signup-field">
+        <div class="signup-label">JE SUIS</div>
+        <div class="signup-pills">
+          <input class="signup-pill-input" type="radio" name="genre" value="H" id="gen-h"/>
+          <label class="signup-pill-label" for="gen-h">Homme</label>
+          <input class="signup-pill-input" type="radio" name="genre" value="F" id="gen-f"/>
+          <label class="signup-pill-label" for="gen-f">Femme</label>
+          <input class="signup-pill-input" type="radio" name="genre" value="NR" id="gen-nr"/>
+          <label class="signup-pill-label" for="gen-nr">Préfère NR</label>
+        </div>
+      </div>
+
+      <div class="signup-field">
+        <div class="signup-label">COMBIEN DE CONCERTS TWOQ AS-TU DÉJÀ VUS ?</div>
+        <div class="signup-pills">
+          <input class="signup-pill-input" type="radio" name="concerts" value="0" id="conc-0"/>
+          <label class="signup-pill-label" for="conc-0">0</label>
+          <input class="signup-pill-input" type="radio" name="concerts" value="1" id="conc-1"/>
+          <label class="signup-pill-label" for="conc-1">1</label>
+          <input class="signup-pill-input" type="radio" name="concerts" value="2-3" id="conc-23"/>
+          <label class="signup-pill-label" for="conc-23">2-3</label>
+          <input class="signup-pill-input" type="radio" name="concerts" value="4-5" id="conc-45"/>
+          <label class="signup-pill-label" for="conc-45">4-5</label>
+          <input class="signup-pill-input" type="radio" name="concerts" value="6+" id="conc-6"/>
+          <label class="signup-pill-label" for="conc-6">6+</label>
+        </div>
+      </div>
+
+      <button type="submit" class="signup-submit">Valider mon profil →</button>
+      <button type="button" class="signup-skip" onclick="closeSignupStep2(true)">Plus tard, merci</button>
+    </form>
   </div>
 </div>
 
