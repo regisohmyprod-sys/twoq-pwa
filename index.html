@@ -949,12 +949,12 @@
     .wide-card {
       position: relative;
       width: 100%;
-      height: 140px;
-      border-radius: 14px;
+      height: 240px;
+      border-radius: 16px;
       overflow: hidden;
-      margin-bottom: 12px;
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+      margin-bottom: 14px;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.45), 0 0 18px rgba(212, 175, 55, 0.1);
       transition: border-color 0.2s, transform 0.2s;
     }
     .wide-card:last-of-type {
@@ -974,40 +974,39 @@
     .wide-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.5) 45%, rgba(10,10,10,0.1) 100%);
+      background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0) 40%, rgba(10,10,10,0.9) 92%, rgba(10,10,10,1) 100%);
     }
     .wide-content {
       position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
+      bottom: 14px;
+      left: 18px;
+      right: 18px;
       z-index: 2;
-      max-width: 70%;
     }
     .wide-tag {
       color: var(--gold);
-      font-size: 9.5px;
-      letter-spacing: 2.5px;
+      font-size: 10px;
+      letter-spacing: 3px;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
       text-shadow: 0 1px 4px rgba(0,0,0,0.7);
     }
     .wide-name {
       color: var(--cream);
       font-family: var(--serif);
-      font-size: 20px;
+      font-size: 24px;
       font-weight: 500;
       line-height: 1.1;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+      margin-bottom: 5px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
     }
     .wide-sub {
       color: #F0D77A;
-      font-size: 11.5px;
+      font-family: var(--serif);
+      font-size: 13px;
       font-style: italic;
-      line-height: 1.35;
-      margin-top: 5px;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.85);
-      max-width: 85%;
+      line-height: 1.4;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.7);
     }
 
     /* === DREAM TEAM CARD === */
@@ -1606,30 +1605,46 @@
       transform: scale(1.1);
       background: var(--gold);
     }
-    /* Flèches navigation vidéos */
-    .video-nav {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.55);
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      color: var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    /* Zones de swipe invisibles par-dessus l'iframe — pour capturer le geste avant YouTube */
+    /* Pour les REELS (vertical), on utilise haut/bas. Pour les VIDÉOS (horizontal), on utilise gauche/droite */
+    .video-modal-content { position: relative; }
+    .swipe-zone {
+      position: absolute;
+      background: transparent;
+      z-index: 5;
       cursor: pointer;
-      z-index: 10000;
-      transition: background 0.2s, transform 0.2s;
     }
-    .video-nav:hover {
-      background: rgba(212, 175, 55, 0.2);
-      transform: translateY(-50%) scale(1.08);
+    /* Reels (vertical) : zones swipe haut/bas (12% de hauteur chacune) */
+    .video-modal-content.vertical .swipe-zone {
+      display: block;
     }
-    .video-prev { left: 12px; }
-    .video-next { right: 12px; }
+    .video-modal-content.vertical .swipe-top {
+      top: 0; left: 0; right: 0; height: 18%;
+    }
+    .video-modal-content.vertical .swipe-bottom {
+      bottom: 0; left: 0; right: 0; height: 18%;
+    }
+    .video-modal-content.vertical .swipe-left,
+    .video-modal-content.vertical .swipe-right {
+      display: none;
+    }
+    /* Vidéos (horizontal) : zones swipe gauche/droite (12% de largeur chacune) */
+    .video-modal-content:not(.vertical) .swipe-zone {
+      display: block;
+    }
+    .video-modal-content:not(.vertical) .swipe-left {
+      top: 0; bottom: 0; left: 0; width: 15%;
+    }
+    .video-modal-content:not(.vertical) .swipe-right {
+      top: 0; bottom: 0; right: 0; width: 15%;
+    }
+    .video-modal-content:not(.vertical) .swipe-top,
+    .video-modal-content:not(.vertical) .swipe-bottom {
+      display: none;
+    }
+
+    /* Compteur "3 / 8" en bas */
     .video-counter {
       position: fixed;
       bottom: 24px;
@@ -1645,6 +1660,57 @@
       padding: 6px 16px;
       z-index: 10000;
       backdrop-filter: blur(8px);
+    }
+
+    /* Hint "Swipe pour la suivante" — affiché au début, disparaît au 1er swipe */
+    .video-swipe-hint {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 16px;
+      padding: 16px 24px;
+      z-index: 9998;
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+      animation: swipeHintIn 0.4s ease-out, swipeHintFade 4s ease-in-out forwards;
+    }
+    .video-swipe-hint.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .swipe-hint-icon {
+      font-size: 36px;
+      color: var(--gold);
+      animation: swipeArrow 1.5s ease-in-out infinite;
+      line-height: 1;
+    }
+    .swipe-hint-text {
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      font-family: var(--serif);
+      font-style: italic;
+      white-space: nowrap;
+    }
+    @keyframes swipeArrow {
+      0%, 100% { transform: translateY(0); opacity: 0.5; }
+      50% { transform: translateY(-12px); opacity: 1; }
+    }
+    @keyframes swipeHintIn {
+      from { opacity: 0; transform: translate(-50%, -40%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+    @keyframes swipeHintFade {
+      0%, 60% { opacity: 1; }
+      100% { opacity: 0; }
     }
 
     .stat-row { display: flex; gap: 8px; margin: 14px 0; }
@@ -3617,6 +3683,24 @@
     const modal = document.getElementById('videoModal');
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    // Reset + adapter le hint visuel selon type
+    const hint = document.getElementById('videoSwipeHint');
+    const hintIcon = document.getElementById('swipeHintIcon');
+    const hintText = document.getElementById('swipeHintText');
+    if (hint && hintIcon && hintText) {
+      hint.classList.remove('hidden');
+      // Re-trigger l'animation
+      hint.style.animation = 'none';
+      void hint.offsetWidth; // force reflow
+      hint.style.animation = '';
+      if (type === 'reel') {
+        hintIcon.textContent = '↑';
+        hintText.textContent = 'Swipe pour la suivante';
+      } else {
+        hintIcon.textContent = '←';
+        hintText.textContent = 'Swipe pour naviguer';
+      }
+    }
   }
 
   function loadVideoAtIndex() {
@@ -3654,7 +3738,7 @@
     document.body.style.overflow = '';
   }
 
-  // Swipe tactile + touches clavier pour la modal vidéo
+  // Swipe tactile : VERTICAL pour reels (TikTok-style), HORIZONTAL pour vidéos
   let videoTouchStartX = 0;
   let videoTouchStartY = 0;
   document.addEventListener('touchstart', (e) => {
@@ -3669,18 +3753,37 @@
     if (!modal || !modal.classList.contains('active')) return;
     const diffX = e.changedTouches[0].clientX - videoTouchStartX;
     const diffY = e.changedTouches[0].clientY - videoTouchStartY;
-    // Swipe horizontal uniquement (sinon conflit avec scroll iframe)
-    if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY)) {
-      if (diffX > 0) videoPrev();
-      else videoNext();
+    const threshold = 50;
+
+    // Cache le hint au 1er swipe
+    const hint = document.getElementById('videoSwipeHint');
+    if (hint) hint.classList.add('hidden');
+
+    if (currentVideoType === 'reel') {
+      // REELS : swipe VERTICAL (TikTok-style)
+      if (Math.abs(diffY) > threshold && Math.abs(diffY) > Math.abs(diffX)) {
+        if (diffY < 0) videoNext(); // swipe haut → suivante
+        else videoPrev();           // swipe bas → précédente
+      }
+    } else {
+      // VIDEOS : swipe HORIZONTAL classique
+      if (Math.abs(diffX) > threshold && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0) videoPrev(); // swipe droite → précédente
+        else videoNext();           // swipe gauche → suivante
+      }
     }
   }, { passive: true });
   document.addEventListener('keydown', (e) => {
     const modal = document.getElementById('videoModal');
     if (!modal || !modal.classList.contains('active')) return;
     if (e.key === 'Escape') closeVideo();
-    if (e.key === 'ArrowLeft') videoPrev();
-    if (e.key === 'ArrowRight') videoNext();
+    if (currentVideoType === 'reel') {
+      if (e.key === 'ArrowUp') videoNext();
+      if (e.key === 'ArrowDown') videoPrev();
+    } else {
+      if (e.key === 'ArrowLeft') videoPrev();
+      if (e.key === 'ArrowRight') videoNext();
+    }
   });
 </script>
 
@@ -3689,16 +3792,20 @@
   <button class="video-modal-close" onclick="closeVideo()" aria-label="Fermer">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
-  <button class="video-nav video-prev" onclick="videoPrev()" aria-label="Précédente">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-  </button>
   <div class="video-modal-content" id="videoModalContent">
     <iframe id="videoIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <!-- Zones de swipe transparentes par-dessus l'iframe (sinon YouTube capture les touches) -->
+    <div class="swipe-zone swipe-top" onclick="videoPrev()"></div>
+    <div class="swipe-zone swipe-bottom" onclick="videoNext()"></div>
+    <div class="swipe-zone swipe-left" onclick="videoPrev()"></div>
+    <div class="swipe-zone swipe-right" onclick="videoNext()"></div>
   </div>
-  <button class="video-nav video-next" onclick="videoNext()" aria-label="Suivante">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-  </button>
   <div class="video-counter" id="videoCounter">1 / 8</div>
+  <!-- Hint d'animation au 1er affichage -->
+  <div class="video-swipe-hint" id="videoSwipeHint">
+    <div class="swipe-hint-icon" id="swipeHintIcon">↑</div>
+    <div class="swipe-hint-text" id="swipeHintText">Swipe pour la suivante</div>
+  </div>
 </div>
 
 <!-- LIGHTBOX GALERIE -->
