@@ -574,7 +574,7 @@
       animation: reviewsScroll 90s linear infinite;
       width: max-content;
     }
-    .reviews-marquee:hover .reviews-track {
+    .reviews-track.paused {
       animation-play-state: paused;
     }
     @keyframes reviewsScroll {
@@ -589,6 +589,11 @@
       border-radius: 12px;
       padding: 12px 14px;
       position: relative;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .review-bubble:active {
+      border-color: rgba(212, 175, 55, 0.6);
     }
     .review-stars {
       color: var(--gold);
@@ -994,6 +999,15 @@
       font-weight: 500;
       line-height: 1.1;
       text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+    }
+    .wide-sub {
+      color: #F0D77A;
+      font-size: 11.5px;
+      font-style: italic;
+      line-height: 1.35;
+      margin-top: 5px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.85);
+      max-width: 85%;
     }
 
     /* === DREAM TEAM CARD === */
@@ -1591,6 +1605,46 @@
     .video-modal-close:hover {
       transform: scale(1.1);
       background: var(--gold);
+    }
+    /* Flèches navigation vidéos */
+    .video-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10000;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .video-nav:hover {
+      background: rgba(212, 175, 55, 0.2);
+      transform: translateY(-50%) scale(1.08);
+    }
+    .video-prev { left: 12px; }
+    .video-next { right: 12px; }
+    .video-counter {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--cream);
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      font-family: var(--serif);
+      background: rgba(0,0,0,0.65);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 999px;
+      padding: 6px 16px;
+      z-index: 10000;
+      backdrop-filter: blur(8px);
     }
 
     .stat-row { display: flex; gap: 8px; margin: 14px 0; }
@@ -2389,7 +2443,7 @@
       <div class="section-eyebrow" style="margin-top:18px;">TEASER OFFICIEL</div>
       <div class="section-title">Le nouveau spectacle</div>
       <div class="video-player-wrap">
-        <video id="teaserVideo" class="video-player" autoplay playsinline preload="auto" controls loop>
+        <video id="teaserVideo" class="video-player" autoplay playsinline preload="auto" controls>
           <source src="assets/TEASER1.mp4" type="video/mp4">
           Votre navigateur ne supporte pas la vidéo HTML5.
         </video>
@@ -2626,6 +2680,7 @@
         <div class="wide-content">
           <div class="wide-tag">BATTEUR · MISE EN SCÈNE</div>
           <div class="wide-name">Alex Caramia</div>
+          <div class="wide-sub">Co-fondateur du groupe avec son frère Fred, héritier de Roger Taylor — la colonne vertébrale du show.</div>
         </div>
       </div>
 
@@ -2635,6 +2690,7 @@
         <div class="wide-content">
           <div class="wide-tag">GUITARISTE</div>
           <div class="wide-name">Adrien Husson</div>
+          <div class="wide-sub">Technique millimétrée et instinct pur — il redonne vie aux solos mythiques de Brian May.</div>
         </div>
       </div>
 
@@ -2644,6 +2700,7 @@
         <div class="wide-content">
           <div class="wide-tag">BASSISTE</div>
           <div class="wide-name">Morgan Michaud</div>
+          <div class="wide-sub">Le groove de John Deacon — l'ancrage profond qui fait vibrer chaque arène.</div>
         </div>
       </div>
 
@@ -2653,6 +2710,7 @@
         <div class="wide-content">
           <div class="wide-tag">CLAVIERS</div>
           <div class="wide-name">Mathieu Le Nestour</div>
+          <div class="wide-sub">L'architecte sonore aux mille textures — claviers et voix qui sublime les chœurs.</div>
         </div>
       </div>
 
@@ -2668,6 +2726,7 @@
         <div class="wide-content">
           <div class="wide-tag">SOPRANO</div>
           <div class="wide-name">Claire Lairy</div>
+          <div class="wide-sub">L'art lyrique avec humour et énergie — sublime sur Barcelona en duo avec Fred.</div>
         </div>
       </div>
 
@@ -2677,6 +2736,7 @@
         <div class="wide-content">
           <div class="wide-tag">SOPRANO</div>
           <div class="wide-name">Fanny Crouet</div>
+          <div class="wide-sub">Étourdissante artiste lyrique — elle rend le classique aussi abordable que magique.</div>
         </div>
       </div>
 
@@ -2692,6 +2752,7 @@
         <div class="wide-content">
           <div class="wide-tag">PIANISTE</div>
           <div class="wide-name">Fred Penas</div>
+          <div class="wide-sub">Bohemian Rhapsody, Love of My Life — sa précision donne corps aux harmonies du show.</div>
         </div>
       </div>
 
@@ -2701,6 +2762,7 @@
         <div class="wide-content">
           <div class="wide-tag">PIANISTE</div>
           <div class="wide-name">Florian Dupu</div>
+          <div class="wide-sub">Sensible et exigeant — la discrétion qui fait vibrer les plus belles ballades de Queen.</div>
         </div>
       </div>
 
@@ -3263,11 +3325,31 @@
           });
         }
       }
-      // === CRITIQUES SPECTATEURS : duplique pour défilement infini ===
+      // === CRITIQUES SPECTATEURS : duplique pour défilement infini + gestion tap pour pause/reprise ===
       const track = document.getElementById('reviewsTrack');
       if (track && !track.dataset.cloned) {
         track.innerHTML += track.innerHTML; // duplique le contenu une fois
         track.dataset.cloned = '1';
+
+        // Au tap sur une bulle : pause 4s puis reprise auto. Re-tap pendant la pause = reprise immédiate.
+        let reviewsPauseTimer = null;
+        track.querySelectorAll('.review-bubble').forEach(bubble => {
+          bubble.addEventListener('click', () => {
+            if (track.classList.contains('paused')) {
+              // 2e tap : reprise immédiate
+              track.classList.remove('paused');
+              if (reviewsPauseTimer) { clearTimeout(reviewsPauseTimer); reviewsPauseTimer = null; }
+            } else {
+              // 1er tap : pause 4s
+              track.classList.add('paused');
+              if (reviewsPauseTimer) clearTimeout(reviewsPauseTimer);
+              reviewsPauseTimer = setTimeout(() => {
+                track.classList.remove('paused');
+                reviewsPauseTimer = null;
+              }, 4000);
+            }
+          });
+        });
       }
     }
 
@@ -3512,23 +3594,58 @@
     }
   }, { passive: true });
 
-  // === LECTEUR VIDÉO YOUTUBE INTÉGRÉ ===
+  // === LECTEUR VIDÉO YOUTUBE INTÉGRÉ avec SWIPE ===
+  // Listes d'IDs pour navigation (ordre = ordre d'affichage dans les pages)
+  const REELS_LIST = [
+    'yoFYxLacJlc', 'DfbSREMEgio', 'GhSKNMFzlMs', 'jZSqzuP7A5o',
+    'tuAwkGunrM0', 'g1wHig3iBOM', 'JhE2YZaTAs4', 'wQEHlQAs_ME'
+  ];
+  const VIDEOS_LIST = [
+    'Q6VOdTNU9mE', 'ipjg7xsZcx8', 'khyyP4NIBQ4', 'OIo40mWmRII',
+    'aYgoOJWT6Bg', 'DmWIfaYm2L0', 'B9lPjOJjRuQ'
+  ];
+  let currentVideoIndex = 0;
+  let currentVideoType = 'video';
+
   // type: 'video' (horizontal 16:9) ou 'reel' (vertical 9:16)
   function openVideo(videoId, type) {
+    const list = type === 'reel' ? REELS_LIST : VIDEOS_LIST;
+    const idx = list.indexOf(videoId);
+    currentVideoIndex = idx >= 0 ? idx : 0;
+    currentVideoType = type;
+    loadVideoAtIndex();
     const modal = document.getElementById('videoModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function loadVideoAtIndex() {
     const content = document.getElementById('videoModalContent');
     const iframe = document.getElementById('videoIframe');
-    // Adapter le format de la modal
-    if (type === 'reel') {
+    const counter = document.getElementById('videoCounter');
+    const list = currentVideoType === 'reel' ? REELS_LIST : VIDEOS_LIST;
+    const videoId = list[currentVideoIndex];
+
+    if (currentVideoType === 'reel') {
       content.classList.add('vertical');
     } else {
       content.classList.remove('vertical');
     }
-    // autoplay=1 pour démarrer direct, rel=0 pour limiter les suggestions
     iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    if (counter) counter.textContent = `${currentVideoIndex + 1} / ${list.length}`;
   }
+
+  function videoPrev() {
+    const list = currentVideoType === 'reel' ? REELS_LIST : VIDEOS_LIST;
+    currentVideoIndex = (currentVideoIndex - 1 + list.length) % list.length;
+    loadVideoAtIndex();
+  }
+  function videoNext() {
+    const list = currentVideoType === 'reel' ? REELS_LIST : VIDEOS_LIST;
+    currentVideoIndex = (currentVideoIndex + 1) % list.length;
+    loadVideoAtIndex();
+  }
+
   function closeVideo() {
     const modal = document.getElementById('videoModal');
     const iframe = document.getElementById('videoIframe');
@@ -3536,6 +3653,35 @@
     iframe.src = ''; // stoppe la lecture immédiatement
     document.body.style.overflow = '';
   }
+
+  // Swipe tactile + touches clavier pour la modal vidéo
+  let videoTouchStartX = 0;
+  let videoTouchStartY = 0;
+  document.addEventListener('touchstart', (e) => {
+    const modal = document.getElementById('videoModal');
+    if (modal && modal.classList.contains('active')) {
+      videoTouchStartX = e.touches[0].clientX;
+      videoTouchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const modal = document.getElementById('videoModal');
+    if (!modal || !modal.classList.contains('active')) return;
+    const diffX = e.changedTouches[0].clientX - videoTouchStartX;
+    const diffY = e.changedTouches[0].clientY - videoTouchStartY;
+    // Swipe horizontal uniquement (sinon conflit avec scroll iframe)
+    if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) videoPrev();
+      else videoNext();
+    }
+  }, { passive: true });
+  document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('videoModal');
+    if (!modal || !modal.classList.contains('active')) return;
+    if (e.key === 'Escape') closeVideo();
+    if (e.key === 'ArrowLeft') videoPrev();
+    if (e.key === 'ArrowRight') videoNext();
+  });
 </script>
 
 <!-- MODAL LECTEUR VIDÉO -->
@@ -3543,9 +3689,16 @@
   <button class="video-modal-close" onclick="closeVideo()" aria-label="Fermer">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
+  <button class="video-nav video-prev" onclick="videoPrev()" aria-label="Précédente">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
   <div class="video-modal-content" id="videoModalContent">
     <iframe id="videoIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
+  <button class="video-nav video-next" onclick="videoNext()" aria-label="Suivante">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <div class="video-counter" id="videoCounter">1 / 8</div>
 </div>
 
 <!-- LIGHTBOX GALERIE -->
