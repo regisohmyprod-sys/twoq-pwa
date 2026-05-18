@@ -4624,14 +4624,14 @@
       <div class="section-eyebrow">CONCOURS ANNUEL</div>
       <div class="contest-card contest-featured">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
-          <span class="tag tag-gold">🏆 QUIZ CHAMPION QUEEN</span>
+          <span style="background:#8B0000; color:#FFFFFF; font-size:10px; letter-spacing:1.5px; padding:4px 10px; border-radius:4px; font-weight:700; box-shadow:1px 1px 0 #5A0000;">🏆 QUIZZ CHAMPION'S QUEEN</span>
           <span class="mut" style="font-size:10px; letter-spacing:1px;">JUSQU'AU 20 DÉC. 2026</span>
         </div>
-        <div style="color:var(--cream); font-size:18px; font-weight:500; font-family:var(--serif); line-height:1.2;">Deviens Champion Queen !</div>
-        <div class="mut" style="margin-top:6px; font-size:12px; line-height:1.5;">10 questions vrai/faux · Du <strong style="color:var(--gold);">1<sup>er</sup> juin au 20 décembre 2026</strong> · Le Top 3 remporte <strong style="color:var(--gold);">2 places pour le concert TWOQ de leur ville</strong></div>
-        <div class="contest-progress" style="margin-top:14px;"><div style="width:62%;" id="quizProgressBar"></div></div>
+        <div style="color:var(--cream); font-size:18px; font-weight:500; font-family:var(--serif); line-height:1.2;">Deviens Champion's Queen !</div>
+        <div class="mut" style="margin-top:6px; font-size:12px; line-height:1.5;">10 questions vrai/faux · Du <strong style="color:var(--gold);">1<sup>er</sup> juin au 20 décembre 2026</strong> · Le Top 3 remporte <strong style="color:var(--gold);">2 places pour le concert TWOQ de leur ville en 2027/2028</strong></div>
+        <div class="contest-progress" style="margin-top:14px;"><div style="width:50%;" id="quizProgressBar"></div></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-          <span class="mut" style="font-size:11px;" id="quizParticipants">312 / 500 participants</span>
+          <span class="mut" style="font-size:11px;" id="quizParticipants">500 / 1000 participants</span>
           <button class="btn-gold" style="padding:7px 14px; font-size:11px;" onclick="openQuiz()">Je tente ma chance →</button>
         </div>
       </div>
@@ -6696,7 +6696,7 @@
     container.innerHTML = `
       <div class="quiz-header">
         <button class="quiz-close" onclick="closeQuiz()">×</button>
-        <div class="quiz-title">🏆 QUIZ CHAMPION QUEEN</div>
+        <div class="quiz-title">🏆 QUIZZ CHAMPION'S QUEEN</div>
         <div class="quiz-subtitle">Es-tu vraiment fan ?</div>
       </div>
       <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${progress}%;"></div></div>
@@ -6762,6 +6762,40 @@
       msg = 'Viens nous voir en concert, tu deviendras un vrai fan !';
     }
 
+    const fan = getFan();
+    const isConnected = !!fan;
+
+    // Bloc de validation/inscription selon connexion
+    let validationBlock = '';
+    if (isConnected) {
+      const prenom = fan.prenom || '';
+      const nom = fan.nom || '';
+      const email = fan.email || '';
+      const ville = fan.ville || '';
+      validationBlock = `
+        <div class="quiz-form">
+          <div class="quiz-form-title">PARTICIPE AU TIRAGE</div>
+          <div class="quiz-form-sub">Le Top 3 remporte 2 places pour le concert TWOQ de leur ville en 2027/2028</div>
+          <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:12px 14px; margin-bottom:14px;">
+            <div style="color:var(--smoke); font-size:10px; letter-spacing:1.5px; margin-bottom:8px;">CONNECTÉ EN TANT QUE</div>
+            <div style="color:var(--cream); font-size:14px; font-weight:500; margin-bottom:4px;">${prenom} ${nom}</div>
+            <div style="color:var(--smoke); font-size:12px; margin-bottom:2px;">✉ ${email}</div>
+            ${ville ? `<div style="color:var(--smoke); font-size:12px;">📍 ${ville}</div>` : ''}
+          </div>
+          <button class="quiz-submit" onclick="confirmQuizParticipation()">✓ CONFIRMER MA PARTICIPATION</button>
+        </div>
+      `;
+    } else {
+      validationBlock = `
+        <div class="quiz-form">
+          <div class="quiz-form-title">⚠ INSCRIPTION REQUISE</div>
+          <div class="quiz-form-sub" style="margin-bottom:16px;">Pour participer au tirage du Quiz Champion Queen, tu dois d'abord rejoindre la communauté TWOQ. C'est <strong style="color:var(--gold);">gratuit</strong> et ça te donne accès à <strong style="color:var(--gold);">tous les avantages FAN TWOQ</strong>.</div>
+          <button class="quiz-submit" onclick="goToSignupFromQuiz()">M'INSCRIRE GRATUITEMENT →</button>
+          <button onclick="closeQuiz()" style="width:100%; padding:12px; background:transparent; border:1px solid rgba(212,175,55,0.3); border-radius:12px; color:var(--smoke); font-size:11px; letter-spacing:1.5px; margin-top:10px; cursor:pointer;">FERMER</button>
+        </div>
+      `;
+    }
+
     const container = document.getElementById('quizContainer');
     container.innerHTML = `
       <div class="quiz-header">
@@ -6777,20 +6811,53 @@
         <div class="quiz-score-big">${score}<span>/${total}</span></div>
         <div class="quiz-result-rank">${rank}</div>
         <div class="quiz-result-msg">"${msg}"</div>
-        <div class="quiz-form">
-          <div class="quiz-form-title">PARTICIPE AU TIRAGE</div>
-          <div class="quiz-form-sub">Le Top 3 remporte 2 places pour le concert TWOQ de leur ville</div>
-          <input type="text" class="quiz-input" id="quizFormPrenom" placeholder="Prénom *" required>
-          <input type="text" class="quiz-input" id="quizFormNom" placeholder="Nom *" required>
-          <input type="email" class="quiz-input" id="quizFormEmail" placeholder="Email *" required>
-          <input type="text" class="quiz-input" id="quizFormVille" placeholder="Ville où tu veux assister au concert *" required>
-          <button class="quiz-submit" onclick="submitQuizForm()">VALIDER MA PARTICIPATION 🏆</button>
-        </div>
+        ${validationBlock}
       </div>
     `;
 
-    // Lancer les confettis pour score 8+
     if (score >= 8) launchConfetti();
+  }
+
+  function goToSignupFromQuiz() {
+    closeQuiz();
+    show('moi');
+  }
+
+  function confirmQuizParticipation() {
+    const fan = getFan();
+    if (!fan) {
+      alert('Erreur : tu n\'es plus connecté. Reconnecte-toi pour participer.');
+      return;
+    }
+
+    const compteur = document.getElementById('quizParticipants');
+    const barre = document.getElementById('quizProgressBar');
+    if (compteur) compteur.textContent = '501 / 1000 participants';
+    if (barre) barre.style.width = '50.1%';
+
+    const container = document.getElementById('quizContainer');
+    container.innerHTML = `
+      <div class="quiz-header">
+        <button class="quiz-close" onclick="closeQuiz()">×</button>
+        <div class="quiz-title">✓ PARTICIPATION ENREGISTRÉE</div>
+        <div class="quiz-subtitle">Bonne chance ${fan.prenom} !</div>
+      </div>
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:100%; background:#3CB371;"></div></div>
+      <div class="quiz-success">
+        <div class="quiz-success-check">✓</div>
+        <div class="quiz-success-title">Bravo ${fan.prenom} !</div>
+        <div class="quiz-success-msg">
+          Ta participation au <strong style="color:var(--gold);">QUIZZ CHAMPION'S QUEEN</strong> est enregistrée.<br><br>
+          Score : <strong style="color:var(--gold);">${quizState.score}/10</strong><br>
+          ${fan.ville ? `Ville : <strong style="color:var(--gold);">${fan.ville}</strong><br>` : ''}
+          <br>
+          Le tirage des <strong style="color:var(--gold);">3 gagnants</strong> aura lieu le <strong style="color:var(--gold);">20 décembre 2026</strong>.<br>
+          Si tu fais partie du Top 3, on te contactera par mail sur :<br>
+          <strong style="color:var(--gold);">${fan.email}</strong>
+        </div>
+        <button class="quiz-submit" onclick="closeQuiz()" style="max-width:200px; margin:0 auto; display:block;">FERMER</button>
+      </div>
+    `;
   }
 
   function launchConfetti() {
@@ -6808,52 +6875,6 @@
       c.style.height = c.style.width;
       zone.appendChild(c);
     }
-  }
-
-  function submitQuizForm() {
-    const prenom = document.getElementById('quizFormPrenom').value.trim();
-    const nom = document.getElementById('quizFormNom').value.trim();
-    const email = document.getElementById('quizFormEmail').value.trim();
-    const ville = document.getElementById('quizFormVille').value.trim();
-
-    if (!prenom || !nom || !email || !ville) {
-      alert('Merci de remplir tous les champs');
-      return;
-    }
-    if (!email.includes('@')) {
-      alert('Email invalide');
-      return;
-    }
-
-    // Simulation : on incrémente le compteur de participants
-    const compteur = document.getElementById('quizParticipants');
-    const barre = document.getElementById('quizProgressBar');
-    if (compteur) compteur.textContent = '313 / 500 participants';
-    if (barre) barre.style.width = '62.6%';
-
-    // Écran de succès
-    const container = document.getElementById('quizContainer');
-    container.innerHTML = `
-      <div class="quiz-header">
-        <button class="quiz-close" onclick="closeQuiz()">×</button>
-        <div class="quiz-title">✓ PARTICIPATION ENREGISTRÉE</div>
-        <div class="quiz-subtitle">Bonne chance ${prenom} !</div>
-      </div>
-      <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:100%; background:#3CB371;"></div></div>
-      <div class="quiz-success">
-        <div class="quiz-success-check">✓</div>
-        <div class="quiz-success-title">Bravo ${prenom} !</div>
-        <div class="quiz-success-msg">
-          Ta participation au <strong style="color:var(--gold);">QUIZ CHAMPION QUEEN</strong> est enregistrée.<br><br>
-          Score : <strong style="color:var(--gold);">${quizState.score}/10</strong><br>
-          Ville choisie : <strong style="color:var(--gold);">${ville}</strong><br><br>
-          Le tirage des 3 gagnants aura lieu le <strong style="color:var(--gold);">28 du mois</strong>.<br>
-          Si tu fais partie du Top 3, on te contactera par mail sur :<br>
-          <strong style="color:var(--gold);">${email}</strong>
-        </div>
-        <button class="quiz-submit" onclick="closeQuiz()" style="max-width:200px; margin:0 auto; display:block;">FERMER</button>
-      </div>
-    `;
   }
 
   function openVideo(videoId, type) {
