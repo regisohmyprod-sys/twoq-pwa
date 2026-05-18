@@ -5061,16 +5061,7 @@
 
       ${renderStatusSection(fan)}
 
-      <div class="section-eyebrow">MES DATES FAVORITES ${favs.length > 0 ? `<span style="color:#E11D2A; margin-left:4px;">❤ ${favs.length}</span>` : ''}</div>
-      <div id="favListContainer">${favsHTML}</div>
-
-      <!-- ─── MES CONCOURS — Option B liste compacte ─── -->
-      <div class="section-eyebrow" style="margin-top:22px;">🏆 MES CONCOURS <span id="concoursBadge" style="background:rgba(212,175,55,0.2); color:var(--gold); padding:2px 8px; border-radius:10px; font-size:10px; letter-spacing:1px; margin-left:6px; display:none;"></span></div>
-      <div id="mesConcoursContainer">
-        <div style="text-align:center; padding:14px; color:var(--smoke); font-size:11px;">Chargement…</div>
-      </div>
-
-      <!-- ─── AVANTAGES DU COMPTE — Accordéon encadré or ─── -->
+      <!-- ─── AVANTAGES DE TON COMPTE — Accordéon encadré or ─── -->
       <div class="section-eyebrow" style="margin-top:22px;">AVANTAGES DE TON COMPTE</div>
       <div class="benefits-accordion" id="benefitsAccordion" onclick="toggleBenefits()" style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px 16px; cursor:pointer; transition:all 0.2s;">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
@@ -5096,6 +5087,18 @@
           </div>
         </div>
       </div>
+
+      <!-- ─── MES CONCOURS — Bloc encadré or ─── -->
+      <div class="section-eyebrow" style="margin-top:22px;">🏆 MES CONCOURS <span id="concoursBadge" style="background:rgba(212,175,55,0.2); color:var(--gold); padding:2px 8px; border-radius:10px; font-size:10px; letter-spacing:1px; margin-left:6px; display:none;"></span></div>
+      <div style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px;">
+        <div id="mesConcoursContainer">
+          <div style="text-align:center; padding:8px; color:var(--smoke); font-size:11px;">Chargement…</div>
+        </div>
+      </div>
+
+      <!-- ─── MES DATES FAVORITES ─── -->
+      <div class="section-eyebrow" style="margin-top:22px;">MES DATES FAVORITES ${favs.length > 0 ? `<span style="color:#E11D2A; margin-left:4px;">❤ ${favs.length}</span>` : ''}</div>
+      <div id="favListContainer">${favsHTML}</div>
 
       <div class="section-eyebrow">SUIVEZ-NOUS</div>
       <div class="socials-grid">
@@ -6977,56 +6980,66 @@
       concoursList.forEach(c => concoursMap[c.id] = c);
 
       // 3. Pour chaque participation, si concours actif, calculer le rang en cours
-      for (const p of participations) {
+      //    (de manière isolée pour ne pas tout faire planter si une requête échoue)
+      await Promise.all(participations.map(async (p) => {
         const c = concoursMap[p.concours_id];
-        if (!c) continue;
-        if (c.statut === 'actif' && !p.rang) {
-          // Calculer le rang : compter ceux qui ont score > nous ou égalité avec date avant
+        if (!c) return;
+        if (c.statut !== 'actif' || p.rang) return;
+        try {
+          // Compter les participations avec score strictement supérieur
           const url = SUPABASE_URL + '/rest/v1/concours_participations'
             + '?concours_id=eq.' + p.concours_id
             + '&source=neq.admin_test'
-            + '&or=(score.gt.' + p.score + ',and(score.eq.' + p.score + ',date_participation.lt.' + encodeURIComponent(p.date_participation) + '))'
+            + '&score=gt.' + p.score
             + '&select=id';
-          try {
-            const r = await fetch(url, {
-              headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-                'Prefer': 'count=exact'
-              }
-            });
-            const range = r.headers.get('content-range');
-            let above = 0;
-            if (range) {
-              const m = range.match(/\/(\d+)$/);
-              if (m) above = parseInt(m[1]) || 0;
+          const r = await fetch(url, {
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+              'Prefer': 'count=exact',
+              'Range-Unit': 'items',
+              'Range': '0-0'
             }
-            p._rang_live = above + 1;
-          } catch(e) {
-            p._rang_live = null;
+          });
+          const range = r.headers.get('content-range');
+          let above = 0;
+          if (range) {
+            const m = range.match(/\/(\d+)$/);
+            if (m) above = parseInt(m[1]) || 0;
           }
+          p._rang_live = above + 1;
+        } catch(e) {
+          // Silencieux : on affichera juste le score
+          p._rang_live = null;
         }
-      }
+      }));
 
       // 4. Rendu
       if (badge) {
         badge.textContent = participations.length;
         badge.style.display = 'inline-block';
       }
-      container.innerHTML = participations.map(p => renderConcoursRow(p, concoursMap[p.concours_id])).join('');
+      const rows = participations.map(p => renderConcoursRow(p, concoursMap[p.concours_id])).filter(Boolean);
+      container.innerHTML = rows.length > 0 ? rows.join('') : renderConcoursVide();
+      // Retirer la bordure du dernier élément via CSS
+      const lastRow = container.lastElementChild;
+      if (lastRow && lastRow.style) lastRow.style.borderBottom = 'none';
     } catch(e) {
       console.warn('Erreur chargement mes concours:', e);
-      container.innerHTML = '<div style="text-align:center; padding:14px; color:var(--smoke); font-size:11px;">Impossible de charger tes concours pour le moment.</div>';
+      const container2 = document.getElementById('mesConcoursContainer');
+      if (container2 && container2.innerHTML.includes('Chargement')) {
+        container2.innerHTML = '<div style="text-align:center; padding:8px; color:var(--smoke); font-size:11px;">Impossible de charger tes concours pour le moment.</div>';
+      }
     }
   }
 
   function renderConcoursVide() {
     return `
-      <div style="background:rgba(212,175,55,0.04); border:1px dashed rgba(212,175,55,0.3); border-radius:8px; padding:16px; text-align:center;">
-        <div style="font-size:28px; margin-bottom:6px; opacity:0.5;">🏆</div>
+      <div style="text-align:center; padding:8px 4px;">
+        <div style="font-size:24px; margin-bottom:4px; opacity:0.6;">🏆</div>
         <div style="font-size:12px; color:var(--cream); font-weight:500; margin-bottom:4px;">Tu n'as pas encore participé à un concours</div>
-        <div style="font-size:10px; color:var(--smoke); line-height:1.4;">Rejoins le <strong style="color:var(--gold);">QUIZZ CHAMPION'S QUEEN</strong> pour gagner 2 places de concert !</div>
-        <a href="#" onclick="event.preventDefault(); showPage('page-fan-zone');" style="display:inline-block; margin-top:10px; background:var(--gold); color:#000; padding:6px 14px; border-radius:6px; font-size:10px; letter-spacing:1px; font-weight:600; text-decoration:none;">JE TENTE MA CHANCE →</a>
+        <div style="font-size:10px; color:var(--smoke); line-height:1.4; margin-bottom:10px;">Rejoins le <strong style="color:var(--gold);">QUIZZ CHAMPION'S QUEEN</strong> pour gagner 2 places de concert !</div>
+        <a href="#" onclick="event.preventDefault(); show('fan-zone');" style="display:inline-block; background:var(--gold); color:#000; padding:7px 16px; border-radius:6px; font-size:10px; letter-spacing:1px; font-weight:600; text-decoration:none;">JE TENTE MA CHANCE →</a>
       </div>
     `;
   }
@@ -7041,7 +7054,7 @@
     const dateFin = new Date(c.date_fin).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
 
     // Détermination du statut visuel
-    let badge, badgeColor, iconBg, iconColor, icon, rowBg, opacity, info;
+    let badge, badgeColor, iconBg, iconColor, icon, opacity, info;
     if (p.statut === 'gagnant' || (c.statut === 'termine' && p.rang && p.rang <= nbGagnants)) {
       // GAGNANT
       badge = 'GAGNANT';
@@ -7049,38 +7062,35 @@
       iconBg = '#FFD700';
       iconColor = '#000';
       icon = '🏆';
-      rowBg = 'rgba(255,215,0,0.05)';
       opacity = '1';
       info = `${p.score}/${cfg.score_max||10} · ${p.rang ? p.rang + 'ᵉ place' : 'Top ' + nbGagnants} · 🎟️ Lot gagné !`;
     } else if (c.statut === 'actif') {
       // EN COURS
       badge = 'EN COURS';
       badgeColor = '#3CB371';
-      iconBg = 'rgba(60,179,113,0.2)';
+      iconBg = 'rgba(60,179,113,0.25)';
       iconColor = '#3CB371';
       icon = '●';
-      rowBg = 'transparent';
       opacity = '1';
-      const rangTxt = p._rang_live ? `${p._rang_live}ᵉ actuel` : `Score ${p.score}/${cfg.score_max||10}`;
+      const rangTxt = p._rang_live ? `${p._rang_live}ᵉ actuel` : `Participation enregistrée`;
       info = `${p.score}/${cfg.score_max||10} · ${rangTxt} · Résultats ${dateFin}`;
     } else {
       // TERMINÉ - NON GAGNÉ
       badge = 'TERMINÉ';
       badgeColor = '#8B8580';
-      iconBg = 'rgba(139,128,128,0.15)';
+      iconBg = 'rgba(139,128,128,0.2)';
       iconColor = '#8B8580';
       icon = '✓';
-      rowBg = 'transparent';
-      opacity = '0.7';
+      opacity = '0.75';
       info = `${p.score}/${cfg.score_max||10}${p.rang ? ' · ' + p.rang + 'ᵉ place' : ''}`;
     }
 
     return `
-      <div style="display:flex; align-items:center; gap:12px; padding:12px 14px; background:${rowBg}; border:1px solid rgba(212,175,55,0.15); border-radius:8px; margin-bottom:8px; opacity:${opacity};">
-        <div style="width:32px; height:32px; border-radius:50%; background:${iconBg}; color:${iconColor}; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">${icon}</div>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 4px; opacity:${opacity}; border-bottom:1px dashed rgba(212,175,55,0.15);">
+        <div style="width:30px; height:30px; border-radius:50%; background:${iconBg}; color:${iconColor}; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0;">${icon}</div>
         <div style="flex:1; min-width:0;">
           <div style="font-family:var(--serif); font-size:13px; color:${opacity === '1' ? 'var(--gold)' : '#aaa'}; line-height:1.3;">${escapeHtml(c.nom)}</div>
-          <div style="font-size:10px; color:var(--smoke); margin-top:3px; line-height:1.4;">${info}</div>
+          <div style="font-size:10px; color:var(--smoke); margin-top:2px; line-height:1.4;">${info}</div>
         </div>
         <div style="font-size:9px; color:${badgeColor}; letter-spacing:1px; font-weight:600; flex-shrink:0;">${badge}</div>
       </div>
