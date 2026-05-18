@@ -819,6 +819,7 @@
       color: var(--cream);
       font-size: 12.5px;
       line-height: 1.7;
+      text-align: center;
     }
 
     /* Au programme — setlist */
@@ -857,6 +858,65 @@
       padding: 18px 16px;
       text-align: center;
       line-height: 1.5;
+    }
+
+    /* Mini-bloc avis spectateurs intégré dans le pitch (marquee défilant) */
+    .pitch-reviews {
+      padding: 14px 0 16px;
+      border-top: 1px solid rgba(212, 175, 55, 0.2);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      background: rgba(0, 0, 0, 0.18);
+    }
+    .pitch-reviews-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #F0D77A;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .pitch-reviews-marquee {
+      overflow: hidden;
+      position: relative;
+      mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+    }
+    .pitch-reviews-track {
+      display: flex;
+      gap: 10px;
+      animation: pitchReviewsScroll 90s linear infinite;
+      width: max-content;
+    }
+    @keyframes pitchReviewsScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .pitch-review-bubble {
+      flex: 0 0 220px;
+      background: linear-gradient(180deg, rgba(28, 22, 14, 0.7), rgba(15, 12, 8, 0.5));
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .pitch-review-stars {
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+    .pitch-review-text {
+      color: var(--cream);
+      font-family: var(--serif);
+      font-size: 11px;
+      font-style: italic;
+      line-height: 1.45;
+      margin-bottom: 5px;
+    }
+    .pitch-review-author {
+      color: var(--smoke);
+      font-size: 9.5px;
+      letter-spacing: 0.5px;
+      text-align: right;
     }
     .pt-line-1 {
       font-size: 11px;
@@ -3565,9 +3625,9 @@
       splash.classList.add('hidden');
       // Lancer le son d'intro au passage sur l'accueil (1 fois, après clic user → autorisé navigateur)
       try {
-        const introSound = new Audio('./icons/intro.mp3');
-        introSound.volume = 0.7;
-        introSound.play().catch(err => {
+        window._introSound = new Audio('./icons/intro.mp3');
+        window._introSound.volume = 0.7;
+        window._introSound.play().catch(err => {
           console.log('Lecture audio bloquée ou fichier absent :', err);
         });
       } catch(e) {
@@ -3928,6 +3988,114 @@
           <div class="pitch-setlist-more">… et bien d'autres surprises encore !!</div>
         </div>
 
+        <div class="pitch-reviews">
+          <div class="pitch-reviews-label">★  ILS ONT VU LE SHOW  ★</div>
+          <div class="pitch-reviews-marquee">
+            <div class="pitch-reviews-track">
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Un super hommage à Freddie, j'en ai eu les larmes aux yeux. Vous êtes tous merveilleux. »</div>
+                <div class="pitch-review-author">— Béatrice C.</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Sans aucun doute, le meilleur du meilleur des hommages à notre cher Freddy. Quel spectacle, quelle émotion, quelle ambiance. Merciii ! »</div>
+                <div class="pitch-review-author">— Lauren P.</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Je préfère 1000 fois votre interprétation des chansons de Queen et de Freddie Mercury. Continuez à nous donner toujours autant de plaisir ! »</div>
+                <div class="pitch-review-author">— Dodo47</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Fan absolue, je vous garantis que ce sont les meilleurs et que Freddie est là à chaque concert ! »</div>
+                <div class="pitch-review-author">— Mag 06</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Allez-y, vous ne le regretterez pas !!! C'est génial !! »</div>
+                <div class="pitch-review-author">— Sylvie V.</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Si les fans veulent vraiment du spectacle et entendre le sosie vocal de Freddie, y a pas photo : c'est The World Of Queen qu'il faut aller voir. Vous êtes les meilleurs ! »</div>
+                <div class="pitch-review-author">— Chris67</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Freddy était parmi nous ce soir… Merci de nous avoir transportés à lui. »</div>
+                <div class="pitch-review-author">— Delphine C.</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Magnifique spectacle et quel duo avec la soprano ! Brillantissime !!! »</div>
+                <div class="pitch-review-author">— Decoptatines</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Vu à Caen, j'ai adoré. Ils m'ont fait pleurer avec les photos de Freddie, Love of My Life et Barcelona magnifique. J'en ai eu des frissons. Bravo ! »</div>
+                <div class="pitch-review-author">— Steliahuor</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« C'est tout simplement époustouflant… Un show grandiose et une précision millimétrée. »</div>
+                <div class="pitch-review-author">— Philinath</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Un super hommage à Freddie, j'en ai eu les larmes aux yeux. Vous êtes tous merveilleux. »</div>
+                <div class="pitch-review-author">— Béatrice C.</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Sans aucun doute, le meilleur du meilleur des hommages à notre cher Freddy. Quel spectacle, quelle émotion, quelle ambiance. Merciii ! »</div>
+                <div class="pitch-review-author">— Lauren P.</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Je préfère 1000 fois votre interprétation des chansons de Queen et de Freddie Mercury. Continuez à nous donner toujours autant de plaisir ! »</div>
+                <div class="pitch-review-author">— Dodo47</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Fan absolue, je vous garantis que ce sont les meilleurs et que Freddie est là à chaque concert ! »</div>
+                <div class="pitch-review-author">— Mag 06</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Allez-y, vous ne le regretterez pas !!! C'est génial !! »</div>
+                <div class="pitch-review-author">— Sylvie V.</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Si les fans veulent vraiment du spectacle et entendre le sosie vocal de Freddie, y a pas photo : c'est The World Of Queen qu'il faut aller voir. Vous êtes les meilleurs ! »</div>
+                <div class="pitch-review-author">— Chris67</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Freddy était parmi nous ce soir… Merci de nous avoir transportés à lui. »</div>
+                <div class="pitch-review-author">— Delphine C.</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Magnifique spectacle et quel duo avec la soprano ! Brillantissime !!! »</div>
+                <div class="pitch-review-author">— Decoptatines</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« Vu à Caen, j'ai adoré. Ils m'ont fait pleurer avec les photos de Freddie, Love of My Life et Barcelona magnifique. J'en ai eu des frissons. Bravo ! »</div>
+                <div class="pitch-review-author">— Steliahuor</div>
+              </div>
+              <div class="pitch-review-bubble">
+                <div class="pitch-review-stars">★★★★★</div>
+                <div class="pitch-review-text">« C'est tout simplement époustouflant… Un show grandiose et une précision millimétrée. »</div>
+                <div class="pitch-review-author">— Philinath</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="pitch-tagline">
           <div class="pt-line-1">THE WORLD OF QUEEN</div>
           <div class="pt-line-2">Pas de copie, pas d'imitation</div>
@@ -3938,67 +4106,6 @@
 
         <div class="pitch-credit">
           Production exclusive · <span class="omp-logo omp-big"><span class="omp-r">O</span>h my prod<span class="omp-r"> !</span></span>
-        </div>
-      </div>
-
-      <div class="gold-divider" style="margin:22px 0 18px;">
-        <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
-      </div>
-
-      <div class="section-eyebrow">CRITIQUES SPECTATEURS</div>
-      <div class="section-title">Ils ont vu le show</div>
-      <div class="reviews-marquee">
-        <div class="reviews-track" id="reviewsTrack">
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« Un super hommage à Freddie, j'en ai eu les larmes aux yeux. Vous êtes tous merveilleux. »</div>
-            <div class="review-author">— Béatrice C.</div>
-          </div>
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« Sans aucun doute, le meilleur du meilleur des hommages à notre cher Freddy. Quel spectacle, quelle émotion, quelle ambiance. Merciii ! »</div>
-            <div class="review-author">— Lauren P.</div>
-          </div>
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« Je préfère 1000 fois votre interprétation des chansons de Queen et de Freddie Mercury. Continuez à nous donner toujours autant de plaisir ! »</div>
-            <div class="review-author">— Dodo47</div>
-          </div>
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« Fan absolue, je vous garantis que ce sont les meilleurs et que Freddie est là à chaque concert ! »</div>
-            <div class="review-author">— Mag 06</div>
-          </div>
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« Allez-y, vous ne le regretterez pas !!! C'est génial !! »</div>
-            <div class="review-author">— Sylvie V.</div>
-          </div>
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« Si les fans veulent vraiment du spectacle et entendre le sosie vocal de Freddie, y a pas photo : c'est The World Of Queen qu'il faut aller voir. Vous êtes les meilleurs ! »</div>
-            <div class="review-author">— Chris67</div>
-          </div>
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« Freddy était parmi nous ce soir… Merci de nous avoir transportés à lui. »</div>
-            <div class="review-author">— Delphine C.</div>
-          </div>
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« Magnifique spectacle et quel duo avec la soprano ! Brillantissime !!! »</div>
-            <div class="review-author">— Decoptatines</div>
-          </div>
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« Vu à Caen, j'ai adoré. Ils m'ont fait pleurer avec les photos de Freddie, Love of My Life et Barcelona magnifique. J'en ai eu des frissons. Bravo The World of Queen, vous allez vous éclater ! »</div>
-            <div class="review-author">— Steliahuor</div>
-          </div>
-          <div class="review-bubble">
-            <div class="review-stars">★★★★★</div>
-            <div class="review-text">« C'est tout simplement époustouflant… Un show grandiose et une précision millimétrée. »</div>
-            <div class="review-author">— Philinath</div>
-          </div>
         </div>
       </div>
 
@@ -5304,6 +5411,15 @@
     document.querySelectorAll('.tab').forEach(t => {
       t.classList.toggle('active', t.dataset.tab === name);
     });
+
+    // === STOP SON D'INTRO dès qu'on quitte la page d'accueil ===
+    if (name !== 'dates' && window._introSound) {
+      try {
+        window._introSound.pause();
+        window._introSound.currentTime = 0;
+        window._introSound = null;
+      } catch(e) {}
+    }
 
     // === AUTOPLAY TEASER avec fallback son ===
     if (name === 'show') {
