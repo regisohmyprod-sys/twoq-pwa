@@ -4628,11 +4628,14 @@
           <span class="mut" style="font-size:10px; letter-spacing:1px;">JUSQU'AU 20 DÉC. 2026</span>
         </div>
         <div style="color:var(--cream); font-size:18px; font-weight:500; font-family:var(--serif); line-height:1.2;">Deviens Champion's Queen !</div>
-        <div class="mut" style="margin-top:6px; font-size:12px; line-height:1.5;">10 questions vrai/faux · Du <strong style="color:var(--gold);">1<sup>er</sup> juin au 20 décembre 2026</strong> · Le Top 3 remporte <strong style="color:var(--gold);">2 places pour le concert TWOQ de leur ville en 2027/2028</strong></div>
+        <div class="mut" style="margin-top:6px; font-size:12px; line-height:1.5;">10 questions vrai/faux · Du <strong style="color:var(--gold);">1<sup>er</sup> juin au 20 décembre 2026</strong> · Le <strong style="color:var(--gold);">Top 10</strong> remporte chacun <strong style="color:var(--gold);">2 places</strong> pour le concert TWOQ de leur ville en 2027/2028</div>
         <div class="contest-progress" style="margin-top:14px;"><div style="width:50%;" id="quizProgressBar"></div></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
           <span class="mut" style="font-size:11px;" id="quizParticipants">500 / 1000 participants</span>
           <button class="btn-gold" style="padding:7px 14px; font-size:11px;" onclick="openQuiz()">Je tente ma chance →</button>
+        </div>
+        <div style="text-align:right; margin-top:8px;">
+          <a href="docs/reglement-concours.pdf" target="_blank" rel="noopener" style="color:var(--smoke); font-size:10px; letter-spacing:0.5px; text-decoration:underline; opacity:0.7;">📄 Règlement du concours</a>
         </div>
       </div>
 
@@ -6774,22 +6777,28 @@
       const ville = fan.ville || '';
       validationBlock = `
         <div class="quiz-form">
-          <div class="quiz-form-title">PARTICIPE AU TIRAGE</div>
-          <div class="quiz-form-sub">Le Top 3 remporte 2 places pour le concert TWOQ de leur ville en 2027/2028</div>
+          <div class="quiz-form-title">VALIDE TA PARTICIPATION</div>
+          <div class="quiz-form-sub">Le Top 10 du classement remporte chacun 2 places pour le concert TWOQ de leur ville en 2027/2028</div>
           <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:12px 14px; margin-bottom:14px;">
             <div style="color:var(--smoke); font-size:10px; letter-spacing:1.5px; margin-bottom:8px;">CONNECTÉ EN TANT QUE</div>
             <div style="color:var(--cream); font-size:14px; font-weight:500; margin-bottom:4px;">${prenom} ${nom}</div>
             <div style="color:var(--smoke); font-size:12px; margin-bottom:2px;">✉ ${email}</div>
             ${ville ? `<div style="color:var(--smoke); font-size:12px;">📍 ${ville}</div>` : ''}
           </div>
-          <button class="quiz-submit" onclick="confirmQuizParticipation()">✓ CONFIRMER MA PARTICIPATION</button>
+          <label style="display:flex; align-items:flex-start; gap:10px; padding:12px 14px; background:rgba(0,0,0,0.25); border:1px solid rgba(212,175,55,0.3); border-radius:10px; margin-bottom:14px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='rgba(212,175,55,0.6)'" onmouseout="this.style.borderColor='rgba(212,175,55,0.3)'">
+            <input type="checkbox" id="quizAcceptReglement" onchange="toggleQuizSubmitBtn()" style="margin-top:2px; width:16px; height:16px; accent-color:var(--gold); cursor:pointer; flex-shrink:0;">
+            <span style="color:var(--cream); font-size:12px; line-height:1.5;">
+              J'ai lu et j'accepte le <a href="docs/reglement-concours.pdf" target="_blank" rel="noopener" style="color:var(--gold); text-decoration:underline; font-weight:500;">règlement du concours</a> ainsi que le traitement de mes données personnelles (RGPD).
+            </span>
+          </label>
+          <button class="quiz-submit" id="quizSubmitBtn" onclick="confirmQuizParticipation()" disabled style="opacity:0.5; cursor:not-allowed;">✓ CONFIRMER MA PARTICIPATION</button>
         </div>
       `;
     } else {
       validationBlock = `
         <div class="quiz-form">
           <div class="quiz-form-title">⚠ INSCRIPTION REQUISE</div>
-          <div class="quiz-form-sub" style="margin-bottom:16px;">Pour participer au tirage du Quiz Champion Queen, tu dois d'abord rejoindre la communauté TWOQ. C'est <strong style="color:var(--gold);">gratuit</strong> et ça te donne accès à <strong style="color:var(--gold);">tous les avantages FAN TWOQ</strong>.</div>
+          <div class="quiz-form-sub" style="margin-bottom:16px;">Pour participer au Quiz Champion's Queen et figurer au classement, tu dois d'abord rejoindre la communauté TWOQ. C'est <strong style="color:var(--gold);">gratuit</strong> et ça te donne accès à <strong style="color:var(--gold);">tous les avantages FAN TWOQ</strong>.</div>
           <button class="quiz-submit" onclick="goToSignupFromQuiz()">M'INSCRIRE GRATUITEMENT →</button>
           <button onclick="closeQuiz()" style="width:100%; padding:12px; background:transparent; border:1px solid rgba(212,175,55,0.3); border-radius:12px; color:var(--smoke); font-size:11px; letter-spacing:1.5px; margin-top:10px; cursor:pointer;">FERMER</button>
         </div>
@@ -6823,7 +6832,28 @@
     show('moi');
   }
 
+  function toggleQuizSubmitBtn() {
+    const checkbox = document.getElementById('quizAcceptReglement');
+    const btn = document.getElementById('quizSubmitBtn');
+    if (!checkbox || !btn) return;
+    if (checkbox.checked) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'not-allowed';
+    }
+  }
+
   function confirmQuizParticipation() {
+    const checkbox = document.getElementById('quizAcceptReglement');
+    if (!checkbox || !checkbox.checked) {
+      alert('Tu dois accepter le règlement du concours pour valider ta participation.');
+      return;
+    }
+
     const fan = getFan();
     if (!fan) {
       alert('Erreur : tu n\'es plus connecté. Reconnecte-toi pour participer.');
@@ -6851,8 +6881,8 @@
           Score : <strong style="color:var(--gold);">${quizState.score}/10</strong><br>
           ${fan.ville ? `Ville : <strong style="color:var(--gold);">${fan.ville}</strong><br>` : ''}
           <br>
-          Le tirage des <strong style="color:var(--gold);">3 gagnants</strong> aura lieu le <strong style="color:var(--gold);">20 décembre 2026</strong>.<br>
-          Si tu fais partie du Top 3, on te contactera par mail sur :<br>
+          Le classement final du <strong style="color:var(--gold);">Top 10</strong> sera annoncé le <strong style="color:var(--gold);">20 décembre 2026</strong>.<br>
+          Si tu fais partie du Top 10, on te contactera par mail sur :<br>
           <strong style="color:var(--gold);">${fan.email}</strong>
         </div>
         <button class="quiz-submit" onclick="closeQuiz()" style="max-width:200px; margin:0 auto; display:block;">FERMER</button>
