@@ -722,185 +722,187 @@
       text-align: right;
     }
 
-    /* === BLOC PITCH SPECTACLE === */
+    /* === BLOC PITCH SPECTACLE — Version C améliorée === */
     .pitch-card {
-      background: linear-gradient(180deg, rgba(28, 22, 14, 0.6), rgba(15, 12, 8, 0.4));
-      border: 1px solid rgba(212, 175, 55, 0.35);
+      background: #0F0C08;
+      border: 1px solid rgba(212, 175, 55, 0.4);
       border-radius: 16px;
-      padding: 20px 16px;
+      padding: 0;
       margin-top: 14px;
-      box-shadow: 0 0 32px rgba(212, 175, 55, 0.08), inset 0 1px 0 rgba(212, 175, 55, 0.1);
-      position: relative;
       overflow: hidden;
-    }
-    .pitch-card::before {
-      content: '';
-      position: absolute;
-      top: -40px;
-      right: -40px;
-      width: 160px;
-      height: 160px;
-      background: radial-gradient(circle, rgba(212, 175, 55, 0.18), transparent 70%);
-      pointer-events: none;
-    }
-    .pitch-intro {
-      color: var(--smoke);
-      font-size: 10.5px;
-      letter-spacing: 1.3px;
-      text-transform: uppercase;
-      text-align: center;
-      margin-bottom: 12px;
       position: relative;
-      z-index: 1;
-    }
-    .pitch-show-name {
-      display: block;
-      color: var(--gold);
-      font-family: var(--serif);
-      font-size: 12.5px;
-      letter-spacing: 0.8px;
-      margin-top: 5px;
-      text-transform: none;
-      font-style: italic;
-    }
-    .pitch-quote {
-      color: var(--cream);
-      font-family: var(--serif);
-      font-size: 13px;
-      font-style: italic;
-      line-height: 1.55;
-      padding: 10px 0 10px 12px;
-      border-left: 2px solid var(--gold);
-      margin: 0 0 14px;
-      position: relative;
-      z-index: 1;
-    }
-    .pitch-quote strong {
-      color: var(--gold);
-      font-style: normal;
-      font-weight: 600;
-    }
-    .pitch-body {
-      color: var(--cream);
-      font-size: 12px;
-      line-height: 1.65;
-      margin-bottom: 10px;
-      position: relative;
-      z-index: 1;
-    }
-    .pitch-body strong {
-      color: #F0D77A;
-      font-weight: 600;
-    }
-    .pitch-body em {
-      color: #F0D77A;
-      font-style: italic;
     }
 
-    /* === SETLIST style affiche spectacle === */
-    .pitch-setlist {
-      margin: 16px 0 14px;
-      padding: 12px 0;
-      border-top: 1px solid rgba(212, 175, 55, 0.2);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    /* Header centré : OMP présente + titre + pill nouveau spectacle */
+    .pitch-header {
       text-align: center;
-      position: relative;
-      z-index: 1;
+      padding: 22px 16px 16px;
+    }
+    .pitch-header-pre {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--smoke);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .pitch-header-title {
+      font-size: 14px;
+      letter-spacing: 3px;
+      color: #FFFFFF;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .pitch-header-subtitle {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-style: italic;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .pitch-header-tag {
+      display: inline-block;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      color: #F0D77A;
+      font-size: 8px;
+      letter-spacing: 2.5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* Zone stats + étoiles avec fond doré léger */
+    .pitch-stats-zone {
+      background: rgba(212, 175, 55, 0.08);
+      padding: 16px 0;
+    }
+    .pitch-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .pitch-stat {
+      text-align: center;
+    }
+    .pitch-stat:nth-child(2) {
+      border-left: 1px solid rgba(212, 175, 55, 0.25);
+      border-right: 1px solid rgba(212, 175, 55, 0.25);
+    }
+    .pitch-stat-num {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--gold);
+      font-weight: 500;
+      line-height: 1;
+    }
+    .pitch-stat-stars {
+      color: #F0D77A;
+      font-size: 14px;
+      letter-spacing: 1px;
+      line-height: 1;
+    }
+    .pitch-stat-lab {
+      font-size: 8.5px;
+      color: var(--smoke);
+      letter-spacing: 1px;
+      margin-top: 5px;
+    }
+    .pitch-stats-divider {
+      height: 1px;
+      background: rgba(212, 175, 55, 0.25);
+      margin: 14px 12%;
+    }
+
+    /* Pitch body — texte courant épuré */
+    .pitch-body {
+      padding: 18px 16px;
+      color: var(--cream);
+      font-size: 12.5px;
+      line-height: 1.7;
+    }
+
+    /* Au programme — setlist */
+    .pitch-setlist {
+      padding: 0 16px 16px;
+      text-align: center;
     }
     .pitch-setlist-label {
-      color: var(--gold);
       font-size: 9px;
-      letter-spacing: 2.5px;
+      letter-spacing: 2px;
+      color: #F0D77A;
       margin-bottom: 8px;
       font-weight: 600;
     }
     .pitch-setlist-text {
       color: var(--cream);
-      font-family: var(--serif);
-      font-size: 12px;
-      font-style: italic;
-      line-height: 1.7;
+      font-size: 11.5px;
+      line-height: 1.75;
       letter-spacing: 0.2px;
     }
     .pitch-setlist-text .dot {
       color: var(--gold);
-      font-weight: 700;
-      margin: 0 4px;
-      font-style: normal;
+      margin: 0 3px;
     }
     .pitch-setlist-more {
       color: var(--smoke);
       font-size: 10.5px;
       font-style: italic;
-      letter-spacing: 0.5px;
-      margin-top: 6px;
+      letter-spacing: 0.3px;
+      margin-top: 8px;
     }
 
-    /* === PUNCHLINE 5 LIGNES === */
+    /* Tagline finale avec fond doré subtil */
     .pitch-tagline {
+      background: rgba(212, 175, 55, 0.08);
+      padding: 18px 16px;
       text-align: center;
-      padding: 16px 0 6px;
-      position: relative;
-      z-index: 1;
+      line-height: 1.5;
     }
     .pt-line-1 {
-      color: var(--gold);
-      font-family: var(--serif);
-      font-size: 15px;
-      font-weight: 500;
+      font-size: 11px;
       letter-spacing: 2.5px;
-      margin-bottom: 8px;
-      text-shadow: 0 0 14px rgba(212, 175, 55, 0.3);
+      color: #FFFFFF;
+      font-weight: 700;
     }
     .pt-line-2 {
-      color: var(--cream);
-      font-family: var(--serif);
-      font-size: 12px;
-      font-style: italic;
-      letter-spacing: 0.3px;
-      margin-bottom: 10px;
-    }
-    .pt-line-3 {
-      color: var(--gold);
-      font-family: var(--serif);
-      font-size: 19px;
-      font-weight: 600;
-      letter-spacing: 3.5px;
-      margin-bottom: 12px;
-      text-shadow: 0 0 18px rgba(212, 175, 55, 0.45);
-    }
-    .pt-line-4 {
-      color: #F0D77A;
-      font-family: var(--serif);
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 2px;
-      margin-bottom: 4px;
-    }
-    .pt-line-5 {
-      color: var(--smoke);
       font-family: var(--serif);
       font-size: 11px;
-      font-style: italic;
-      letter-spacing: 1px;
-    }
-
-    .pitch-credit {
-      text-align: center;
       color: var(--smoke);
-      font-size: 9.5px;
-      letter-spacing: 1.8px;
-      text-transform: uppercase;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(212, 175, 55, 0.15);
-      position: relative;
-      z-index: 1;
-      white-space: nowrap;
+      font-style: italic;
+      margin-bottom: 8px;
     }
-    .pitch-credit strong {
+    .pt-line-3 {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #F0D77A;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .pt-line-4 {
+      font-family: var(--serif);
+      font-size: 17px;
       color: var(--gold);
       letter-spacing: 2px;
+      font-weight: 500;
+    }
+    .pt-line-5 {
+      font-family: var(--serif);
+      font-size: 11px;
+      color: var(--smoke);
+      font-style: italic;
+    }
+
+    /* Credit final */
+    .pitch-credit {
+      text-align: center;
+      padding: 12px 16px 14px;
+      color: var(--smoke);
+      font-size: 9.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .pitch-credit .omp-logo {
+      font-size: 1.05em;
     }
     /* === SIGNATURE OH MY PROD couleurs officielles === */
     .omp-logo {
@@ -3867,24 +3869,75 @@
         <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
       </div>
 
-      <div class="stat-row" style="margin-top:0;">
-        <div class="stat-box"><div class="stat-num">1,3M</div><div class="stat-lab">SPECTATEURS</div></div>
-        <div class="stat-box"><div class="stat-num">N°1</div><div class="stat-lab">VENTES FRANCE</div></div>
-        <div class="stat-box"><div class="stat-num">N°1</div><div class="stat-lab">HOMMAGE QUEEN</div></div>
-      </div>
+      <div class="section-eyebrow">LE PITCH</div>
+      <div class="section-title">L'Éternelle Légende</div>
+      <div class="pitch-card">
 
-      <div class="stat-row">
-        <div class="stat-box">
-          <div class="stat-stars">★★★★★</div>
-          <div class="stat-lab">TICKETMASTER</div>
+        <div class="pitch-header">
+          <div class="pitch-header-pre">Oh my prod présente</div>
+          <div class="pitch-header-title">THE WORLD OF QUEEN</div>
+          <div class="pitch-header-subtitle">L'Éternelle Légende</div>
+          <div style="margin-top:6px;">
+            <span class="pitch-header-tag">Nouveau spectacle</span>
+          </div>
         </div>
-        <div class="stat-box">
-          <div class="stat-stars">★★★★★</div>
-          <div class="stat-lab">GOOGLE</div>
+
+        <div class="pitch-stats-zone">
+          <div class="pitch-stats-row">
+            <div class="pitch-stat">
+              <div class="pitch-stat-num">1,3M</div>
+              <div class="pitch-stat-lab">SPECTATEURS</div>
+            </div>
+            <div class="pitch-stat">
+              <div class="pitch-stat-num">N°1</div>
+              <div class="pitch-stat-lab">VENTES FRANCE</div>
+            </div>
+            <div class="pitch-stat">
+              <div class="pitch-stat-num">N°1</div>
+              <div class="pitch-stat-lab">HOMMAGE QUEEN</div>
+            </div>
+          </div>
+
+          <div class="pitch-stats-divider"></div>
+
+          <div class="pitch-stats-row">
+            <div class="pitch-stat">
+              <div class="pitch-stat-stars">★★★★★</div>
+              <div class="pitch-stat-lab">TICKETMASTER</div>
+            </div>
+            <div class="pitch-stat">
+              <div class="pitch-stat-stars">★★★★★</div>
+              <div class="pitch-stat-lab">GOOGLE</div>
+            </div>
+            <div class="pitch-stat">
+              <div class="pitch-stat-stars">★★★★★</div>
+              <div class="pitch-stat-lab">AVIS PUBLIC</div>
+            </div>
+          </div>
         </div>
-        <div class="stat-box">
-          <div class="stat-stars">★★★★★</div>
-          <div class="stat-lab">AVIS PUBLIC</div>
+
+        <div class="pitch-body">
+          Un nouveau show de plus de deux heures à travers un voyage immersif au cœur de l'héritage de Freddie Mercury et de Queen — nouveaux décors, mise en scène spectaculaire et création technique époustouflante.
+        </div>
+
+        <div class="pitch-setlist">
+          <div class="pitch-setlist-label">AU PROGRAMME</div>
+          <div class="pitch-setlist-text">
+            Bohemian&nbsp;Rhapsody <span class="dot">·</span> We&nbsp;Will&nbsp;Rock&nbsp;You <span class="dot">·</span> The&nbsp;Show&nbsp;Must&nbsp;Go&nbsp;On <span class="dot">·</span> I&nbsp;Want&nbsp;To&nbsp;Break&nbsp;Free <span class="dot">·</span> Don't&nbsp;Stop&nbsp;Me&nbsp;Now <span class="dot">·</span> Love&nbsp;of&nbsp;my&nbsp;Life <span class="dot">·</span> We&nbsp;Are&nbsp;the&nbsp;Champions
+          </div>
+          <div class="pitch-setlist-more">… et bien d'autres surprises encore !!</div>
+        </div>
+
+        <div class="pitch-tagline">
+          <div class="pt-line-1">THE WORLD OF QUEEN</div>
+          <div class="pt-line-2">Pas de copie, pas d'imitation</div>
+          <div class="pt-line-3">CÉLÈBRE</div>
+          <div class="pt-line-4">FREDDIE MERCURY</div>
+          <div class="pt-line-5">L'éternelle légende</div>
+        </div>
+
+        <div class="pitch-credit">
+          Production exclusive · <span class="omp-logo omp-big"><span class="omp-r">O</span>h my prod<span class="omp-r"> !</span></span>
         </div>
       </div>
 
@@ -3946,46 +3999,6 @@
             <div class="review-text">« C'est tout simplement époustouflant… Un show grandiose et une précision millimétrée. »</div>
             <div class="review-author">— Philinath</div>
           </div>
-        </div>
-      </div>
-
-      <div class="gold-divider" style="margin:22px 0 18px;">
-        <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
-      </div>
-
-      <div class="section-eyebrow">LE PITCH</div>
-      <div class="section-title">L'Éternelle Légende</div>
-      <div class="pitch-card">
-        <div class="pitch-intro">
-          <span class="omp-logo"><span class="omp-r">O</span>h my prod<span class="omp-r"> !</span></span> présente <span class="pitch-show-name">THE WORLD OF QUEEN — « L'Éternelle Légende »</span>
-        </div>
-
-        <div class="pitch-quote">
-          « Trois ans de tournée sold out, plus de <strong>1,3 million de spectateurs</strong>, un show <strong>n°1 des ventes</strong> et un <strong>triomphe au Dôme de Paris</strong> : THE WORLD OF QUEEN revient avec un nouveau spectacle événement. »
-        </div>
-
-        <div class="pitch-body">
-          Un nouveau show de <strong>plus de deux heures</strong>, voyage immersif au cœur de l'héritage de <strong>Freddie Mercury</strong> et de <strong>Queen</strong> — <em>nouveaux décors, mise en scène spectaculaire, création technique époustouflante</em>.
-        </div>
-
-        <div class="pitch-setlist">
-          <div class="pitch-setlist-label">AU PROGRAMME</div>
-          <div class="pitch-setlist-text">
-            Bohemian&nbsp;Rhapsody <span class="dot">·</span> We&nbsp;Will&nbsp;Rock&nbsp;You <span class="dot">·</span> The&nbsp;Show&nbsp;Must&nbsp;Go&nbsp;On <span class="dot">·</span> I&nbsp;Want&nbsp;To&nbsp;Break&nbsp;Free <span class="dot">·</span> Don't&nbsp;Stop&nbsp;Me&nbsp;Now
-          </div>
-          <div class="pitch-setlist-more">… et bien d'autres surprises encore</div>
-        </div>
-
-        <div class="pitch-tagline">
-          <div class="pt-line-1">THE WORLD OF QUEEN</div>
-          <div class="pt-line-2">Pas de copie, pas d'imitation</div>
-          <div class="pt-line-3">IL CÉLÈBRE</div>
-          <div class="pt-line-4">FREDDIE MERCURY</div>
-          <div class="pt-line-5">L'éternelle légende</div>
-        </div>
-
-        <div class="pitch-credit">
-          Production exclusive · <span class="omp-logo omp-big"><span class="omp-r">O</span>h my prod<span class="omp-r"> !</span></span>
         </div>
       </div>
 
