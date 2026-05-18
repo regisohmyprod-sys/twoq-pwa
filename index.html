@@ -3561,6 +3561,16 @@
   if (enterBtn) {
     enterBtn.addEventListener('click', () => {
       splash.classList.add('hidden');
+      // Lancer le son d'intro au passage sur l'accueil (1 fois, après clic user → autorisé navigateur)
+      try {
+        const introSound = new Audio('./icons/intro.mp3');
+        introSound.volume = 0.7;
+        introSound.play().catch(err => {
+          console.log('Lecture audio bloquée ou fichier absent :', err);
+        });
+      } catch(e) {
+        console.log('Erreur audio intro :', e);
+      }
     });
   }
 
