@@ -4692,13 +4692,13 @@
         Partagez vos meilleurs souvenirs <strong style="color:var(--gold);">pendant les concerts</strong> avec <strong style="color:var(--gold);">#TheWorldOfQueen</strong> — les plus belles sont publiées ici.
       </div>
       <div class="contest-card">
-        <div class="wall-grid">
-          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">📸</div></div>
-          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎤</div></div>
-          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎸</div></div>
-          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">👑</div></div>
-          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎹</div></div>
-          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🥁</div></div>
+        <div class="wall-grid" id="wallOfFansGrid">
+          <div class="wall-item"><div class="wall-placeholder">📸</div></div>
+          <div class="wall-item"><div class="wall-placeholder">🎤</div></div>
+          <div class="wall-item"><div class="wall-placeholder">🎸</div></div>
+          <div class="wall-item"><div class="wall-placeholder">👑</div></div>
+          <div class="wall-item"><div class="wall-placeholder">🎹</div></div>
+          <div class="wall-item"><div class="wall-placeholder">🥁</div></div>
         </div>
         <div style="text-align:center; margin-top:14px;">
           <input type="file" id="wallPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleWallPhotoSelected(event)">
@@ -5459,6 +5459,101 @@
     if (s == null) return '';
     return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   }
+
+  // ──────────────────────────────────────────────────────────────────────
+  // CHARGEMENT DES PHOTOS VALIDÉES (Wall of Fans)
+  // ──────────────────────────────────────────────────────────────────────
+  async function chargerWallOfFansPhotos() {
+    const grid = document.getElementById('wallOfFansGrid');
+    if (!grid) return;
+
+    try {
+      // Récupère mises_en_avant en premier, puis validées les plus récentes (max 6)
+      const url = SUPABASE_URL + '/rest/v1/wall_of_fans_photos'
+        + '?statut=in.(validee,mise_en_avant)'
+        + '&order=statut.desc,created_at.desc'
+        + '&limit=6'
+        + '&select=id,photo_url,prenom,nom,ville_concert,legende,statut';
+      
+      const r = await fetch(url, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+      
+      if (!r.ok) return;
+      const photos = await r.json();
+      if (!Array.isArray(photos) || photos.length === 0) return;
+
+      // Mélange si on a plus que prévu (on garde la mise en avant en haut)
+      const placeholders = ['📸', '🎤', '🎸', '👑', '🎹', '🥁'];
+      let html = '';
+      
+      for (let i = 0; i < 6; i++) {
+        const photo = photos[i];
+        if (photo && photo.photo_url) {
+          const isAvant = photo.statut === 'mise_en_avant';
+          html += '<div class="wall-item" onclick="ouvrirPhotoFan(\'' + photo.id + '\')" '
+                + 'style="background-image:url(\'' + escapeHtmlWall(photo.photo_url) + '\');'
+                + 'background-size:cover;background-position:center;position:relative;cursor:pointer;">';
+          if (isAvant) {
+            html += '<div style="position:absolute;top:4px;right:4px;background:linear-gradient(135deg,#D4AF37,#F0D77A);color:#000;border-radius:4px;padding:2px 6px;font-size:8px;font-weight:600;letter-spacing:0.5px;">⭐ TOP</div>';
+          }
+          html += '</div>';
+        } else {
+          html += '<div class="wall-item"><div class="wall-placeholder">' + placeholders[i] + '</div></div>';
+        }
+      }
+      grid.innerHTML = html;
+      
+      // Stocker en mémoire pour le viewer
+      window._wallOfFansPhotos = photos;
+    } catch(e) {
+      console.warn('[WallOfFans] Chargement photos échec:', e);
+    }
+  }
+
+  // Ouvrir une photo en grand (viewer)
+  window.ouvrirPhotoFan = function(photoId) {
+    const photos = window._wallOfFansPhotos || [];
+    const photo = photos.find(p => p.id === photoId);
+    if (!photo) return;
+
+    let modal = document.getElementById('wallPhotoViewer');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'wallPhotoViewer';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer;';
+      modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div style="max-width:600px;width:100%;cursor:default;" onclick="event.stopPropagation()">
+        <div style="position:relative;background:#000;border-radius:10px;overflow:hidden;border:1px solid var(--gold);">
+          <button onclick="document.getElementById('wallPhotoViewer').remove()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);border:1px solid var(--gold);color:var(--gold);width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;z-index:2;">✕</button>
+          <img src="${escapeHtmlWall(photo.photo_url || '')}" style="width:100%;display:block;" alt="Photo fan">
+          ${photo.statut === 'mise_en_avant' ? '<div style="position:absolute;top:10px;left:10px;background:linear-gradient(135deg,#D4AF37,#F0D77A);color:#000;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;letter-spacing:1px;">⭐ MISE EN AVANT</div>' : ''}
+        </div>
+        <div style="background:#0A0A0A;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;padding:14px;margin-top:-1px;">
+          <div style="font-family:var(--serif);font-size:16px;color:var(--gold);margin-bottom:4px;">${escapeHtmlWall(photo.prenom || '')} ${escapeHtmlWall(photo.nom || '')}</div>
+          ${photo.ville_concert ? '<div style="font-size:11px;color:var(--smoke);margin-bottom:6px;">📍 ' + escapeHtmlWall(photo.ville_concert) + '</div>' : ''}
+          ${photo.legende ? '<div style="font-size:13px;color:var(--cream);font-style:italic;line-height:1.5;margin-top:8px;">"' + escapeHtmlWall(photo.legende) + '"</div>' : ''}
+        </div>
+      </div>
+    `;
+  };
+
+  // Charger automatiquement au chargement de la page
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(chargerWallOfFansPhotos, 800));
+  } else {
+    setTimeout(chargerWallOfFansPhotos, 800);
+  }
+
+  // Exposer pour pouvoir recharger après envoi
+  window.chargerWallOfFansPhotos = chargerWallOfFansPhotos;
 
   // Témoignages — laisser un avis (réservé membres)
   function openLeaveReview() {
