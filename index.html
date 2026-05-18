@@ -5405,10 +5405,99 @@
   }
   function setFavs(arr) {
     try { localStorage.setItem(FAVS_KEY, JSON.stringify(arr)); } catch (e) {}
+    // Sync vers Supabase en arrière-plan si fan connecté
+    syncFavsToSupabase(arr);
   }
   function isFav(id) {
     return getFavs().some(f => f.id === id);
   }
+
+  // ──────────────────────────────────────────────────────────────────────
+  // PERSISTANCE FAVORIS — Supabase + localStorage hybride
+  // ──────────────────────────────────────────────────────────────────────
+  // Le localStorage peut être effacé (mode privé, navigation propre, etc.)
+  // donc on sauvegarde aussi dans la table fans (colonne favoris JSON)
+  // ──────────────────────────────────────────────────────────────────────
+  let _favsSyncTimeout = null;
+  let _favsLastSync = 0;
+  function syncFavsToSupabase(favs) {
+    const fan = typeof getFan === 'function' ? getFan() : null;
+    if (!fan || !fan.id) return;
+    // Debounce 1 seconde pour éviter trop d'appels si modifs rapides
+    if (_favsSyncTimeout) clearTimeout(_favsSyncTimeout);
+    _favsSyncTimeout = setTimeout(async () => {
+      try {
+        await fetch(SUPABASE_URL + '/rest/v1/fans?id=eq.' + fan.id, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ favoris: favs })
+        });
+        _favsLastSync = Date.now();
+      } catch(e) {
+        console.warn('[FAVS] Sync Supabase failed:', e);
+      }
+    }, 1000);
+  }
+
+  // Au chargement (et chaque fois qu'un fan se connecte) — récupère depuis Supabase
+  async function restoreFavsFromSupabase() {
+    const fan = typeof getFan === 'function' ? getFan() : null;
+    if (!fan || !fan.id) return;
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/fans?id=eq.' + fan.id + '&select=favoris', {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+      if (!r.ok) return;
+      const data = await r.json();
+      if (!Array.isArray(data) || data.length === 0) return;
+      const remoteFavs = data[0].favoris;
+
+      // Si Supabase n'a pas de favoris MAIS le localStorage en a → migration vers Supabase
+      const localFavs = getFavs();
+      if ((!remoteFavs || remoteFavs.length === 0) && localFavs.length > 0) {
+        console.log('[FAVS] Migration localStorage → Supabase (' + localFavs.length + ' favoris)');
+        syncFavsToSupabase(localFavs);
+        return;
+      }
+
+      // Si Supabase a des favoris ET le localStorage est vide → restauration depuis Supabase
+      if (Array.isArray(remoteFavs) && remoteFavs.length > 0 && localFavs.length === 0) {
+        console.log('[FAVS] Restauration depuis Supabase (' + remoteFavs.length + ' favoris)');
+        try { localStorage.setItem(FAVS_KEY, JSON.stringify(remoteFavs)); } catch(e) {}
+        // Re-render la page MOI si on est dessus
+        if (typeof show === 'function' && document.querySelector('.tab.active')?.dataset.tab === 'moi') {
+          show('moi');
+        }
+        return;
+      }
+
+      // Si les deux ont des favoris : on garde celui avec le plus d'éléments (à priori le plus récent)
+      if (Array.isArray(remoteFavs) && remoteFavs.length > localFavs.length) {
+        try { localStorage.setItem(FAVS_KEY, JSON.stringify(remoteFavs)); } catch(e) {}
+        if (typeof show === 'function' && document.querySelector('.tab.active')?.dataset.tab === 'moi') {
+          show('moi');
+        }
+      } else if (localFavs.length > (remoteFavs || []).length) {
+        syncFavsToSupabase(localFavs);
+      }
+    } catch(e) {
+      console.warn('[FAVS] Restore failed:', e);
+    }
+  }
+
+  // Auto-restore au chargement après que la session fan soit prête
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(restoreFavsFromSupabase, 2000);
+  });
+
   function toggleFav(ev, id, city, venue, date, tm) {
     ev.stopPropagation();
     ev.preventDefault();
@@ -6943,8 +7032,11 @@
       return;
     }
 
+    let participations = [];
+    let concoursMap = {};
+
+    // ÉTAPE 1 — Récupérer les participations du fan (priorité absolue)
     try {
-      // 1. Récupérer toutes les participations du fan
       const partsUrl = SUPABASE_URL + '/rest/v1/concours_participations'
         + '?email=eq.' + encodeURIComponent(fan.email)
         + '&source=neq.admin_test'
@@ -6956,15 +7048,29 @@
           'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
         }
       });
-      const participations = await partsResp.json();
+      if (!partsResp.ok) throw new Error('HTTP ' + partsResp.status);
+      const data = await partsResp.json();
+      if (Array.isArray(data)) participations = data;
+    } catch(e) {
+      console.warn('[CONCOURS] Erreur étape 1 (participations):', e);
+      container.innerHTML = '<div style="text-align:center; padding:8px; color:var(--smoke); font-size:11px;">Impossible de charger tes concours pour le moment.</div>';
+      return;
+    }
 
-      if (!Array.isArray(participations) || participations.length === 0) {
-        container.innerHTML = renderConcoursVide();
-        if (badge) badge.style.display = 'none';
-        return;
-      }
+    if (participations.length === 0) {
+      container.innerHTML = renderConcoursVide();
+      if (badge) badge.style.display = 'none';
+      return;
+    }
 
-      // 2. Récupérer les détails des concours
+    // Mise à jour du badge AVANT les autres requêtes (on a au moins le compte)
+    if (badge) {
+      badge.textContent = participations.length;
+      badge.style.display = 'inline-block';
+    }
+
+    // ÉTAPE 2 — Récupérer les détails des concours (non bloquant)
+    try {
       const concoursIds = [...new Set(participations.map(p => p.concours_id))];
       const concoursUrl = SUPABASE_URL + '/rest/v1/concours_jeux'
         + '?id=in.(' + concoursIds.join(',') + ')'
@@ -6975,18 +7081,23 @@
           'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
         }
       });
-      const concoursList = await concoursResp.json();
-      const concoursMap = {};
-      concoursList.forEach(c => concoursMap[c.id] = c);
+      if (concoursResp.ok) {
+        const concoursList = await concoursResp.json();
+        if (Array.isArray(concoursList)) {
+          concoursList.forEach(c => concoursMap[c.id] = c);
+        }
+      }
+    } catch(e) {
+      console.warn('[CONCOURS] Erreur étape 2 (détails concours):', e);
+      // On continue avec des concours par défaut (nom = "Concours")
+    }
 
-      // 3. Pour chaque participation, si concours actif, calculer le rang en cours
-      //    (de manière isolée pour ne pas tout faire planter si une requête échoue)
+    // ÉTAPE 3 — Calculer le rang en cours (non bloquant, parallèle)
+    try {
       await Promise.all(participations.map(async (p) => {
         const c = concoursMap[p.concours_id];
-        if (!c) return;
-        if (c.statut !== 'actif' || p.rang) return;
+        if (!c || c.statut !== 'actif' || p.rang) return;
         try {
-          // Compter les participations avec score strictement supérieur
           const url = SUPABASE_URL + '/rest/v1/concours_participations'
             + '?concours_id=eq.' + p.concours_id
             + '&source=neq.admin_test'
@@ -6997,7 +7108,6 @@
               'apikey': SUPABASE_ANON_KEY,
               'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
               'Prefer': 'count=exact',
-              'Range-Unit': 'items',
               'Range': '0-0'
             }
           });
@@ -7009,27 +7119,22 @@
           }
           p._rang_live = above + 1;
         } catch(e) {
-          // Silencieux : on affichera juste le score
           p._rang_live = null;
         }
       }));
+    } catch(e) {
+      console.warn('[CONCOURS] Erreur étape 3 (rangs):', e);
+    }
 
-      // 4. Rendu
-      if (badge) {
-        badge.textContent = participations.length;
-        badge.style.display = 'inline-block';
-      }
+    // RENDU — Toujours afficher quelque chose
+    try {
       const rows = participations.map(p => renderConcoursRow(p, concoursMap[p.concours_id])).filter(Boolean);
       container.innerHTML = rows.length > 0 ? rows.join('') : renderConcoursVide();
-      // Retirer la bordure du dernier élément via CSS
       const lastRow = container.lastElementChild;
       if (lastRow && lastRow.style) lastRow.style.borderBottom = 'none';
     } catch(e) {
-      console.warn('Erreur chargement mes concours:', e);
-      const container2 = document.getElementById('mesConcoursContainer');
-      if (container2 && container2.innerHTML.includes('Chargement')) {
-        container2.innerHTML = '<div style="text-align:center; padding:8px; color:var(--smoke); font-size:11px;">Impossible de charger tes concours pour le moment.</div>';
-      }
+      console.warn('[CONCOURS] Erreur rendu:', e);
+      container.innerHTML = '<div style="text-align:center; padding:8px; color:var(--smoke); font-size:11px;">Affichage en cours…</div>';
     }
   }
 
@@ -7045,13 +7150,19 @@
   }
 
   function renderConcoursRow(p, c) {
+    // Fallback si on n'a pas pu récupérer les détails du concours
     if (!c) {
-      return '';
+      c = {
+        nom: 'Concours TWOQ',
+        statut: 'actif',
+        config: { nb_gagnants: 10, score_max: 10 },
+        date_fin: null
+      };
     }
     const cfg = c.config || {};
     const nbGagnants = cfg.nb_gagnants || 10;
     const dateP = new Date(p.date_participation).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
-    const dateFin = new Date(c.date_fin).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
+    const dateFin = c.date_fin ? new Date(c.date_fin).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' }) : '—';
 
     // Détermination du statut visuel
     let badge, badgeColor, iconBg, iconColor, icon, opacity, info;
