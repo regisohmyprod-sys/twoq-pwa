@@ -4666,7 +4666,7 @@
       <div style="color:var(--smoke); font-size:12px; line-height:1.5; margin: 4px 0 12px; font-style:italic;">
         La chanson qui remportera le + de votes sera interprétée ce soir par le groupe ! <span style="color:var(--gold); font-style:normal;">(hors set list habituelle)</span>
       </div>
-      <div class="card">
+      <div class="contest-card">
         <div class="poll-option selected" onclick="handleVote(event, 0)">
           <span>Somebody To Love</span>
         </div>
@@ -4691,16 +4691,19 @@
       <div style="color:var(--smoke); font-size:12px; line-height:1.5; margin-bottom:12px;">
         Partagez vos meilleurs souvenirs <strong style="color:var(--gold);">pendant les concerts</strong> avec <strong style="color:var(--gold);">#TheWorldOfQueen</strong> — les plus belles sont publiées ici.
       </div>
-      <div class="wall-grid">
-        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">📸</div></div>
-        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎤</div></div>
-        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎸</div></div>
-        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">👑</div></div>
-        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎹</div></div>
-        <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🥁</div></div>
-      </div>
-      <div style="text-align:center; margin-top:14px;">
-        <span class="btn-outline" onclick="openSendPhoto()">📤 Envoyer ma photo</span>
+      <div class="contest-card">
+        <div class="wall-grid">
+          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">📸</div></div>
+          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎤</div></div>
+          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎸</div></div>
+          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">👑</div></div>
+          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🎹</div></div>
+          <div class="wall-item" onclick="openWallPhoto()"><div class="wall-placeholder">🥁</div></div>
+        </div>
+        <div style="text-align:center; margin-top:14px;">
+          <input type="file" id="wallPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleWallPhotoSelected(event)">
+          <span class="btn-outline" onclick="openSendPhoto()">📤 Envoyer ma photo</span>
+        </div>
       </div>
 
       <div class="gold-divider" style="margin:22px 0 18px;">
@@ -5236,10 +5239,225 @@
     alert('Galerie Wall of Fans — bientôt');
   }
 
-  // Wall of Fans — envoyer photo (réservé membres)
+  // Wall of Fans — envoyer photo (réservé membres) — VERSION FONCTIONNELLE
   function openSendPhoto() {
     if (!requireMember('partager une photo')) return;
-    alert('📸 Envoi photo — fonctionnalité en cours de développement.\n\nBientôt : tu pourras envoyer tes photos directement depuis l\'app, qui seront modérées puis affichées dans le Wall of Fans !');
+    // Déclenche le sélecteur de fichier natif (caméra ou galerie sur mobile)
+    const input = document.getElementById('wallPhotoInput');
+    if (input) {
+      input.value = ''; // reset pour pouvoir re-uploader la même photo si besoin
+      input.click();
+    }
+  }
+  window.openSendPhoto = openSendPhoto;
+
+  // Quand l'utilisateur a choisi/pris une photo
+  async function handleWallPhotoSelected(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    // Vérifier que c'est bien une image
+    if (!file.type.startsWith('image/')) {
+      alert('❌ Ce fichier n\'est pas une image valide.');
+      return;
+    }
+
+    // Vérifier la taille (max 10 Mo)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert('❌ Photo trop lourde (' + (file.size / 1024 / 1024).toFixed(1) + ' Mo)\n\nLimite : 10 Mo\n\nAstuce : réduis la taille de la photo avant de l\'envoyer.');
+      return;
+    }
+
+    const fan = getFan();
+    if (!fan || !fan.id) {
+      alert('Erreur : tu dois être connecté pour envoyer une photo.');
+      return;
+    }
+
+    // Afficher modal de confirmation avec aperçu
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      afficherModalConfirmationPhoto(e.target.result, file, fan);
+    };
+    reader.readAsDataURL(file);
+  }
+  window.handleWallPhotoSelected = handleWallPhotoSelected;
+
+  function afficherModalConfirmationPhoto(dataUrl, file, fan) {
+    // Créer ou récupérer le modal
+    let modal = document.getElementById('wallPhotoModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'wallPhotoModal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+      document.body.appendChild(modal);
+    }
+
+    const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+
+    modal.innerHTML = `
+      <div style="background:linear-gradient(180deg, #1a1a1a 0%, #0A0A0A 100%);border:1px solid var(--gold);border-radius:14px;padding:24px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div style="font-size:36px;margin-bottom:8px;">📸</div>
+          <div style="font-family:var(--serif);font-size:22px;color:var(--gold);margin-bottom:4px;">Envoyer cette photo ?</div>
+          <div style="font-size:11px;color:var(--smoke);">Wall of Fans · THE WORLD OF QUEEN</div>
+        </div>
+
+        <div style="background:#000;border:1px solid var(--border);border-radius:10px;padding:8px;margin-bottom:14px;">
+          <img src="${dataUrl}" style="width:100%;border-radius:6px;display:block;max-height:300px;object-fit:contain;background:#000;" alt="Aperçu">
+        </div>
+
+        <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--cream);line-height:1.6;">
+          <div style="color:var(--gold);font-weight:600;margin-bottom:4px;">📋 INFOS</div>
+          De : <strong>${escapeHtmlWall(fan.prenom || '')} ${escapeHtmlWall(fan.nom || '')}</strong><br>
+          Poids : <strong>${sizeMB} Mo</strong><br>
+          Modération : ta photo sera examinée par l'équipe avant publication
+        </div>
+
+        <label style="display:block;font-size:10px;letter-spacing:1.5px;color:var(--smoke);margin-bottom:4px;">💬 LÉGENDE (optionnel)</label>
+        <textarea id="wallPhotoLegende" placeholder="Ex: Bohemian Rhapsody à Lyon, soirée magique !" maxlength="200" style="width:100%;background:#0f0f0f;border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--cream);font-size:12px;font-family:inherit;resize:none;min-height:60px;margin-bottom:6px;"></textarea>
+        <div style="text-align:right;font-size:10px;color:var(--smoke);margin-bottom:14px;">200 caractères max</div>
+
+        <label style="display:block;font-size:10px;letter-spacing:1.5px;color:var(--smoke);margin-bottom:4px;">📍 VILLE DU CONCERT (optionnel)</label>
+        <input type="text" id="wallPhotoVille" placeholder="Ex: Paris, Lyon, Marseille..." maxlength="50" style="width:100%;background:#0f0f0f;border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--cream);font-size:12px;margin-bottom:18px;">
+
+        <div style="display:flex;gap:10px;">
+          <button onclick="annulerEnvoiPhoto()" style="flex:1;background:transparent;color:var(--smoke);border:1px solid var(--border);border-radius:10px;padding:12px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;">ANNULER</button>
+          <button id="btnConfirmEnvoiPhoto" onclick='confirmerEnvoiPhoto()' style="flex:1.4;background:linear-gradient(135deg, #D4AF37 0%, #F0D77A 100%);color:#000;border:none;border-radius:10px;padding:12px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;font-weight:700;">✓ ENVOYER</button>
+        </div>
+      </div>
+    `;
+
+    // Stocker temporairement pour confirmation
+    window._wallPhotoPending = { file, fan, dataUrl };
+  }
+
+  window.annulerEnvoiPhoto = function() {
+    const modal = document.getElementById('wallPhotoModal');
+    if (modal) modal.remove();
+    window._wallPhotoPending = null;
+  };
+
+  window.confirmerEnvoiPhoto = async function() {
+    const pending = window._wallPhotoPending;
+    if (!pending) return;
+    const { file, fan } = pending;
+    const legende = (document.getElementById('wallPhotoLegende')?.value || '').trim();
+    const ville = (document.getElementById('wallPhotoVille')?.value || '').trim();
+
+    const btn = document.getElementById('btnConfirmEnvoiPhoto');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '⏳ ENVOI...';
+      btn.style.opacity = '0.6';
+      btn.style.cursor = 'wait';
+    }
+
+    try {
+      // 1. Upload vers Supabase Storage (bucket "wall-of-fans")
+      const timestamp = Date.now();
+      const fanId = fan.id || 'anon';
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const fileName = 'pending/' + fanId + '_' + timestamp + '.' + ext;
+
+      const uploadUrl = SUPABASE_URL + '/storage/v1/object/wall-of-fans/' + fileName;
+      const uploadResp = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': file.type,
+          'x-upsert': 'true'
+        },
+        body: file
+      });
+
+      if (!uploadResp.ok) {
+        const err = await uploadResp.text();
+        console.warn('[WallOfFans] Upload error:', err);
+        throw new Error('Échec de l\'upload : ' + uploadResp.status);
+      }
+
+      // 2. Construire l'URL publique
+      const publicUrl = SUPABASE_URL + '/storage/v1/object/public/wall-of-fans/' + fileName;
+
+      // 3. Créer l'entrée en base (table wall_of_fans_photos)
+      const insertPayload = {
+        fan_id: fan.id || null,
+        prenom: fan.prenom || '',
+        nom: fan.nom || '',
+        email: fan.email || '',
+        ville_concert: ville || null,
+        legende: legende || null,
+        photo_url: publicUrl,
+        photo_path: fileName,
+        statut: 'en_attente',
+        source: 'pwa'
+      };
+
+      const insertResp = await fetch(SUPABASE_URL + '/rest/v1/wall_of_fans_photos', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(insertPayload)
+      });
+
+      // Si la table n'existe pas, on n'échoue pas - la photo est uploadée dans Storage
+      if (!insertResp.ok) {
+        const errTxt = await insertResp.text();
+        console.warn('[WallOfFans] DB insert warn:', insertResp.status, errTxt);
+        // On continue quand même : la photo est dans Storage, l'équipe pourra la voir
+      }
+
+      // 4. Confirmation succès
+      afficherEcranSuccesPhoto(fan);
+
+    } catch(e) {
+      console.error('[WallOfFans] Erreur:', e);
+      alert('❌ Échec de l\'envoi : ' + e.message + '\n\nRéessaye dans quelques instants.');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '✓ ENVOYER';
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+      }
+    }
+  };
+
+  function afficherEcranSuccesPhoto(fan) {
+    const modal = document.getElementById('wallPhotoModal');
+    if (!modal) return;
+
+    modal.innerHTML = `
+      <div style="background:linear-gradient(180deg, #1a1a1a 0%, #0A0A0A 100%);border:1px solid var(--gold);border-radius:14px;padding:32px 24px;max-width:380px;width:100%;text-align:center;">
+        <div style="font-size:60px;margin-bottom:16px;animation:successPulse 0.6s ease;">✅</div>
+        <div style="font-family:var(--serif);font-size:24px;color:var(--gold);margin-bottom:10px;">Photo envoyée !</div>
+        <div style="font-size:13px;color:var(--cream);line-height:1.6;margin-bottom:20px;">
+          Merci ${escapeHtmlWall(fan.prenom || '')} ! 🤍<br>
+          Ta photo a été reçue et sera examinée par notre équipe.
+        </div>
+
+        <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:12px;margin-bottom:20px;font-size:11px;color:var(--cream);line-height:1.6;">
+          <div style="color:var(--gold);font-weight:600;margin-bottom:6px;">📋 PROCHAINES ÉTAPES</div>
+          • Modération sous 48h<br>
+          • Si validée, elle apparaîtra dans le Wall of Fans<br>
+          • Tu seras notifié si elle est mise en avant 👑
+        </div>
+
+        <button onclick="annulerEnvoiPhoto()" style="background:linear-gradient(135deg, #D4AF37 0%, #F0D77A 100%);color:#000;border:none;border-radius:10px;padding:12px 32px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;font-weight:700;">FERMER</button>
+      </div>
+      <style>@keyframes successPulse { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }</style>
+    `;
+  }
+
+  function escapeHtmlWall(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   }
 
   // Témoignages — laisser un avis (réservé membres)
