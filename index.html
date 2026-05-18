@@ -5064,51 +5064,36 @@
       <div class="section-eyebrow">MES DATES FAVORITES ${favs.length > 0 ? `<span style="color:#E11D2A; margin-left:4px;">❤ ${favs.length}</span>` : ''}</div>
       <div id="favListContainer">${favsHTML}</div>
 
-      <div class="section-eyebrow" style="margin-top:22px;">AVANTAGES DU COMPTE</div>
-      <div class="benefits-grid">
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-          <div class="benefit-text">Dates favorites</div>
+      <!-- ─── MES CONCOURS — Option B liste compacte ─── -->
+      <div class="section-eyebrow" style="margin-top:22px;">🏆 MES CONCOURS <span id="concoursBadge" style="background:rgba(212,175,55,0.2); color:var(--gold); padding:2px 8px; border-radius:10px; font-size:10px; letter-spacing:1px; margin-left:6px; display:none;"></span></div>
+      <div id="mesConcoursContainer">
+        <div style="text-align:center; padding:14px; color:var(--smoke); font-size:11px;">Chargement…</div>
+      </div>
+
+      <!-- ─── AVANTAGES DU COMPTE — Accordéon encadré or ─── -->
+      <div class="section-eyebrow" style="margin-top:22px;">AVANTAGES DE TON COMPTE</div>
+      <div class="benefits-accordion" id="benefitsAccordion" onclick="toggleBenefits()" style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px 16px; cursor:pointer; transition:all 0.2s;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:13px; color:var(--cream); font-weight:500; margin-bottom:4px;">✨ 11 avantages exclusifs débloqués</div>
+            <div id="benefitsTeaser" style="font-size:10px; color:var(--smoke); line-height:1.5;">❤ favoris · 🏆 concours · <span style="color:#FF6B6B;">⚡ tarifs réduits</span> · +8 autres</div>
+          </div>
+          <div id="benefitsChevron" style="color:var(--gold); font-size:14px; transition:transform 0.3s; flex-shrink:0;">▼</div>
         </div>
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <div class="benefit-text">Jeux concours</div>
-        </div>
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <div class="benefit-text">Précommande prioritaire</div>
-        </div>
-        <div class="benefit-mini benefit-blink">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3030" stroke-width="1.5"><path d="M20 12V8H6a2 2 0 010-4h12v4M4 6v12a2 2 0 002 2h14v-4M18 12a2 2 0 100 4h4v-4z"/></svg>
-          <div class="benefit-text benefit-text-red">Tarifs réduits</div>
-        </div>
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-          <div class="benefit-text">Newsletter VIP</div>
-        </div>
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          <div class="benefit-text">Contenus inédits</div>
-        </div>
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <div class="benefit-text">Alertes changements</div>
-        </div>
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
-          <div class="benefit-text">Sondages exclusifs</div>
-        </div>
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          <div class="benefit-text">Communauté fans</div>
-        </div>
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>
-          <div class="benefit-text">Cadeau anniversaire 🎂</div>
-        </div>
-        <div class="benefit-mini">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-          <div class="benefit-text">Statut Super-fan</div>
+        <div id="benefitsList" style="max-height:0; overflow:hidden; transition:max-height 0.4s ease-out;">
+          <div style="display:flex; flex-wrap:wrap; gap:6px; padding-top:14px; border-top:1px dashed rgba(212,175,55,0.2); margin-top:14px;">
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">❤ Dates favorites</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🏆 Jeux concours</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">✓ Précommande prioritaire</span>
+            <span style="background:rgba(139,0,0,0.15); border:1px solid rgba(139,0,0,0.5); color:#FF6B6B; padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px; font-weight:600;">⚡ Tarifs réduits</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">💬 Newsletter VIP</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🔒 Contenus inédits</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">⚠ Alertes changements</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">📋 Sondages exclusifs</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">💬 Communauté fans</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🎂 Cadeau anniversaire</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🏅 Statut Super-fan</span>
+          </div>
         </div>
       </div>
 
@@ -5697,6 +5682,11 @@
     document.querySelectorAll('.tab').forEach(t => {
       t.classList.toggle('active', t.dataset.tab === name);
     });
+
+    // === Chargement asynchrone des concours du fan sur la page MOI ===
+    if (name === 'moi' && typeof chargerMesConcours === 'function') {
+      setTimeout(chargerMesConcours, 100);
+    }
 
     // === STOP SON D'INTRO dès qu'on quitte la page d'accueil ===
     if (name !== 'dates' && window._introSound) {
@@ -6914,6 +6904,200 @@
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(chargerCompteurConcours, 1500);
   });
+
+  // ──────────────────────────────────────────────────────────────────────
+  // ACCORDÉON AVANTAGES DU COMPTE
+  // ──────────────────────────────────────────────────────────────────────
+  let _benefitsOpen = false;
+  window.toggleBenefits = function() {
+    _benefitsOpen = !_benefitsOpen;
+    const list = document.getElementById('benefitsList');
+    const chevron = document.getElementById('benefitsChevron');
+    const teaser = document.getElementById('benefitsTeaser');
+    if (!list || !chevron) return;
+    if (_benefitsOpen) {
+      list.style.maxHeight = '500px';
+      chevron.style.transform = 'rotate(180deg)';
+      if (teaser) teaser.style.opacity = '0.5';
+    } else {
+      list.style.maxHeight = '0';
+      chevron.style.transform = 'rotate(0deg)';
+      if (teaser) teaser.style.opacity = '1';
+    }
+  };
+
+  // ──────────────────────────────────────────────────────────────────────
+  // MES CONCOURS — Chargement et affichage dans la page MOI
+  // ──────────────────────────────────────────────────────────────────────
+  async function chargerMesConcours() {
+    const container = document.getElementById('mesConcoursContainer');
+    const badge = document.getElementById('concoursBadge');
+    if (!container) return;
+
+    const fan = getFan();
+    if (!fan || !fan.email) {
+      container.innerHTML = renderConcoursVide();
+      return;
+    }
+
+    try {
+      // 1. Récupérer toutes les participations du fan
+      const partsUrl = SUPABASE_URL + '/rest/v1/concours_participations'
+        + '?email=eq.' + encodeURIComponent(fan.email)
+        + '&source=neq.admin_test'
+        + '&select=id,concours_id,score,rang,statut,date_participation'
+        + '&order=date_participation.desc';
+      const partsResp = await fetch(partsUrl, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+      const participations = await partsResp.json();
+
+      if (!Array.isArray(participations) || participations.length === 0) {
+        container.innerHTML = renderConcoursVide();
+        if (badge) badge.style.display = 'none';
+        return;
+      }
+
+      // 2. Récupérer les détails des concours
+      const concoursIds = [...new Set(participations.map(p => p.concours_id))];
+      const concoursUrl = SUPABASE_URL + '/rest/v1/concours_jeux'
+        + '?id=in.(' + concoursIds.join(',') + ')'
+        + '&select=id,nom,statut,date_debut,date_fin,config,dotation_description,type_mecanisme';
+      const concoursResp = await fetch(concoursUrl, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+      const concoursList = await concoursResp.json();
+      const concoursMap = {};
+      concoursList.forEach(c => concoursMap[c.id] = c);
+
+      // 3. Pour chaque participation, si concours actif, calculer le rang en cours
+      for (const p of participations) {
+        const c = concoursMap[p.concours_id];
+        if (!c) continue;
+        if (c.statut === 'actif' && !p.rang) {
+          // Calculer le rang : compter ceux qui ont score > nous ou égalité avec date avant
+          const url = SUPABASE_URL + '/rest/v1/concours_participations'
+            + '?concours_id=eq.' + p.concours_id
+            + '&source=neq.admin_test'
+            + '&or=(score.gt.' + p.score + ',and(score.eq.' + p.score + ',date_participation.lt.' + encodeURIComponent(p.date_participation) + '))'
+            + '&select=id';
+          try {
+            const r = await fetch(url, {
+              headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                'Prefer': 'count=exact'
+              }
+            });
+            const range = r.headers.get('content-range');
+            let above = 0;
+            if (range) {
+              const m = range.match(/\/(\d+)$/);
+              if (m) above = parseInt(m[1]) || 0;
+            }
+            p._rang_live = above + 1;
+          } catch(e) {
+            p._rang_live = null;
+          }
+        }
+      }
+
+      // 4. Rendu
+      if (badge) {
+        badge.textContent = participations.length;
+        badge.style.display = 'inline-block';
+      }
+      container.innerHTML = participations.map(p => renderConcoursRow(p, concoursMap[p.concours_id])).join('');
+    } catch(e) {
+      console.warn('Erreur chargement mes concours:', e);
+      container.innerHTML = '<div style="text-align:center; padding:14px; color:var(--smoke); font-size:11px;">Impossible de charger tes concours pour le moment.</div>';
+    }
+  }
+
+  function renderConcoursVide() {
+    return `
+      <div style="background:rgba(212,175,55,0.04); border:1px dashed rgba(212,175,55,0.3); border-radius:8px; padding:16px; text-align:center;">
+        <div style="font-size:28px; margin-bottom:6px; opacity:0.5;">🏆</div>
+        <div style="font-size:12px; color:var(--cream); font-weight:500; margin-bottom:4px;">Tu n'as pas encore participé à un concours</div>
+        <div style="font-size:10px; color:var(--smoke); line-height:1.4;">Rejoins le <strong style="color:var(--gold);">QUIZZ CHAMPION'S QUEEN</strong> pour gagner 2 places de concert !</div>
+        <a href="#" onclick="event.preventDefault(); showPage('page-fan-zone');" style="display:inline-block; margin-top:10px; background:var(--gold); color:#000; padding:6px 14px; border-radius:6px; font-size:10px; letter-spacing:1px; font-weight:600; text-decoration:none;">JE TENTE MA CHANCE →</a>
+      </div>
+    `;
+  }
+
+  function renderConcoursRow(p, c) {
+    if (!c) {
+      return '';
+    }
+    const cfg = c.config || {};
+    const nbGagnants = cfg.nb_gagnants || 10;
+    const dateP = new Date(p.date_participation).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
+    const dateFin = new Date(c.date_fin).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
+
+    // Détermination du statut visuel
+    let badge, badgeColor, iconBg, iconColor, icon, rowBg, opacity, info;
+    if (p.statut === 'gagnant' || (c.statut === 'termine' && p.rang && p.rang <= nbGagnants)) {
+      // GAGNANT
+      badge = 'GAGNANT';
+      badgeColor = '#FFD700';
+      iconBg = '#FFD700';
+      iconColor = '#000';
+      icon = '🏆';
+      rowBg = 'rgba(255,215,0,0.05)';
+      opacity = '1';
+      info = `${p.score}/${cfg.score_max||10} · ${p.rang ? p.rang + 'ᵉ place' : 'Top ' + nbGagnants} · 🎟️ Lot gagné !`;
+    } else if (c.statut === 'actif') {
+      // EN COURS
+      badge = 'EN COURS';
+      badgeColor = '#3CB371';
+      iconBg = 'rgba(60,179,113,0.2)';
+      iconColor = '#3CB371';
+      icon = '●';
+      rowBg = 'transparent';
+      opacity = '1';
+      const rangTxt = p._rang_live ? `${p._rang_live}ᵉ actuel` : `Score ${p.score}/${cfg.score_max||10}`;
+      info = `${p.score}/${cfg.score_max||10} · ${rangTxt} · Résultats ${dateFin}`;
+    } else {
+      // TERMINÉ - NON GAGNÉ
+      badge = 'TERMINÉ';
+      badgeColor = '#8B8580';
+      iconBg = 'rgba(139,128,128,0.15)';
+      iconColor = '#8B8580';
+      icon = '✓';
+      rowBg = 'transparent';
+      opacity = '0.7';
+      info = `${p.score}/${cfg.score_max||10}${p.rang ? ' · ' + p.rang + 'ᵉ place' : ''}`;
+    }
+
+    return `
+      <div style="display:flex; align-items:center; gap:12px; padding:12px 14px; background:${rowBg}; border:1px solid rgba(212,175,55,0.15); border-radius:8px; margin-bottom:8px; opacity:${opacity};">
+        <div style="width:32px; height:32px; border-radius:50%; background:${iconBg}; color:${iconColor}; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">${icon}</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-family:var(--serif); font-size:13px; color:${opacity === '1' ? 'var(--gold)' : '#aaa'}; line-height:1.3;">${escapeHtml(c.nom)}</div>
+          <div style="font-size:10px; color:var(--smoke); margin-top:3px; line-height:1.4;">${info}</div>
+        </div>
+        <div style="font-size:9px; color:${badgeColor}; letter-spacing:1px; font-weight:600; flex-shrink:0;">${badge}</div>
+      </div>
+    `;
+  }
+
+  // Helper escape HTML si pas déjà défini globalement
+  if (typeof window.escapeHtml === 'undefined') {
+    window.escapeHtml = function(s) {
+      if (s == null) return '';
+      return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    };
+  }
+  function escapeHtml(s) { return window.escapeHtml(s); }
+
+  // Expose globalement pour appel depuis renderMoi (après affichage)
+  window.chargerMesConcours = chargerMesConcours;
 
   async function confirmQuizParticipation() {
     const checkbox = document.getElementById('quizAcceptReglement');
