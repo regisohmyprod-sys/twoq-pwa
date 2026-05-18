@@ -4629,9 +4629,9 @@
         </div>
         <div style="color:var(--cream); font-size:18px; font-weight:500; font-family:var(--serif); line-height:1.2;">Deviens Champion's Queen !</div>
         <div class="mut" style="margin-top:6px; font-size:12px; line-height:1.5;">10 questions vrai/faux · Du <strong style="color:var(--gold);">1<sup>er</sup> juin au 20 décembre 2026</strong> · Le <strong style="color:var(--gold);">Top 10</strong> remporte chacun <strong style="color:var(--gold);">2 places</strong> pour le concert TWOQ de leur ville en 2027/2028</div>
-        <div class="contest-progress" style="margin-top:14px;"><div style="width:50%;" id="quizProgressBar"></div></div>
+        <div class="contest-progress" style="margin-top:14px;"><div style="width:0%;" id="quizProgressBar"></div></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-          <span class="mut" style="font-size:11px;" id="quizParticipants">500 / 1000 participants</span>
+          <span class="mut" style="font-size:11px;" id="quizParticipants">— participants</span>
           <button class="btn-gold" style="padding:7px 14px; font-size:11px;" onclick="openQuiz()">Je tente ma chance →</button>
         </div>
         <div style="text-align:right; margin-top:8px;">
@@ -6847,7 +6847,75 @@
     }
   }
 
-  function confirmQuizParticipation() {
+  // ──────────────────────────────────────────────────────────────────────
+  // ID du concours QUIZZ CHAMPION'S QUEEN — récupéré depuis Supabase au démarrage
+  // ──────────────────────────────────────────────────────────────────────
+  const CONCOURS_QUIZZ_SLUG = 'quizz-champions-queen';
+  let _concoursQuizzId = null;
+
+  async function getConcoursQuizzId() {
+    if (_concoursQuizzId) return _concoursQuizzId;
+    try {
+      const response = await fetch(SUPABASE_URL + '/rest/v1/concours_jeux?slug=eq.' + CONCOURS_QUIZZ_SLUG + '&select=id&limit=1', {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+      const data = await response.json();
+      if (data && data.length > 0) {
+        _concoursQuizzId = data[0].id;
+        return _concoursQuizzId;
+      }
+    } catch(e) {
+      console.error('Erreur récupération concours_id:', e);
+    }
+    return null;
+  }
+
+  async function chargerCompteurConcours() {
+    try {
+      const concoursId = await getConcoursQuizzId();
+      if (!concoursId) return;
+      const url = SUPABASE_URL + '/rest/v1/concours_participations'
+        + '?concours_id=eq.' + concoursId
+        + '&source=neq.admin_test'
+        + '&select=id';
+      const response = await fetch(url, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Prefer': 'count=exact'
+        }
+      });
+      const contentRange = response.headers.get('content-range');
+      let count = 0;
+      if (contentRange) {
+        const match = contentRange.match(/\/(\d+)$/);
+        if (match) count = parseInt(match[1]) || 0;
+      } else {
+        const data = await response.json();
+        count = Array.isArray(data) ? data.length : 0;
+      }
+      const compteur = document.getElementById('quizParticipants');
+      const barre = document.getElementById('quizProgressBar');
+      if (compteur) compteur.textContent = count + ' participant' + (count > 1 ? 's' : '');
+      if (barre) {
+        // Progression visuelle : on plafonne à 100% à 1000 participants pour l'effet
+        const pct = Math.min(100, (count / 1000) * 100);
+        barre.style.width = pct.toFixed(1) + '%';
+      }
+    } catch(e) {
+      console.warn('Erreur chargement compteur concours:', e);
+    }
+  }
+
+  // Auto-chargement compteur quand on entre dans FAN ZONE
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(chargerCompteurConcours, 1500);
+  });
+
+  async function confirmQuizParticipation() {
     const checkbox = document.getElementById('quizAcceptReglement');
     if (!checkbox || !checkbox.checked) {
       alert('Tu dois accepter le règlement du concours pour valider ta participation.');
@@ -6860,10 +6928,104 @@
       return;
     }
 
-    const compteur = document.getElementById('quizParticipants');
-    const barre = document.getElementById('quizProgressBar');
-    if (compteur) compteur.textContent = '501 / 1000 participants';
-    if (barre) barre.style.width = '50.1%';
+    // Désactiver le bouton pour éviter double-clic
+    const btn = document.getElementById('quizSubmitBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      btn.textContent = '⏳ ENVOI EN COURS…';
+    }
+
+    // Récupérer l'id du concours
+    const concoursId = await getConcoursQuizzId();
+    if (!concoursId) {
+      alert('Erreur : impossible de retrouver le concours. Contacte l\'équipe TWOQ.');
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.textContent = '✓ CONFIRMER MA PARTICIPATION';
+      }
+      return;
+    }
+
+    // Vérifier que le fan n'a pas déjà participé (par email)
+    try {
+      const checkUrl = SUPABASE_URL + '/rest/v1/concours_participations'
+        + '?concours_id=eq.' + concoursId
+        + '&email=eq.' + encodeURIComponent(fan.email)
+        + '&source=neq.admin_test'
+        + '&select=id&limit=1';
+      const checkResponse = await fetch(checkUrl, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+      const existing = await checkResponse.json();
+      if (existing && existing.length > 0) {
+        // Déjà participé !
+        afficherDejaParticipe(fan);
+        return;
+      }
+    } catch(e) {
+      console.warn('Vérification participation existante échouée:', e);
+      // On continue, l'unicité sera bloquée par la contrainte Supabase si nécessaire
+    }
+
+    // INSERT de la participation
+    try {
+      const payload = {
+        concours_id: concoursId,
+        fan_id: fan.id || null,
+        prenom: fan.prenom || '',
+        nom: fan.nom || '',
+        email: fan.email,
+        ville: fan.ville || null,
+        code_postal: fan.code_postal || null,
+        score: quizState.score,
+        reponses: quizState.answers,
+        reglement_accepte: true,
+        statut: 'valide',
+        source: 'pwa'
+      };
+      const response = await fetch(SUPABASE_URL + '/rest/v1/concours_participations', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        // Erreur 409 = doublon (déjà participé)
+        if (response.status === 409 || (err.message && err.message.includes('duplicate'))) {
+          afficherDejaParticipe(fan);
+          return;
+        }
+        throw new Error(err.message || 'Erreur ' + response.status);
+      }
+
+      console.log('✅ Participation enregistrée dans Supabase');
+      afficherParticipationEnregistree(fan);
+
+    } catch(e) {
+      console.error('Erreur enregistrement participation:', e);
+      alert('❌ Erreur lors de l\'enregistrement de ta participation.\n\n' + (e.message || 'Erreur inconnue') + '\n\nRéessaye dans quelques instants ou contacte l\'équipe TWOQ.');
+      if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.textContent = '✓ CONFIRMER MA PARTICIPATION';
+      }
+    }
+  }
+
+  function afficherParticipationEnregistree(fan) {
+    // Rafraîchir le compteur en arrière-plan
+    chargerCompteurConcours();
 
     const container = document.getElementById('quizContainer');
     container.innerHTML = `
@@ -6884,6 +7046,30 @@
           Le classement final du <strong style="color:var(--gold);">Top 10</strong> sera annoncé le <strong style="color:var(--gold);">20 décembre 2026</strong>.<br>
           Si tu fais partie du Top 10, on te contactera par mail sur :<br>
           <strong style="color:var(--gold);">${fan.email}</strong>
+        </div>
+        <button class="quiz-submit" onclick="closeQuiz()" style="max-width:200px; margin:0 auto; display:block;">FERMER</button>
+      </div>
+    `;
+  }
+
+  function afficherDejaParticipe(fan) {
+    const container = document.getElementById('quizContainer');
+    container.innerHTML = `
+      <div class="quiz-header">
+        <button class="quiz-close" onclick="closeQuiz()">×</button>
+        <div class="quiz-title">⚠️ DÉJÀ PARTICIPÉ</div>
+        <div class="quiz-subtitle">Une seule participation par personne</div>
+      </div>
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:100%; background:#e67e22;"></div></div>
+      <div class="quiz-success">
+        <div class="quiz-success-check" style="background:#e67e22;">!</div>
+        <div class="quiz-success-title">Tu as déjà joué ${fan.prenom} 😊</div>
+        <div class="quiz-success-msg">
+          Tu as déjà participé au <strong style="color:var(--gold);">QUIZZ CHAMPION'S QUEEN</strong> avec l'adresse :<br>
+          <strong style="color:var(--gold);">${fan.email}</strong><br><br>
+          Une seule participation est autorisée par personne.<br><br>
+          Le classement final du <strong style="color:var(--gold);">Top 10</strong> sera annoncé le <strong style="color:var(--gold);">20 décembre 2026</strong>.<br>
+          Reste connecté pour découvrir si tu fais partie des gagnants ! 🏆
         </div>
         <button class="quiz-submit" onclick="closeQuiz()" style="max-width:200px; margin:0 auto; display:block;">FERMER</button>
       </div>
