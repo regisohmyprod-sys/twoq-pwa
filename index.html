@@ -5275,6 +5275,17 @@
 
       ${renderStatusSection(fan)}
 
+      ${isConnected ? `
+      <!-- ─── MES NOTIFICATIONS — Bloc encadré or ─── -->
+      <div class="section-eyebrow" style="margin-top:22px;">
+        🔔 MES NOTIFICATIONS 
+        <span id="notifsBadge" style="background:#E11D2A; color:#fff; padding:2px 8px; border-radius:10px; font-size:10px; letter-spacing:1px; margin-left:6px; display:none; font-weight:700;"></span>
+      </div>
+      <div id="notifsContainer" style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px;">
+        <div style="text-align:center; padding:8px; color:var(--smoke); font-size:11px;">Chargement…</div>
+      </div>
+      ` : ''}
+
       <!-- ─── AVANTAGES DE TON COMPTE — Accordéon encadré or ─── -->
       <div class="section-eyebrow" style="margin-top:22px;">AVANTAGES DE TON COMPTE</div>
       <div class="benefits-accordion" id="benefitsAccordion" onclick="toggleBenefits()" style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px 16px; cursor:pointer; transition:all 0.2s;">
@@ -5355,9 +5366,9 @@
       </div>
 
       <div class="section-eyebrow">L'APP</div>
-      <div class="menu-row" onclick="alert('Notifications — bientôt')">
+      <div class="menu-row" onclick="scrollToNotifs()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-        <span class="lbl">Notifications</span>
+        <span class="lbl">Notifications <span id="notifsMenuBadge" style="background:#E11D2A; color:#fff; padding:2px 7px; border-radius:10px; font-size:10px; margin-left:6px; display:none; font-weight:700;"></span></span>
         <span class="arr"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
       </div>
       <div class="menu-row" onclick="alert('Partage — bientôt')">
@@ -7149,6 +7160,11 @@
     // === Chargement asynchrone des concours du fan sur la page MOI ===
     if (name === 'moi' && typeof chargerMesConcours === 'function') {
       setTimeout(chargerMesConcours, 100);
+    }
+
+    // === Chargement asynchrone des notifications sur la page MOI ===
+    if (name === 'moi' && typeof loadAndRenderNotifs === 'function') {
+      setTimeout(loadAndRenderNotifs, 150);
     }
 
     // === Chargement asynchrone des photos Wall of Fans ===
@@ -9421,6 +9437,243 @@
       if (e.key === 'ArrowRight') videoNext();
     }
   });
+
+  // ================================================
+  // 🔔 SYSTÈME NOTIFICATIONS TWOQ
+  // ================================================
+  let _notifsCache = [];
+
+  // Charger les notifs depuis Supabase
+  async function loadNotifsFromSupabase() {
+    const fan = getFan();
+    if (!fan || !fan.id) return [];
+    try {
+      // Récupère les notifs perso du fan + broadcasts (fan_id IS NULL)
+      // Triées du plus récent au plus ancien, limit 50
+      const url = SUPABASE_URL + '/rest/v1/notifications_twoq'
+        + '?select=*'
+        + '&or=(fan_id.eq.' + fan.id + ',fan_id.is.null)'
+        + '&archive=eq.false'
+        + '&order=created_at.desc'
+        + '&limit=50';
+      const r = await fetch(url, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+      if (!r.ok) {
+        console.warn('[NOTIFS] Fetch error:', r.status);
+        return [];
+      }
+      const data = await r.json();
+      _notifsCache = data || [];
+      return _notifsCache;
+    } catch (e) {
+      console.warn('[NOTIFS] Exception:', e);
+      return [];
+    }
+  }
+
+  // Formatter "il y a X" 
+  function notifTimeAgo(dateStr) {
+    const date = new Date(dateStr);
+    const diffMs = Date.now() - date.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffH = Math.floor(diffMin / 60);
+    const diffJ = Math.floor(diffH / 24);
+    if (diffMin < 1) return "à l'instant";
+    if (diffMin < 60) return `il y a ${diffMin} min`;
+    if (diffH < 24) return `il y a ${diffH}h`;
+    if (diffJ < 7) return `il y a ${diffJ} jour${diffJ > 1 ? 's' : ''}`;
+    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+  }
+
+  // Render la liste des notifs dans #notifsContainer
+  function renderNotifs() {
+    const container = document.getElementById('notifsContainer');
+    const badge = document.getElementById('notifsBadge');
+    const menuBadge = document.getElementById('notifsMenuBadge');
+    if (!container) return;
+
+    const notifs = _notifsCache;
+    const nonLues = notifs.filter(n => !n.lu).length;
+
+    // Maj badges
+    if (badge) {
+      badge.style.display = nonLues > 0 ? 'inline-block' : 'none';
+      badge.textContent = nonLues + ' nouvelle' + (nonLues > 1 ? 's' : '');
+    }
+    if (menuBadge) {
+      menuBadge.style.display = nonLues > 0 ? 'inline-block' : 'none';
+      menuBadge.textContent = nonLues;
+    }
+
+    if (notifs.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center; padding:14px; color:var(--smoke); font-size:12px;">
+          <div style="font-size:28px; margin-bottom:6px;">🔕</div>
+          <div>Aucune notification pour l'instant</div>
+          <div style="font-size:10px; margin-top:4px; opacity:0.7;">Tu seras prévenu des dates dans ta ville, concours, et plus !</div>
+        </div>
+      `;
+      return;
+    }
+
+    // Bouton "Tout marquer lu" si y'a des non lues
+    const headerActions = nonLues > 0 ? `
+      <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+        <button onclick="marquerToutesNotifsLues()" style="background:transparent; border:1px solid rgba(212,175,55,0.4); color:var(--gold); padding:4px 10px; border-radius:6px; font-size:10px; cursor:pointer; letter-spacing:0.5px;">
+          ✓ Tout marquer lu
+        </button>
+      </div>
+    ` : '';
+
+    // Liste notifs
+    const listHTML = notifs.map(n => {
+      const lu = n.lu;
+      const icone = n.icone || '🔔';
+      const titre = (n.titre || '').replace(/"/g,'&quot;');
+      const message = (n.message || '').replace(/</g,'&lt;');
+      const tps = notifTimeAgo(n.created_at);
+      const lien = n.lien || '';
+      const bgColor = lu ? 'rgba(255,255,255,0.02)' : 'rgba(212,175,55,0.08)';
+      const borderColor = lu ? 'rgba(255,255,255,0.06)' : 'rgba(212,175,55,0.3)';
+      const titreColor = lu ? 'var(--smoke)' : 'var(--gold)';
+      const dotHTML = lu ? '' : '<div style="width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0; box-shadow:0 0 6px rgba(212,175,55,0.6);"></div>';
+      return `
+        <div onclick="onNotifClick('${n.id}', '${lien}')" style="background:${bgColor}; border:1px solid ${borderColor}; border-radius:8px; padding:10px 12px; margin-bottom:6px; display:flex; gap:10px; align-items:flex-start; cursor:pointer; transition:all 0.2s;" 
+             onmouseover="this.style.background='rgba(212,175,55,0.12)'" 
+             onmouseout="this.style.background='${bgColor}'">
+          <div style="font-size:22px; flex-shrink:0;">${icone}</div>
+          <div style="flex:1; min-width:0;">
+            <div style="color:${titreColor}; font-weight:600; font-size:13px; margin-bottom:2px;">${titre}</div>
+            <div style="color:var(--cream); opacity:0.85; font-size:11.5px; line-height:1.4;">${message}</div>
+            <div style="color:var(--smoke); font-size:10px; margin-top:4px;">${tps}</div>
+          </div>
+          ${dotHTML}
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = headerActions + listHTML;
+  }
+
+  // Click sur une notif
+  window.onNotifClick = async function(notifId, lien) {
+    // 1. Marquer comme lue (optimistic + serveur)
+    const notif = _notifsCache.find(n => n.id === notifId);
+    if (notif && !notif.lu) {
+      notif.lu = true;
+      notif.read_at = new Date().toISOString();
+      renderNotifs();
+      // Update serveur
+      try {
+        await fetch(SUPABASE_URL + '/rest/v1/notifications_twoq?id=eq.' + notifId, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ lu: true, read_at: new Date().toISOString() })
+        });
+      } catch (e) {
+        console.warn('[NOTIFS] Update failed:', e);
+      }
+    }
+    // 2. Si un lien interne PWA → naviguer
+    if (lien && lien.startsWith('#')) {
+      const target = lien.substring(1);
+      // Mappings vers les tabs/sections
+      const tabMap = {
+        'dates': 'dates',
+        'show': 'show',
+        'fan-zone': 'fanzone',
+        'fanzone': 'fanzone',
+        'medias': 'medias',
+        'moi': 'moi',
+        'wall-of-fans': 'fanzone', // Wall est dans fanzone
+        'temoignages': 'fanzone'
+      };
+      const tab = tabMap[target];
+      if (tab && typeof show === 'function') {
+        show(tab);
+        // Scroll vers section spécifique après changement de tab
+        setTimeout(() => {
+          if (target === 'wall-of-fans') {
+            const el = document.querySelector('[id*="wall"], [id*="Wall"]');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else if (target === 'temoignages') {
+            const el = document.querySelector('[id*="emoig"]');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 300);
+      }
+    }
+  };
+
+  // Tout marquer comme lu
+  window.marquerToutesNotifsLues = async function() {
+    const fan = getFan();
+    if (!fan || !fan.id) return;
+    
+    // Optimistic update
+    _notifsCache.forEach(n => { n.lu = true; n.read_at = new Date().toISOString(); });
+    renderNotifs();
+
+    // Update serveur via RPC
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/rpc/marquer_toutes_notifs_lues', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ p_fan_id: fan.id })
+      });
+    } catch (e) {
+      console.warn('[NOTIFS] Mark all read failed:', e);
+    }
+  };
+
+  // Scroll vers le bloc Notifications (depuis menu_row "Notifications")
+  window.scrollToNotifs = function() {
+    const el = document.getElementById('notifsContainer');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Charger + rendre les notifs quand on entre sur la page MOI
+  window.loadAndRenderNotifs = async function() {
+    if (!isFanConnected()) return;
+    await loadNotifsFromSupabase();
+    renderNotifs();
+  };
+
+  // Hook : à chaque fois qu'on affiche la page MOI, on recharge les notifs
+  // On observe les changements de tab actif
+  document.addEventListener('DOMContentLoaded', () => {
+    // Recharge les notifs quand on clique sur l'onglet MOI
+    document.querySelectorAll('.tab[data-tab="moi"]').forEach(t => {
+      t.addEventListener('click', () => {
+        setTimeout(loadAndRenderNotifs, 100);
+      });
+    });
+  });
+
+  // Auto-refresh toutes les 60 secondes si l'utilisateur est sur la page MOI
+  setInterval(() => {
+    if (document.querySelector('.tab.active')?.dataset.tab === 'moi' && isFanConnected()) {
+      loadAndRenderNotifs();
+    }
+  }, 60000);
+
+  console.log('✅ Module Notifications TWOQ chargé');
+
 </script>
 
 <!-- MODAL QUIZ CHAMPION QUEEN -->
