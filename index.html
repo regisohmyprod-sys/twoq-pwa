@@ -4713,12 +4713,14 @@
       <div class="section-eyebrow">TÉMOIGNAGES</div>
       <div class="contest-card">
         <div class="section-title" style="margin:0 0 12px;">Ce qu'ils en disent</div>
+
+        <!-- 3 commentaires fixes (vedettes) -->
         <div class="testimonial-card">
           <div class="testi-stars">★★★★★</div>
           <div class="testi-text">« Un super hommage à Freddie, j'en ai eu les larmes aux yeux. Vous êtes tous merveilleux. »</div>
           <div class="testi-meta">
-            <div class="testi-author">Béatrice C.</div>
-            <div class="testi-date">Nantes · oct. 2024</div>
+            <div class="testi-author">Béatrice G.</div>
+            <div class="testi-date">Angers · 2024</div>
           </div>
         </div>
         <div class="testimonial-card">
@@ -4726,7 +4728,7 @@
           <div class="testi-text">« Sans aucun doute, le meilleur du meilleur des hommages à notre cher Freddy. Quel spectacle, quelle émotion ! »</div>
           <div class="testi-meta">
             <div class="testi-author">Lauren P.</div>
-            <div class="testi-date">Dôme de Paris · 2024</div>
+            <div class="testi-date">Dôme de Paris · 2025</div>
           </div>
         </div>
         <div class="testimonial-card">
@@ -4737,7 +4739,25 @@
             <div class="testi-date">Caen · 2024</div>
           </div>
         </div>
-        <div style="text-align:center; margin-top:14px;">
+
+        <!-- Toggle pour voir les avis des fans -->
+        <div id="autresAvisToggle" style="text-align:center; margin-top:14px;">
+          <button onclick="toggleAvisFans()" id="btnVoirAvisFans" style="background:transparent; border:1px solid rgba(212,175,55,0.4); color:var(--gold); border-radius:30px; padding:10px 20px; font-size:11px; letter-spacing:1.5px; cursor:pointer; font-weight:600; display:inline-flex; align-items:center; gap:8px; transition:all 0.2s;">
+            <span id="btnVoirAvisFansLabel">✨ VOIR TOUS LES AVIS DES FANS</span>
+            <span id="btnVoirAvisFansArrow" style="transition:transform 0.3s;">↓</span>
+          </button>
+        </div>
+
+        <!-- Zone d'affichage des avis fans (cachée par défaut) -->
+        <div id="avisFansContainer" style="display:none; margin-top:14px;">
+          <div style="text-align:center; padding:20px 10px; color:var(--smoke); font-size:11px;">⏳ Chargement des avis...</div>
+        </div>
+
+        <!-- Séparateur -->
+        <div style="height:1px; background:rgba(212,175,55,0.2); margin:18px 0 14px;"></div>
+
+        <!-- Bouton laisser mon avis -->
+        <div style="text-align:center;">
           <span class="btn-outline" onclick="openLeaveReview()">✍️ Laisser mon avis</span>
         </div>
       </div>
@@ -5595,6 +5615,114 @@
     afficherModalAvis(fan);
   }
   window.openLeaveReview = openLeaveReview;
+
+  // ──────────────────────────────────────────────────────────────────────
+  // AVIS DES FANS — Toggle "Voir tous les avis"
+  // ──────────────────────────────────────────────────────────────────────
+  let _avisFansCharges = false;
+  let _avisFansVisible = false;
+
+  window.toggleAvisFans = async function() {
+    const container = document.getElementById('avisFansContainer');
+    const label = document.getElementById('btnVoirAvisFansLabel');
+    const arrow = document.getElementById('btnVoirAvisFansArrow');
+    const btn = document.getElementById('btnVoirAvisFans');
+    if (!container) return;
+
+    _avisFansVisible = !_avisFansVisible;
+
+    if (_avisFansVisible) {
+      // Afficher
+      container.style.display = 'block';
+      if (label) label.textContent = '✨ MASQUER LES AVIS DES FANS';
+      if (arrow) arrow.style.transform = 'rotate(180deg)';
+      if (btn) btn.style.background = 'rgba(212,175,55,0.08)';
+      
+      // Charger les avis si pas encore fait
+      if (!_avisFansCharges) {
+        await chargerAvisFans();
+        _avisFansCharges = true;
+      }
+      
+      // Scroll fluide pour les rendre visibles
+      setTimeout(() => {
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    } else {
+      // Masquer
+      container.style.display = 'none';
+      if (label) label.textContent = '✨ VOIR TOUS LES AVIS DES FANS';
+      if (arrow) arrow.style.transform = 'rotate(0deg)';
+      if (btn) btn.style.background = 'transparent';
+    }
+  };
+
+  async function chargerAvisFans() {
+    const container = document.getElementById('avisFansContainer');
+    if (!container) return;
+
+    try {
+      // Récupère mises_en_avant en premier, puis validées récentes (max 30)
+      const url = SUPABASE_URL + '/rest/v1/temoignages_fans'
+        + '?statut=in.(validee,mise_en_avant)'
+        + '&order=statut.desc,created_at.desc'
+        + '&limit=30'
+        + '&select=id,prenom,nom,note,texte,ville_concert,statut,created_at';
+
+      const r = await fetch(url, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+
+      if (!r.ok) {
+        container.innerHTML = '<div style="text-align:center; padding:20px 10px; color:var(--smoke); font-size:11px;">Pas d\'avis disponibles pour le moment</div>';
+        return;
+      }
+      const avis = await r.json();
+      if (!Array.isArray(avis) || avis.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:24px 10px; color:var(--smoke); font-size:12px; font-style:italic;">🌟 Sois le premier à laisser un avis !<br><span style="font-size:10px; color:#666;">Ton témoignage apparaîtra ici après modération</span></div>';
+        return;
+      }
+
+      // Afficher les avis
+      let html = '<div style="font-size:10px; letter-spacing:1.5px; color:var(--gold); margin-bottom:10px; text-align:center; font-weight:600;">💬 ' + avis.length + ' AVIS DE FANS</div>';
+      avis.forEach(a => {
+        const note = parseInt(a.note) || 0;
+        const etoiles = '★'.repeat(note) + '<span style="color:#3a3a3a;">' + '★'.repeat(5 - note) + '</span>';
+        const isAvant = a.statut === 'mise_en_avant';
+        const dateStr = formatAvisDate(a.created_at);
+        const ville = a.ville_concert ? escapeHtmlWall(a.ville_concert) : '';
+
+        html += '<div class="testimonial-card" style="position:relative;' + (isAvant ? 'border:1px solid rgba(212,175,55,0.4);background:linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(0,0,0,0) 100%);' : '') + '">';
+        if (isAvant) {
+          html += '<div style="position:absolute; top:8px; right:8px; background:linear-gradient(135deg,#D4AF37,#F0D77A); color:#000; padding:2px 8px; border-radius:4px; font-size:8px; font-weight:700; letter-spacing:1px;">⭐ TOP</div>';
+        }
+        html += '<div class="testi-stars">' + etoiles + '</div>';
+        html += '<div class="testi-text">« ' + escapeHtmlWall(a.texte || '') + ' »</div>';
+        html += '<div class="testi-meta">';
+        html += '<div class="testi-author">' + escapeHtmlWall((a.prenom || '') + ' ' + (a.nom ? a.nom.charAt(0).toUpperCase() + '.' : '')) + '</div>';
+        html += '<div class="testi-date">' + (ville ? ville + ' · ' : '') + dateStr + '</div>';
+        html += '</div>';
+        html += '</div>';
+      });
+
+      container.innerHTML = html;
+    } catch(e) {
+      console.warn('[Avis] Erreur chargement:', e);
+      container.innerHTML = '<div style="text-align:center; padding:20px 10px; color:var(--smoke); font-size:11px;">Pas d\'avis disponibles pour le moment</div>';
+    }
+  }
+
+  function formatAvisDate(iso) {
+    if (!iso) return '';
+    try {
+      const d = new Date(iso);
+      const mois = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+      return mois[d.getMonth()] + ' ' + d.getFullYear();
+    } catch(e) { return ''; }
+  }
 
   function afficherModalAvis(fan) {
     let modal = document.getElementById('reviewModal');
