@@ -6114,6 +6114,11 @@
       setTimeout(chargerMesConcours, 100);
     }
 
+    // === Chargement asynchrone des photos Wall of Fans ===
+    if (name === 'fanzone' && typeof chargerWallOfFansPhotos === 'function') {
+      setTimeout(chargerWallOfFansPhotos, 300);
+    }
+
     // === STOP SON D'INTRO dès qu'on quitte la page d'accueil ===
     if (name !== 'dates' && window._introSound) {
       try {
