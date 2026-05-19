@@ -4662,25 +4662,181 @@
       </div>
 
       <div class="section-eyebrow">CONCERT INTERACTIF</div>
-      <div class="contest-card">
-        <div class="section-title" style="margin:0 0 4px;">Choisis ta chanson</div>
-        <div style="color:var(--smoke); font-size:12px; line-height:1.5; margin: 4px 0 12px; font-style:italic;">
-          La chanson qui remportera le + de votes sera interprétée ce soir par le groupe ! <span style="color:var(--gold); font-style:normal;">(hors set list habituelle)</span>
+      <div class="interactive-spotlight">
+        <!-- Badge LIVE clignotant en haut -->
+        <div class="live-badge-container">
+          <span class="live-badge">
+            <span class="live-dot"></span>
+            LIVE TONIGHT
+          </span>
         </div>
-        <div class="poll-option selected" onclick="handleVote(event, 0)">
-          <span>Somebody To Love</span>
+
+        <!-- Phrase d'accroche forte -->
+        <div style="text-align:center; margin-bottom:12px;">
+          <div style="font-family:var(--serif); font-size:22px; color:var(--gold); line-height:1.2; margin-bottom:4px;">
+            Vous êtes dans la salle ce soir ?
+          </div>
+          <div style="color:#FF6B6B; font-size:13px; font-weight:600; letter-spacing:0.3px;">
+            🎤 Votez pour la chanson surprise du show !
+          </div>
         </div>
-        <div class="poll-option" onclick="handleVote(event, 1)">
-          <span>I Want It All</span>
+
+        <!-- Sous-explication -->
+        <div style="color:var(--smoke); font-size:11px; line-height:1.5; margin-bottom:14px; text-align:center; font-style:italic; padding:0 4px;">
+          La chanson qui remporte le + de votes sera interprétée <strong style="color:var(--gold); font-style:normal;">en bonus</strong> ce soir <span style="color:var(--gold); font-style:normal;">(hors set list habituelle)</span>
         </div>
-        <div class="poll-option" onclick="handleVote(event, 2)">
-          <span>Killer Queen</span>
+
+        <!-- Options de vote avec barres animées -->
+        <div class="poll-option-fx selected" onclick="handleVote(event, 0)" data-pct="42">
+          <div class="poll-bar" style="width:42%;"></div>
+          <span class="poll-label">🎵 Somebody To Love</span>
+          <span class="poll-pct">42%</span>
         </div>
-        <div class="poll-option" onclick="handleVote(event, 3)">
-          <span>Living On My Own</span>
+        <div class="poll-option-fx" onclick="handleVote(event, 1)" data-pct="28">
+          <div class="poll-bar" style="width:28%;"></div>
+          <span class="poll-label">🎵 I Want It All</span>
+          <span class="poll-pct">28%</span>
         </div>
-        <div class="mut" style="font-size:10px; margin-top:10px; text-align:right;">2 847 votes</div>
+        <div class="poll-option-fx" onclick="handleVote(event, 2)" data-pct="18">
+          <div class="poll-bar" style="width:18%;"></div>
+          <span class="poll-label">🎵 Killer Queen</span>
+          <span class="poll-pct">18%</span>
+        </div>
+        <div class="poll-option-fx" onclick="handleVote(event, 3)" data-pct="12">
+          <div class="poll-bar" style="width:12%;"></div>
+          <span class="poll-label">🎵 Living On My Own</span>
+          <span class="poll-pct">12%</span>
+        </div>
+
+        <!-- Footer avec compteur + animation -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:10px; border-top:1px solid rgba(212,175,55,0.15);">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="live-dot" style="width:8px; height:8px;"></span>
+            <span style="color:#FF6B6B; font-size:10px; letter-spacing:1.5px; font-weight:700;">EN DIRECT</span>
+          </div>
+          <div style="color:var(--gold); font-size:11px; font-weight:600;">
+            <span style="font-family:var(--serif); font-size:14px;">2 847</span> votes
+          </div>
+        </div>
       </div>
+
+      <style>
+        /* === CONCERT INTERACTIF — SPECTACULAIRE === */
+        .interactive-spotlight {
+          position: relative;
+          background: linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(20,20,20,0.95) 50%, rgba(139,0,0,0.06) 100%);
+          border: 2px solid var(--gold);
+          border-radius: 16px;
+          padding: 22px 16px 16px;
+          margin-bottom: 12px;
+          box-shadow: 0 0 30px rgba(212,175,55,0.15), 0 0 60px rgba(212,175,55,0.06);
+          animation: spotlightGlow 3.5s ease-in-out infinite;
+          overflow: hidden;
+        }
+        @keyframes spotlightGlow {
+          0%, 100% { box-shadow: 0 0 30px rgba(212,175,55,0.15), 0 0 60px rgba(212,175,55,0.06); border-color: var(--gold); }
+          50% { box-shadow: 0 0 40px rgba(212,175,55,0.35), 0 0 80px rgba(212,175,55,0.15); border-color: #F0D77A; }
+        }
+
+        /* Badge LIVE TONIGHT — clignotant */
+        .live-badge-container {
+          display: flex;
+          justify-content: center;
+          margin: -34px 0 14px 0;
+        }
+        .live-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: linear-gradient(135deg, #8B0000 0%, #C81010 100%);
+          color: #fff;
+          padding: 6px 14px;
+          border-radius: 20px;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 2px;
+          box-shadow: 0 4px 12px rgba(139,0,0,0.5);
+          animation: liveBadgeBlink 1.4s ease-in-out infinite;
+          border: 1.5px solid rgba(255,107,107,0.5);
+        }
+        @keyframes liveBadgeBlink {
+          0%, 100% { box-shadow: 0 4px 12px rgba(139,0,0,0.5), 0 0 0 0 rgba(139,0,0,0.5); transform: scale(1); }
+          50% { box-shadow: 0 4px 16px rgba(139,0,0,0.8), 0 0 0 8px rgba(139,0,0,0); transform: scale(1.05); }
+        }
+        .live-dot {
+          display: inline-block;
+          width: 6px;
+          height: 6px;
+          background: #fff;
+          border-radius: 50%;
+          animation: liveDotPulse 1s ease-in-out infinite;
+          box-shadow: 0 0 0 0 #fff;
+        }
+        @keyframes liveDotPulse {
+          0%, 100% { opacity: 1; box-shadow: 0 0 4px #fff; }
+          50% { opacity: 0.4; box-shadow: 0 0 8px #fff; }
+        }
+
+        /* Poll options FX (avec barres animées) */
+        .poll-option-fx {
+          position: relative;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(212,175,55,0.2);
+          border-radius: 10px;
+          padding: 10px 12px;
+          margin-bottom: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          overflow: hidden;
+          transition: all 0.2s;
+        }
+        .poll-option-fx:hover {
+          border-color: var(--gold);
+          background: rgba(212,175,55,0.06);
+          transform: translateX(2px);
+        }
+        .poll-option-fx.selected {
+          border-color: var(--gold);
+          background: linear-gradient(90deg, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.04) 100%);
+        }
+        .poll-bar {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          background: linear-gradient(90deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.06) 100%);
+          z-index: 0;
+          border-radius: 10px 0 0 10px;
+          animation: pollBarSlide 1.2s ease-out;
+        }
+        .poll-option-fx.selected .poll-bar {
+          background: linear-gradient(90deg, rgba(212,175,55,0.35) 0%, rgba(212,175,55,0.15) 100%);
+        }
+        @keyframes pollBarSlide {
+          from { width: 0%; }
+        }
+        .poll-label {
+          position: relative;
+          z-index: 1;
+          color: var(--cream);
+          font-size: 13px;
+          flex: 1;
+        }
+        .poll-pct {
+          position: relative;
+          z-index: 1;
+          color: var(--gold);
+          font-size: 12px;
+          font-weight: 700;
+          font-family: 'Bebas Neue', sans-serif;
+          letter-spacing: 1px;
+        }
+        .poll-option-fx.selected .poll-pct {
+          color: #F0D77A;
+        }
+      </style>
 
       <div class="gold-divider" style="margin:22px 0 18px;">
         <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
@@ -4770,14 +4926,71 @@
       <div class="contest-card">
         <div class="section-title" style="margin:0 0 12px;">Rejoins la famille TWOQ</div>
 
-        <div class="community-card" onclick="openParrainage()" style="margin-bottom:14px;">
-          <div class="community-icon">🤝</div>
-          <div class="community-info">
-            <div class="community-title">Parraine un ami</div>
-            <div class="community-sub">Invite un proche · Gagne des places & du merch</div>
+        <div class="parrain-shimmer-card" onclick="openParrainage()">
+          <div class="parrain-shimmer-content">
+            <div class="community-icon" style="font-size:28px;">🤝</div>
+            <div class="community-info">
+              <div class="community-title" style="color:#FF6B6B; font-weight:700;">Parraine un ami</div>
+              <div class="community-sub">Invite un proche · Gagne des points pour monter en niveau</div>
+            </div>
+            <div class="community-arrow" style="color:#FF6B6B;">→</div>
           </div>
-          <div class="community-arrow">→</div>
         </div>
+        <style>
+          .parrain-shimmer-card {
+            position: relative;
+            margin-bottom: 14px;
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.12) 0%, rgba(20, 20, 20, 0.95) 100%);
+            border: 2px solid #8B0000;
+            border-radius: 14px;
+            padding: 14px;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 0 0 0 rgba(139, 0, 0, 0.7);
+            animation: parrainPulse 2.4s ease-in-out infinite;
+            transition: transform 0.2s;
+          }
+          .parrain-shimmer-card:hover {
+            transform: translateY(-2px);
+          }
+          .parrain-shimmer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+              90deg,
+              transparent 0%,
+              rgba(255, 107, 107, 0.25) 50%,
+              transparent 100%
+            );
+            animation: parrainShimmer 3s linear infinite;
+            pointer-events: none;
+          }
+          .parrain-shimmer-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+          }
+          @keyframes parrainShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+          }
+          @keyframes parrainPulse {
+            0%, 100% {
+              box-shadow: 0 0 0 0 rgba(139, 0, 0, 0.5);
+              border-color: #8B0000;
+            }
+            50% {
+              box-shadow: 0 0 0 6px rgba(139, 0, 0, 0);
+              border-color: #C81010;
+            }
+          }
+        </style>
 
         <!-- BLOC SUIVEZ-NOUS -->
         <div style="margin-top:18px;">
@@ -4805,13 +5018,13 @@
         <!-- BLOC BOUTIQUE -->
         <div style="margin-top:18px;">
           <div class="section-eyebrow" style="margin-bottom:10px;">BOUTIQUE</div>
-          <div onclick="show('boutique')" style="cursor:pointer; background:linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(20,20,20,0.95) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:12px; padding:18px; position:relative; overflow:hidden;">
+          <a href="https://theworldofqueen.fanavenue.com/" target="_blank" rel="noopener" style="display:block; text-decoration:none; cursor:pointer; background:linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(20,20,20,0.95) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:12px; padding:18px; position:relative; overflow:hidden;">
             <div style="font-size:9px; letter-spacing:1.5px; color:var(--gold); margin-bottom:6px; font-weight:600;">MERCH OFFICIEL</div>
             <div style="font-family:var(--serif); font-size:22px; color:var(--cream); line-height:1.2; margin-bottom:6px;">La Boutique TWOQ</div>
             <div style="color:var(--smoke); font-size:12px; font-style:italic; margin-bottom:14px;">T-shirts, vinyles, posters &amp; souvenirs collectors</div>
             <span class="btn-gold" style="display:inline-block; padding:7px 14px; font-size:11px;">Découvrir →</span>
             <div style="position:absolute; right:14px; bottom:10px; font-size:56px; opacity:0.18;">🛍️</div>
-          </div>
+          </a>
         </div>
       </div>
 
@@ -5164,7 +5377,7 @@
       </div>
 
       <div class="section-eyebrow" style="margin-top:22px;">BOUTIQUE</div>
-      <div class="shop-card" onclick="window.open('https://www.theworldofqueen.com/boutique', '_blank')">
+      <div class="shop-card" onclick="window.open('https://theworldofqueen.fanavenue.com/', '_blank')">
         <div class="shop-bg"></div>
         <div class="shop-overlay"></div>
         <div class="shop-content">
@@ -5251,7 +5464,8 @@
   // Vote dans le sondage Concert Interactif
   function handleVote(e, idx) {
     if (!requireMember('voter')) return;
-    document.querySelectorAll('.poll-option').forEach(o => o.classList.remove('selected'));
+    // Compat ancien + nouveau (poll-option ET poll-option-fx)
+    document.querySelectorAll('.poll-option, .poll-option-fx').forEach(o => o.classList.remove('selected'));
     e.currentTarget.classList.add('selected');
     // Petit toast confirmation
     const confirm = document.createElement('div');
