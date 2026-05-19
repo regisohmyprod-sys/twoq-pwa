@@ -4662,61 +4662,10 @@
       </div>
 
       <div class="section-eyebrow">CONCERT INTERACTIF</div>
-      <div class="interactive-spotlight">
-        <!-- Badge LIVE clignotant en haut -->
-        <div class="live-badge-container">
-          <span class="live-badge">
-            <span class="live-dot"></span>
-            LIVE TONIGHT
-          </span>
-        </div>
-
-        <!-- Phrase d'accroche forte -->
-        <div style="text-align:center; margin-bottom:12px;">
-          <div style="font-family:var(--serif); font-size:22px; color:var(--gold); line-height:1.2; margin-bottom:4px;">
-            Vous êtes dans la salle ce soir ?
-          </div>
-          <div style="color:#FF6B6B; font-size:13px; font-weight:600; letter-spacing:0.3px;">
-            🎤 Votez pour la chanson surprise du show !
-          </div>
-        </div>
-
-        <!-- Sous-explication -->
-        <div style="color:var(--smoke); font-size:11px; line-height:1.5; margin-bottom:14px; text-align:center; font-style:italic; padding:0 4px;">
-          La chanson qui remporte le + de votes sera interprétée <strong style="color:var(--gold); font-style:normal;">en bonus</strong> ce soir <span style="color:var(--gold); font-style:normal;">(hors set list habituelle)</span>
-        </div>
-
-        <!-- Options de vote avec barres animées -->
-        <div class="poll-option-fx selected" onclick="handleVote(event, 0)" data-pct="42">
-          <div class="poll-bar" style="width:42%;"></div>
-          <span class="poll-label">🎵 Somebody To Love</span>
-          <span class="poll-pct">42%</span>
-        </div>
-        <div class="poll-option-fx" onclick="handleVote(event, 1)" data-pct="28">
-          <div class="poll-bar" style="width:28%;"></div>
-          <span class="poll-label">🎵 I Want It All</span>
-          <span class="poll-pct">28%</span>
-        </div>
-        <div class="poll-option-fx" onclick="handleVote(event, 2)" data-pct="18">
-          <div class="poll-bar" style="width:18%;"></div>
-          <span class="poll-label">🎵 Killer Queen</span>
-          <span class="poll-pct">18%</span>
-        </div>
-        <div class="poll-option-fx" onclick="handleVote(event, 3)" data-pct="12">
-          <div class="poll-bar" style="width:12%;"></div>
-          <span class="poll-label">🎵 Living On My Own</span>
-          <span class="poll-pct">12%</span>
-        </div>
-
-        <!-- Footer avec compteur + animation -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:10px; border-top:1px solid rgba(212,175,55,0.15);">
-          <div style="display:flex; align-items:center; gap:6px;">
-            <span class="live-dot" style="width:8px; height:8px;"></span>
-            <span style="color:#FF6B6B; font-size:10px; letter-spacing:1.5px; font-weight:700;">EN DIRECT</span>
-          </div>
-          <div style="color:var(--gold); font-size:11px; font-weight:600;">
-            <span style="font-family:var(--serif); font-size:14px;">2 847</span> votes
-          </div>
+      <div id="concertInteractifContainer">
+        <!-- Contenu généré dynamiquement par renderConcertInteractif() -->
+        <div class="interactive-spotlight" style="opacity:0.5;">
+          <div style="text-align:center; padding:24px; color:var(--smoke);">⏳ Chargement...</div>
         </div>
       </div>
 
@@ -4727,22 +4676,31 @@
           background: linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(20,20,20,0.95) 50%, rgba(139,0,0,0.06) 100%);
           border: 2px solid var(--gold);
           border-radius: 16px;
-          padding: 22px 16px 16px;
+          padding: 26px 16px 16px;
+          margin-top: 18px;
           margin-bottom: 12px;
           box-shadow: 0 0 30px rgba(212,175,55,0.15), 0 0 60px rgba(212,175,55,0.06);
           animation: spotlightGlow 3.5s ease-in-out infinite;
-          overflow: hidden;
+          /* Plus de overflow:hidden — pour que le badge puisse dépasser */
+        }
+        .interactive-spotlight.is-off {
+          background: linear-gradient(135deg, rgba(40,40,40,0.4) 0%, rgba(15,15,15,0.95) 100%);
+          border-color: rgba(120,120,120,0.3);
+          box-shadow: none;
+          animation: none;
         }
         @keyframes spotlightGlow {
           0%, 100% { box-shadow: 0 0 30px rgba(212,175,55,0.15), 0 0 60px rgba(212,175,55,0.06); border-color: var(--gold); }
           50% { box-shadow: 0 0 40px rgba(212,175,55,0.35), 0 0 80px rgba(212,175,55,0.15); border-color: #F0D77A; }
         }
 
-        /* Badge LIVE TONIGHT — clignotant */
+        /* Badge LIVE TONIGHT — chevauche la bordure du haut */
         .live-badge-container {
-          display: flex;
-          justify-content: center;
-          margin: -34px 0 14px 0;
+          position: absolute;
+          top: -14px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 2;
         }
         .live-badge {
           display: inline-flex;
@@ -4758,6 +4716,14 @@
           box-shadow: 0 4px 12px rgba(139,0,0,0.5);
           animation: liveBadgeBlink 1.4s ease-in-out infinite;
           border: 1.5px solid rgba(255,107,107,0.5);
+          white-space: nowrap;
+        }
+        .live-badge.is-off {
+          background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+          color: #888;
+          border-color: rgba(120,120,120,0.3);
+          animation: none;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.4);
         }
         @keyframes liveBadgeBlink {
           0%, 100% { box-shadow: 0 4px 12px rgba(139,0,0,0.5), 0 0 0 0 rgba(139,0,0,0.5); transform: scale(1); }
@@ -5461,23 +5427,309 @@
     }, 5000);
   }
 
-  // Vote dans le sondage Concert Interactif
-  function handleVote(e, idx) {
+  // ──────────────────────────────────────────────────────────────────────
+  // 🎤 CONCERT INTERACTIF — LIVE depuis Supabase
+  // ──────────────────────────────────────────────────────────────────────
+  const CONCERT_DEFAULT_CHANSONS = ['Somebody To Love', 'I Want It All', 'Killer Queen', 'Living On My Own'];
+  window._concertState = {
+    isLive: false,
+    concertId: null,
+    concertVille: null,
+    concertDate: null,         // YYYY-MM-DD
+    chansons: [...CONCERT_DEFAULT_CHANSONS],
+    votes: { total: 0, pcts: [0, 0, 0, 0], counts: [0, 0, 0, 0] },
+    monVote: null,             // 1, 2, 3 ou 4
+    refreshTimer: null,
+    forceLive: false           // bouton admin "Forcer LIVE"
+  };
+
+  // Récupère la config des chansons depuis Supabase
+  async function chargerConfigChansons() {
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/concert_interactif_config?select=chanson_1,chanson_2,chanson_3,chanson_4,actif&limit=1', {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+      });
+      if (!r.ok) return CONCERT_DEFAULT_CHANSONS;
+      const data = await r.json();
+      if (Array.isArray(data) && data[0]) {
+        return [data[0].chanson_1, data[0].chanson_2, data[0].chanson_3, data[0].chanson_4];
+      }
+    } catch(e) {
+      console.warn('[Concert] Config:', e);
+    }
+    return CONCERT_DEFAULT_CHANSONS;
+  }
+
+  // Détecte s'il y a un concert TWOQ aujourd'hui (via RPC)
+  async function detecterConcertDuJour() {
+    // Mode forcé (admin)
+    if (localStorage.getItem('twoq_force_live') === '1') {
+      const today = new Date().toISOString().split('T')[0];
+      return {
+        id: '00000000-0000-0000-0000-000000000000',
+        ville: 'TEST',
+        date_concert: today,
+        heure_show: '20:30:00'
+      };
+    }
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/concert_du_jour', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: '{}'
+      });
+      if (!r.ok) return null;
+      const data = await r.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data[0];
+      }
+    } catch(e) {
+      console.warn('[Concert] Détection:', e);
+    }
+    return null;
+  }
+
+  // Récupère les résultats des votes pour une date
+  async function chargerResultatsVotes(dateConcert) {
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/v_votes_resultats?date_concert=eq.' + dateConcert + '&select=total_votes,votes_1,votes_2,votes_3,votes_4,pct_1,pct_2,pct_3,pct_4', {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+      });
+      if (!r.ok) return { total: 0, pcts: [0, 0, 0, 0], counts: [0, 0, 0, 0] };
+      const data = await r.json();
+      if (Array.isArray(data) && data[0]) {
+        return {
+          total: data[0].total_votes || 0,
+          pcts: [data[0].pct_1 || 0, data[0].pct_2 || 0, data[0].pct_3 || 0, data[0].pct_4 || 0],
+          counts: [data[0].votes_1 || 0, data[0].votes_2 || 0, data[0].votes_3 || 0, data[0].votes_4 || 0]
+        };
+      }
+    } catch(e) {
+      console.warn('[Concert] Votes:', e);
+    }
+    return { total: 0, pcts: [0, 0, 0, 0], counts: [0, 0, 0, 0] };
+  }
+
+  // Récupère le vote actuel du fan
+  async function chargerMonVote(email, dateConcert) {
+    if (!email || !dateConcert) return null;
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/concert_votes?email=eq.' + encodeURIComponent(email) + '&date_concert=eq.' + dateConcert + '&select=chanson_votee&limit=1', {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+      });
+      if (!r.ok) return null;
+      const data = await r.json();
+      if (Array.isArray(data) && data[0]) {
+        return data[0].chanson_votee;
+      }
+    } catch(e) { /* silent */ }
+    return null;
+  }
+
+  // Initialisation du module
+  async function initConcertInteractif() {
+    const state = window._concertState;
+    const fan = getFan();
+    
+    state.chansons = await chargerConfigChansons();
+    const concert = await detecterConcertDuJour();
+    
+    if (concert) {
+      state.isLive = true;
+      state.concertId = concert.id;
+      state.concertVille = concert.ville;
+      state.concertDate = concert.date_concert;
+      
+      // Charger les résultats
+      state.votes = await chargerResultatsVotes(concert.date_concert);
+      // Charger mon vote si je suis connecté
+      if (fan && fan.email) {
+        state.monVote = await chargerMonVote(fan.email, concert.date_concert);
+      }
+      
+      // Auto-refresh toutes les 30 secondes
+      if (state.refreshTimer) clearInterval(state.refreshTimer);
+      state.refreshTimer = setInterval(async () => {
+        state.votes = await chargerResultatsVotes(concert.date_concert);
+        renderConcertInteractif();
+      }, 30000);
+    } else {
+      state.isLive = false;
+      state.concertId = null;
+      state.concertVille = null;
+      state.concertDate = null;
+      state.votes = { total: 0, pcts: [0, 0, 0, 0], counts: [0, 0, 0, 0] };
+      state.monVote = null;
+      if (state.refreshTimer) {
+        clearInterval(state.refreshTimer);
+        state.refreshTimer = null;
+      }
+    }
+    
+    renderConcertInteractif();
+  }
+  window.initConcertInteractif = initConcertInteractif;
+
+  // Render du bloc
+  function renderConcertInteractif() {
+    const container = document.getElementById('concertInteractifContainer');
+    if (!container) return;
+    const state = window._concertState;
+    const isLive = state.isLive;
+
+    if (!isLive) {
+      // Mode OFF — pas de concert aujourd'hui
+      container.innerHTML = `
+        <div class="interactive-spotlight is-off">
+          <div class="live-badge-container">
+            <span class="live-badge is-off">
+              <span style="display:inline-block; width:6px; height:6px; background:#666; border-radius:50%;"></span>
+              OFF
+            </span>
+          </div>
+          <div style="text-align:center; padding:8px 0 4px;">
+            <div style="font-family:var(--serif); font-size:18px; color:var(--smoke); line-height:1.3; margin-bottom:6px;">
+              Pas de concert ce soir
+            </div>
+            <div style="color:#666; font-size:12px; line-height:1.5; font-style:italic; padding:6px 8px;">
+              🎤 Reviens le jour J pour voter pour la chanson surprise du show !
+            </div>
+            <div style="margin-top:12px; padding:8px; background:rgba(212,175,55,0.05); border:1px dashed rgba(212,175,55,0.2); border-radius:8px; font-size:11px; color:var(--smoke);">
+              ✨ <strong style="color:var(--gold);">À chaque concert TWOQ</strong>, vote pour la chanson qui sera jouée<br>en bonus surprise sur scène
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // Mode LIVE
+    const { total, pcts } = state.votes;
+    const chansons = state.chansons;
+    const monVote = state.monVote;
+
+    let pollHtml = '';
+    for (let i = 0; i < 4; i++) {
+      const isSelected = (monVote === (i + 1));
+      const pct = pcts[i] || 0;
+      pollHtml += `
+        <div class="poll-option-fx${isSelected ? ' selected' : ''}" onclick="handleVote(event, ${i + 1})" data-pct="${pct}">
+          <div class="poll-bar" style="width:${pct}%;"></div>
+          <span class="poll-label">🎵 ${escapeHtmlWall(chansons[i])}</span>
+          <span class="poll-pct">${pct}%</span>
+        </div>
+      `;
+    }
+
+    const villeDisplay = state.concertVille && state.concertVille !== 'TEST' 
+      ? state.concertVille.toUpperCase() 
+      : (state.concertVille === 'TEST' ? 'MODE TEST 🧪' : '');
+
+    container.innerHTML = `
+      <div class="interactive-spotlight">
+        <div class="live-badge-container">
+          <span class="live-badge">
+            <span class="live-dot"></span>
+            LIVE TONIGHT
+          </span>
+        </div>
+
+        <div style="text-align:center; margin-bottom:12px;">
+          <div style="font-family:var(--serif); font-size:22px; color:var(--gold); line-height:1.2; margin-bottom:4px;">
+            Vous êtes dans la salle ce soir ?
+          </div>
+          <div style="color:#FF6B6B; font-size:13px; font-weight:600; letter-spacing:0.3px;">
+            🎤 Votez pour la chanson surprise du show !
+          </div>
+          ${villeDisplay ? `<div style="color:var(--gold); font-size:11px; letter-spacing:2px; margin-top:6px; font-weight:600;">📍 ${villeDisplay}</div>` : ''}
+        </div>
+
+        <div style="color:var(--smoke); font-size:11px; line-height:1.5; margin-bottom:14px; text-align:center; font-style:italic; padding:0 4px;">
+          La chanson qui remporte le + de votes sera interprétée <strong style="color:var(--gold); font-style:normal;">en bonus</strong> ce soir <span style="color:var(--gold); font-style:normal;">(hors set list habituelle)</span>
+        </div>
+
+        ${pollHtml}
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:10px; border-top:1px solid rgba(212,175,55,0.15);">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="live-dot" style="width:8px; height:8px;"></span>
+            <span style="color:#FF6B6B; font-size:10px; letter-spacing:1.5px; font-weight:700;">EN DIRECT</span>
+          </div>
+          <div style="color:var(--gold); font-size:11px; font-weight:600;">
+            <span style="font-family:var(--serif); font-size:14px;">${total.toLocaleString('fr-FR')}</span> vote${total > 1 ? 's' : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  window.renderConcertInteractif = renderConcertInteractif;
+
+  // Vote dans le sondage Concert Interactif (NOUVELLE VERSION — envoie à Supabase)
+  async function handleVote(e, idx) {
     if (!requireMember('voter')) return;
-    // Compat ancien + nouveau (poll-option ET poll-option-fx)
+    const state = window._concertState;
+    if (!state.isLive) {
+      alert('🎤 Le vote est désactivé : pas de concert TWOQ aujourd\'hui.\n\nReviens le jour d\'un concert pour participer !');
+      return;
+    }
+
+    const fan = getFan();
+    if (!fan || !fan.email) {
+      alert('Tu dois être connecté pour voter.');
+      return;
+    }
+
+    // Optimistic update
     document.querySelectorAll('.poll-option, .poll-option-fx').forEach(o => o.classList.remove('selected'));
     e.currentTarget.classList.add('selected');
-    // Petit toast confirmation
-    const confirm = document.createElement('div');
-    confirm.className = 'signup-success-toast';
-    confirm.innerHTML = '👑 Vote enregistré !';
-    document.body.appendChild(confirm);
-    setTimeout(() => confirm.classList.add('show'), 50);
-    setTimeout(() => {
-      confirm.classList.remove('show');
-      setTimeout(() => confirm.remove(), 400);
-    }, 2000);
+    state.monVote = idx;
+
+    // Envoyer le vote
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/voter_concert', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          p_fan_id: fan.id,
+          p_email: fan.email,
+          p_date_concert: state.concertDate,
+          p_date_concert_id: (state.concertId && state.concertId !== '00000000-0000-0000-0000-000000000000') ? state.concertId : null,
+          p_chanson: idx
+        })
+      });
+      const result = await r.json();
+      if (result && result.success) {
+        // Refresh des résultats
+        state.votes = await chargerResultatsVotes(state.concertDate);
+        renderConcertInteractif();
+        
+        // Toast confirmation
+        const confirm = document.createElement('div');
+        confirm.className = 'signup-success-toast';
+        confirm.innerHTML = result.updated ? '👑 Vote modifié !' : '👑 Vote enregistré !';
+        document.body.appendChild(confirm);
+        setTimeout(() => confirm.classList.add('show'), 50);
+        setTimeout(() => {
+          confirm.classList.remove('show');
+          setTimeout(() => confirm.remove(), 400);
+        }, 2000);
+      } else {
+        throw new Error(result && result.message ? result.message : 'Erreur inconnue');
+      }
+    } catch(err) {
+      console.error('[Vote] Erreur:', err);
+      alert('❌ Erreur lors du vote : ' + (err.message || 'inconnue'));
+    }
   }
+  window.handleVote = handleVote;
 
   // Wall of Fans — voir photo (pas réservé : tout le monde peut regarder)
   function openWallPhoto() {
@@ -6902,6 +7154,11 @@
     // === Chargement asynchrone des photos Wall of Fans ===
     if (name === 'fanzone' && typeof chargerWallOfFansPhotos === 'function') {
       setTimeout(chargerWallOfFansPhotos, 300);
+    }
+
+    // === Chargement asynchrone du Concert Interactif (badge LIVE + votes) ===
+    if (name === 'fanzone' && typeof initConcertInteractif === 'function') {
+      setTimeout(initConcertInteractif, 300);
     }
 
     // === STOP SON D'INTRO dès qu'on quitte la page d'accueil ===
