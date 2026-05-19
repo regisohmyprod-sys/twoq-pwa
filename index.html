@@ -4662,11 +4662,11 @@
       </div>
 
       <div class="section-eyebrow">CONCERT INTERACTIF</div>
-      <div class="section-title">Choisis ta chanson</div>
-      <div style="color:var(--smoke); font-size:12px; line-height:1.5; margin: 4px 0 12px; font-style:italic;">
-        La chanson qui remportera le + de votes sera interprétée ce soir par le groupe ! <span style="color:var(--gold); font-style:normal;">(hors set list habituelle)</span>
-      </div>
       <div class="contest-card">
+        <div class="section-title" style="margin:0 0 4px;">Choisis ta chanson</div>
+        <div style="color:var(--smoke); font-size:12px; line-height:1.5; margin: 4px 0 12px; font-style:italic;">
+          La chanson qui remportera le + de votes sera interprétée ce soir par le groupe ! <span style="color:var(--gold); font-style:normal;">(hors set list habituelle)</span>
+        </div>
         <div class="poll-option selected" onclick="handleVote(event, 0)">
           <span>Somebody To Love</span>
         </div>
@@ -4687,11 +4687,11 @@
       </div>
 
       <div class="section-eyebrow">WALL OF FANS</div>
-      <div class="section-title">Vos plus belles photos</div>
-      <div style="color:var(--smoke); font-size:12px; line-height:1.5; margin-bottom:12px;">
-        Partagez vos meilleurs souvenirs <strong style="color:var(--gold);">pendant les concerts</strong> avec <strong style="color:var(--gold);">#TheWorldOfQueen</strong> — les plus belles sont publiées ici.
-      </div>
       <div class="contest-card">
+        <div class="section-title" style="margin:0 0 4px;">Vos plus belles photos</div>
+        <div style="color:var(--smoke); font-size:12px; line-height:1.5; margin-bottom:12px;">
+          Partagez vos meilleurs souvenirs <strong style="color:var(--gold);">pendant les concerts</strong> avec <strong style="color:var(--gold);">#TheWorldOfQueen</strong> — les plus belles sont publiées ici.
+        </div>
         <div class="wall-grid" id="wallOfFansGrid">
           <div class="wall-item"><div class="wall-placeholder">📸</div></div>
           <div class="wall-item"><div class="wall-placeholder">🎤</div></div>
@@ -4711,55 +4711,35 @@
       </div>
 
       <div class="section-eyebrow">TÉMOIGNAGES</div>
-      <div class="section-title">Ce qu'ils en disent</div>
-      <div class="testimonial-card">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">« Un super hommage à Freddie, j'en ai eu les larmes aux yeux. Vous êtes tous merveilleux. »</div>
-        <div class="testi-meta">
-          <div class="testi-author">Béatrice C.</div>
-          <div class="testi-date">Nantes · oct. 2024</div>
+      <div class="contest-card">
+        <div class="section-title" style="margin:0 0 12px;">Ce qu'ils en disent</div>
+        <div class="testimonial-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-text">« Un super hommage à Freddie, j'en ai eu les larmes aux yeux. Vous êtes tous merveilleux. »</div>
+          <div class="testi-meta">
+            <div class="testi-author">Béatrice C.</div>
+            <div class="testi-date">Nantes · oct. 2024</div>
+          </div>
         </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">« Sans aucun doute, le meilleur du meilleur des hommages à notre cher Freddy. Quel spectacle, quelle émotion ! »</div>
-        <div class="testi-meta">
-          <div class="testi-author">Lauren P.</div>
-          <div class="testi-date">Dôme de Paris · 2024</div>
+        <div class="testimonial-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-text">« Sans aucun doute, le meilleur du meilleur des hommages à notre cher Freddy. Quel spectacle, quelle émotion ! »</div>
+          <div class="testi-meta">
+            <div class="testi-author">Lauren P.</div>
+            <div class="testi-date">Dôme de Paris · 2024</div>
+          </div>
         </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">« Vu à Caen, j'ai adoré. Love of My Life, Barcelona magnifique. J'en ai eu des frissons ! »</div>
-        <div class="testi-meta">
-          <div class="testi-author">Steliahuor</div>
-          <div class="testi-date">Caen · 2024</div>
+        <div class="testimonial-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-text">« Vu à Caen, j'ai adoré. Love of My Life, Barcelona magnifique. J'en ai eu des frissons ! »</div>
+          <div class="testi-meta">
+            <div class="testi-author">Steliahuor</div>
+            <div class="testi-date">Caen · 2024</div>
+          </div>
         </div>
-      </div>
-      <div style="text-align:center; margin-top:14px;">
-        <span class="btn-outline" onclick="openLeaveReview()">✍️ Laisser mon avis</span>
-      </div>
-
-      <div class="gold-divider" style="margin:22px 0 18px;">
-        <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
-      </div>
-
-      <div class="section-eyebrow">QUIZ TWOQ</div>
-      <div class="section-title">Es-tu un vrai fan ?</div>
-      <div class="quiz-card" onclick="openQuiz()">
-        <div class="quiz-cover"></div>
-        <div class="quiz-overlay"></div>
-        <div class="quiz-content">
-          <div class="quiz-tag">QUIZ EXCLUSIF</div>
-          <div class="quiz-title">Connais-tu vraiment Queen ?</div>
-          <div class="quiz-sub">15 questions · 2 minutes · Score à la fin</div>
-          <div class="quiz-cta">▶ Lancer le quiz</div>
+        <div style="text-align:center; margin-top:14px;">
+          <span class="btn-outline" onclick="openLeaveReview()">✍️ Laisser mon avis</span>
         </div>
-      </div>
-      <div class="quiz-stats">
-        <div class="quiz-stat"><div class="quiz-stat-num">12 458</div><div class="quiz-stat-lab">JOUEURS</div></div>
-        <div class="quiz-stat"><div class="quiz-stat-num">68%</div><div class="quiz-stat-lab">SCORE MOYEN</div></div>
-        <div class="quiz-stat"><div class="quiz-stat-num">2 min</div><div class="quiz-stat-lab">DURÉE</div></div>
       </div>
 
       <div class="gold-divider" style="margin:22px 0 18px;">
@@ -4767,33 +4747,52 @@
       </div>
 
       <div class="section-eyebrow">COMMUNAUTÉ</div>
-      <div class="section-title">Rejoins le Royal Club</div>
+      <div class="contest-card">
+        <div class="section-title" style="margin:0 0 12px;">Rejoins la famille TWOQ</div>
 
-      <div class="community-card community-newsletter" onclick="alert('Newsletter — bientôt')">
-        <div class="community-icon">✉️</div>
-        <div class="community-info">
-          <div class="community-title">Newsletter Royale</div>
-          <div class="community-sub">Avant-premières dates, contenus exclusifs, ventes prioritaires</div>
+        <div class="community-card" onclick="openParrainage()" style="margin-bottom:14px;">
+          <div class="community-icon">🤝</div>
+          <div class="community-info">
+            <div class="community-title">Parraine un ami</div>
+            <div class="community-sub">Invite un proche · Gagne des places & du merch</div>
+          </div>
+          <div class="community-arrow">→</div>
         </div>
-        <div class="community-arrow">→</div>
-      </div>
 
-      <div class="community-card community-club" onclick="alert('Club fan — bientôt')">
-        <div class="community-icon">👑</div>
-        <div class="community-info">
-          <div class="community-title">Club Fan TWOQ</div>
-          <div class="community-sub">Badge officiel · Réductions billets · Accès meet & greet</div>
+        <!-- BLOC SUIVEZ-NOUS -->
+        <div style="margin-top:18px;">
+          <div class="section-eyebrow" style="margin-bottom:10px;">SUIVEZ-NOUS</div>
+          <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;">
+            <a href="https://www.facebook.com/theworldofqueen" target="_blank" rel="noopener" class="social-btn" style="display:flex; align-items:center; gap:10px; background:#0f0f0f; border:1px solid var(--border); border-radius:10px; padding:12px; text-decoration:none; color:var(--cream); font-size:13px;">
+              <span style="width:28px; height:28px; background:#1877F2; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; font-size:14px;">f</span>
+              Facebook
+            </a>
+            <a href="https://www.instagram.com/theworldofqueen.officiel/" target="_blank" rel="noopener" class="social-btn" style="display:flex; align-items:center; gap:10px; background:#0f0f0f; border:1px solid var(--border); border-radius:10px; padding:12px; text-decoration:none; color:var(--cream); font-size:13px;">
+              <span style="width:28px; height:28px; background:linear-gradient(135deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff;">📷</span>
+              Instagram
+            </a>
+            <a href="https://www.youtube.com/@TheWorldOfQueenOfficiel" target="_blank" rel="noopener" class="social-btn" style="display:flex; align-items:center; gap:10px; background:#0f0f0f; border:1px solid var(--border); border-radius:10px; padding:12px; text-decoration:none; color:var(--cream); font-size:13px;">
+              <span style="width:28px; height:28px; background:#FF0000; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff;">▶</span>
+              YouTube
+            </a>
+            <a href="https://www.theworldofqueen.com" target="_blank" rel="noopener" class="social-btn" style="display:flex; align-items:center; gap:10px; background:#0f0f0f; border:1px solid var(--border); border-radius:10px; padding:12px; text-decoration:none; color:var(--cream); font-size:13px;">
+              <span style="width:28px; height:28px; background:var(--gold); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#000; font-size:14px;">🌐</span>
+              Site officiel
+            </a>
+          </div>
         </div>
-        <span class="tag tag-gold" style="font-size:9px; padding:3px 8px;">PREMIUM</span>
-      </div>
 
-      <div class="community-card" onclick="alert('Parrainage — bientôt')">
-        <div class="community-icon">🤝</div>
-        <div class="community-info">
-          <div class="community-title">Parraine un ami</div>
-          <div class="community-sub">Invite un proche · Gagne des places & du merch</div>
+        <!-- BLOC BOUTIQUE -->
+        <div style="margin-top:18px;">
+          <div class="section-eyebrow" style="margin-bottom:10px;">BOUTIQUE</div>
+          <div onclick="show('boutique')" style="cursor:pointer; background:linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(20,20,20,0.95) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:12px; padding:18px; position:relative; overflow:hidden;">
+            <div style="font-size:9px; letter-spacing:1.5px; color:var(--gold); margin-bottom:6px; font-weight:600;">MERCH OFFICIEL</div>
+            <div style="font-family:var(--serif); font-size:22px; color:var(--cream); line-height:1.2; margin-bottom:6px;">La Boutique TWOQ</div>
+            <div style="color:var(--smoke); font-size:12px; font-style:italic; margin-bottom:14px;">T-shirts, vinyles, posters &amp; souvenirs collectors</div>
+            <span class="btn-gold" style="display:inline-block; padding:7px 14px; font-size:11px;">Découvrir →</span>
+            <div style="position:absolute; right:14px; bottom:10px; font-size:56px; opacity:0.18;">🛍️</div>
+          </div>
         </div>
-        <div class="community-arrow">→</div>
       </div>
 
       <div class="gold-divider" style="margin:22px 0 18px;">
@@ -4801,22 +4800,34 @@
       </div>
 
       <div class="section-eyebrow">CONCOURS PASSÉS</div>
-      <div class="card" style="opacity:0.65;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="color:var(--cream); font-size:13px;">Vinyle signé édition limitée</div>
-            <div class="mut" style="font-size:11px; margin-top:2px;">🏆 Gagnante : Sophie L. (Lyon)</div>
+      <div class="contest-card">
+        <div class="section-title" style="margin:0 0 12px;">Édition précédente</div>
+        <div style="background:#0f0f0f; border-radius:8px; padding:14px; opacity:0.75; margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:0;">
+              <div style="color:var(--cream); font-size:14px; font-weight:500;">🎄 32 places — Tournée Noël 2025-2026</div>
+              <div class="mut" style="font-size:11px; margin-top:4px; line-height:1.4;">🏆 32 gagnants tirés au sort sur les dates de la tournée de Noël</div>
+            </div>
+            <span class="tag tag-outline" style="white-space:nowrap;">TERMINÉ</span>
           </div>
-          <span class="tag tag-outline">TERMINÉ</span>
         </div>
-      </div>
-      <div class="card" style="opacity:0.65; margin-top:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="color:var(--cream); font-size:13px;">2 places Brest Arena</div>
-            <div class="mut" style="font-size:11px; margin-top:2px;">🏆 Gagnant : Marc D. (Quimper)</div>
+        <div style="background:#0f0f0f; border-radius:8px; padding:14px; opacity:0.65; margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:0;">
+              <div style="color:var(--cream); font-size:13px;">Vinyle signé édition limitée</div>
+              <div class="mut" style="font-size:11px; margin-top:2px;">🏆 Gagnante : Sophie L. (Lyon)</div>
+            </div>
+            <span class="tag tag-outline" style="white-space:nowrap;">TERMINÉ</span>
           </div>
-          <span class="tag tag-outline">TERMINÉ</span>
+        </div>
+        <div style="background:#0f0f0f; border-radius:8px; padding:14px; opacity:0.65;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:0;">
+              <div style="color:var(--cream); font-size:13px;">2 places Brest Arena</div>
+              <div class="mut" style="font-size:11px; margin-top:2px;">🏆 Gagnant : Marc D. (Quimper)</div>
+            </div>
+            <span class="tag tag-outline" style="white-space:nowrap;">TERMINÉ</span>
+          </div>
         </div>
       </div>
     `,
@@ -5575,11 +5586,178 @@
   // Exposer pour pouvoir recharger après envoi
   window.chargerWallOfFansPhotos = chargerWallOfFansPhotos;
 
-  // Témoignages — laisser un avis (réservé membres)
+  // ──────────────────────────────────────────────────────────────────────
+  // TÉMOIGNAGES — Laisser un avis (VERSION FONCTIONNELLE)
+  // ──────────────────────────────────────────────────────────────────────
   function openLeaveReview() {
     if (!requireMember('laisser un avis')) return;
-    alert('✍️ Laisser un avis — fonctionnalité en cours de développement.\n\nBientôt : tu pourras donner ton ressenti après chaque concert vu, avec note ★ et photo !');
+    const fan = getFan();
+    afficherModalAvis(fan);
   }
+  window.openLeaveReview = openLeaveReview;
+
+  function afficherModalAvis(fan) {
+    let modal = document.getElementById('reviewModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'reviewModal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+      document.body.appendChild(modal);
+    }
+
+    window._reviewNote = 0; // note sélectionnée
+
+    modal.innerHTML = `
+      <div style="background:linear-gradient(180deg, #1a1a1a 0%, #0A0A0A 100%);border:1px solid var(--gold);border-radius:14px;padding:24px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div style="font-size:36px;margin-bottom:8px;">✍️</div>
+          <div style="font-family:var(--serif);font-size:22px;color:var(--gold);margin-bottom:4px;">Laisser un avis</div>
+          <div style="font-size:11px;color:var(--smoke);">Partage ton ressenti après le concert</div>
+        </div>
+
+        <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--cream);line-height:1.6;">
+          De : <strong>${escapeHtmlWall(fan.prenom || '')} ${escapeHtmlWall(fan.nom || '')}</strong><br>
+          Modération : ton avis sera vérifié avant publication
+        </div>
+
+        <label style="display:block;font-size:10px;letter-spacing:1.5px;color:var(--smoke);margin-bottom:6px;">⭐ NOTE</label>
+        <div id="reviewStarsContainer" style="display:flex;justify-content:center;gap:8px;margin-bottom:14px;">
+          ${[1,2,3,4,5].map(n => `
+            <button type="button" data-note="${n}" onclick="reviewSetNote(${n})" style="background:transparent;border:none;font-size:36px;color:var(--border);cursor:pointer;padding:0;line-height:1;transition:color 0.15s;">☆</button>
+          `).join('')}
+        </div>
+        <div id="reviewNoteLabel" style="text-align:center;font-size:11px;color:var(--smoke);margin-bottom:14px;height:14px;"></div>
+
+        <label style="display:block;font-size:10px;letter-spacing:1.5px;color:var(--smoke);margin-bottom:4px;">💬 TON AVIS</label>
+        <textarea id="reviewTexte" placeholder="Ex: Concert magique, des frissons sur Bohemian Rhapsody !" maxlength="500" style="width:100%;background:#0f0f0f;border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--cream);font-size:12px;font-family:inherit;resize:none;min-height:90px;margin-bottom:6px;"></textarea>
+        <div style="text-align:right;font-size:10px;color:var(--smoke);margin-bottom:14px;">500 caractères max</div>
+
+        <label style="display:block;font-size:10px;letter-spacing:1.5px;color:var(--smoke);margin-bottom:4px;">📍 VILLE / SALLE (optionnel)</label>
+        <input type="text" id="reviewVille" placeholder="Ex: Dôme de Paris" maxlength="80" style="width:100%;background:#0f0f0f;border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--cream);font-size:12px;margin-bottom:18px;">
+
+        <div style="display:flex;gap:10px;">
+          <button onclick="annulerAvis()" style="flex:1;background:transparent;color:var(--smoke);border:1px solid var(--border);border-radius:10px;padding:12px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;">ANNULER</button>
+          <button id="btnEnvoyerAvis" onclick="envoyerAvis()" style="flex:1.4;background:linear-gradient(135deg, #D4AF37 0%, #F0D77A 100%);color:#000;border:none;border-radius:10px;padding:12px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;cursor:pointer;font-weight:700;">✓ ENVOYER</button>
+        </div>
+      </div>
+    `;
+
+    window._reviewPendingFan = fan;
+  }
+
+  window.reviewSetNote = function(note) {
+    window._reviewNote = note;
+    const labels = ['', 'À éviter', 'Bof', 'Bien', 'Très bien', 'Exceptionnel !'];
+    const labelEl = document.getElementById('reviewNoteLabel');
+    if (labelEl) labelEl.textContent = labels[note] || '';
+    // Update visuel étoiles
+    const btns = document.querySelectorAll('#reviewStarsContainer button');
+    btns.forEach((btn, i) => {
+      if (i < note) {
+        btn.style.color = '#D4AF37';
+        btn.textContent = '★';
+      } else {
+        btn.style.color = '#3a3a3a';
+        btn.textContent = '☆';
+      }
+    });
+  };
+
+  window.annulerAvis = function() {
+    const modal = document.getElementById('reviewModal');
+    if (modal) modal.remove();
+    window._reviewPendingFan = null;
+    window._reviewNote = 0;
+  };
+
+  window.envoyerAvis = async function() {
+    const fan = window._reviewPendingFan;
+    if (!fan) return;
+    const note = window._reviewNote || 0;
+    const texte = (document.getElementById('reviewTexte')?.value || '').trim();
+    const ville = (document.getElementById('reviewVille')?.value || '').trim();
+
+    if (note === 0) {
+      alert('⭐ Merci de mettre une note (1 à 5 étoiles)');
+      return;
+    }
+    if (texte.length < 10) {
+      alert('💬 Ton avis est un peu court. Écris-en quelques mots de plus (10 caractères min) !');
+      return;
+    }
+
+    const btn = document.getElementById('btnEnvoyerAvis');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '⏳ ENVOI...';
+      btn.style.opacity = '0.6';
+      btn.style.cursor = 'wait';
+    }
+
+    try {
+      const payload = {
+        fan_id: fan.id || null,
+        prenom: fan.prenom || '',
+        nom: fan.nom || '',
+        email: fan.email || '',
+        note: note,
+        texte: texte,
+        ville_concert: ville || null,
+        statut: 'en_attente',
+        source: 'pwa'
+      };
+      const r = await fetch(SUPABASE_URL + '/rest/v1/temoignages_fans', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!r.ok) {
+        const err = await r.text();
+        console.warn('[Review] Insert error:', err);
+        throw new Error('Échec de l\'envoi (' + r.status + ')');
+      }
+      afficherEcranSuccesAvis(fan, note);
+    } catch(e) {
+      console.error('[Review] Erreur:', e);
+      alert('❌ Échec de l\'envoi : ' + e.message + '\n\nRéessaye dans quelques instants.');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '✓ ENVOYER';
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+      }
+    }
+  };
+
+  function afficherEcranSuccesAvis(fan, note) {
+    const modal = document.getElementById('reviewModal');
+    if (!modal) return;
+    const etoiles = '★'.repeat(note) + '☆'.repeat(5 - note);
+    modal.innerHTML = `
+      <div style="background:linear-gradient(180deg, #1a1a1a 0%, #0A0A0A 100%);border:1px solid var(--gold);border-radius:14px;padding:32px 24px;max-width:380px;width:100%;text-align:center;">
+        <div style="font-size:60px;margin-bottom:16px;animation:successPulse 0.6s ease;">✅</div>
+        <div style="font-family:var(--serif);font-size:24px;color:var(--gold);margin-bottom:10px;">Merci ${escapeHtmlWall(fan.prenom || '')} !</div>
+        <div style="font-size:24px;color:var(--gold);letter-spacing:4px;margin-bottom:14px;">${etoiles}</div>
+        <div style="font-size:13px;color:var(--cream);line-height:1.6;margin-bottom:20px;">
+          Ton avis a bien été enregistré 🤍<br>
+          Il sera publié après modération.
+        </div>
+        <button onclick="annulerAvis()" style="background:linear-gradient(135deg, #D4AF37 0%, #F0D77A 100%);color:#000;border:none;border-radius:10px;padding:12px 32px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;cursor:pointer;font-weight:700;">FERMER</button>
+      </div>
+      <style>@keyframes successPulse { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }</style>
+    `;
+  }
+
+  // Fonction parrainage (basique)
+  window.openParrainage = function() {
+    if (!requireMember('parrainer un ami')) return;
+    alert('🤝 Parraine un ami\n\nFonctionnalité bientôt disponible : tu pourras inviter tes proches et gagner des places + du merch exclusif !');
+  };
 
   // Quiz TWOQ — lancer le quiz (réservé membres pour valider le score)
   function openQuiz() {
