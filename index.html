@@ -5881,10 +5881,245 @@
     `;
   }
 
-  // Fonction parrainage (basique)
-  window.openParrainage = function() {
+  // ──────────────────────────────────────────────────────────────────────
+  // 🤝 PARRAINAGE — Modal complet
+  // ──────────────────────────────────────────────────────────────────────
+  window.openParrainage = async function() {
     if (!requireMember('parrainer un ami')) return;
-    alert('🤝 Parraine un ami\n\nFonctionnalité bientôt disponible : tu pourras inviter tes proches et gagner des places + du merch exclusif !');
+    const fan = getFan();
+    
+    // Construire l'URL de parrainage
+    const baseUrl = 'https://regisohmyprod-sys.github.io/twoq-pwa/';
+    const parrainUrl = baseUrl + '?parrain=' + encodeURIComponent(fan.id);
+    
+    // Récupérer les stats actuelles du parrain
+    let nbFilleuls = 0;
+    let pointsParrainage = 0;
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/fans?id=eq.' + fan.id + '&select=nb_filleuls,points_parrainage,fan_score', {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+      });
+      if (r.ok) {
+        const data = await r.json();
+        if (data && data[0]) {
+          nbFilleuls = data[0].nb_filleuls || 0;
+          pointsParrainage = data[0].points_parrainage || 0;
+          if (typeof data[0].fan_score === 'number') {
+            fan.fan_score = data[0].fan_score;
+            saveFan(fan);
+          }
+        }
+      }
+    } catch(e) { console.warn('[Parrain] Erreur stats:', e); }
+
+    // Calculer le niveau actuel
+    const niveauActuel = getFanLevel(fan);
+    const prochainNiveau = getNextLevel(niveauActuel);
+
+    // Message texte par défaut pour le partage
+    const messagePartage = "🎤 Salut ! Rejoins-moi sur l'appli THE WORLD OF QUEEN — le meilleur hommage à Queen ! Toutes les dates de tournée, concours, contenus exclusifs : " + parrainUrl;
+
+    afficherModalParrainage(fan, parrainUrl, messagePartage, nbFilleuls, pointsParrainage, niveauActuel, prochainNiveau);
+  };
+
+  function afficherModalParrainage(fan, parrainUrl, messagePartage, nbFilleuls, pointsParrainage, niveauActuel, prochainNiveau) {
+    let modal = document.getElementById('parrainageModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'parrainageModal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;';
+      document.body.appendChild(modal);
+    }
+
+    // Construire la jauge de progression
+    const score = fan.fan_score || 0;
+    const niveau = niveauActuel || { icon: '👤', label: 'FAN', color: '#888' };
+    const next = prochainNiveau;
+    
+    let jaugeHtml = '';
+    if (next && next.key !== niveau.key) {
+      const seuilNext = (next.key === 'vip') ? 1 : next.min;
+      const progress = Math.min(100, Math.round((score / Math.max(1, seuilNext)) * 100));
+      jaugeHtml = `
+        <div style="margin:14px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--smoke);margin-bottom:4px;">
+            <span>${niveau.icon} ${niveau.label}</span>
+            <span>${next.icon} ${next.label}</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:${progress}%;background:linear-gradient(90deg, ${niveau.color}, ${next.color});transition:width 0.5s;"></div>
+          </div>
+          <div style="font-size:10px;color:var(--smoke);text-align:center;margin-top:4px;">${score} / ${seuilNext} pts</div>
+        </div>
+      `;
+    } else {
+      jaugeHtml = `
+        <div style="margin:14px 0; text-align:center; padding:8px; background:linear-gradient(135deg, ${niveau.bg || 'rgba(212,175,55,0.1)'}, transparent); border-radius:8px;">
+          <span style="color:${niveau.color}; font-size:12px; font-weight:600;">${niveau.icon} Niveau MAX atteint : ${niveau.label}</span>
+        </div>
+      `;
+    }
+
+    modal.innerHTML = `
+      <div style="background:linear-gradient(180deg, #1a1a1a 0%, #0A0A0A 100%);border:1px solid var(--gold);border-radius:14px;padding:20px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto;">
+        
+        <div style="text-align:center;margin-bottom:14px;">
+          <div style="font-size:36px;margin-bottom:6px;">🤝</div>
+          <div style="font-family:var(--serif);font-size:22px;color:var(--gold);margin-bottom:4px;">Parraine un ami</div>
+          <div style="font-size:11px;color:var(--smoke);">Invite tes proches, gagnez des points ensemble !</div>
+        </div>
+
+        <!-- Tes stats actuelles -->
+        <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.3);border-radius:10px;padding:12px;margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-around;text-align:center;margin-bottom:6px;">
+            <div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);line-height:1;">${nbFilleuls}</div>
+              <div style="font-size:9px;letter-spacing:1px;color:var(--smoke);margin-top:2px;">FILLEULS</div>
+            </div>
+            <div style="border-left:1px solid rgba(212,175,55,0.2);"></div>
+            <div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);line-height:1;">+${pointsParrainage}</div>
+              <div style="font-size:9px;letter-spacing:1px;color:var(--smoke);margin-top:2px;">POINTS</div>
+            </div>
+            <div style="border-left:1px solid rgba(212,175,55,0.2);"></div>
+            <div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${niveau.color};line-height:1;">${niveau.icon}</div>
+              <div style="font-size:9px;letter-spacing:1px;color:var(--smoke);margin-top:2px;">${niveau.label}</div>
+            </div>
+          </div>
+          ${jaugeHtml}
+        </div>
+
+        <!-- Avantages -->
+        <div style="background:#0f0f0f;border-radius:8px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--cream);line-height:1.7;">
+          <div style="color:var(--gold);font-weight:600;margin-bottom:6px;letter-spacing:0.5px;">🎁 COMMENT ÇA MARCHE ?</div>
+          • Tu partages ton lien à un ami<br>
+          • Il s'inscrit gratuitement : <strong style="color:var(--gold);">+10 pts</strong> pour toi 🎉<br>
+          • Il complète son profil : <strong style="color:var(--gold);">+5 pts</strong> bonus<br>
+          • Ton ami démarre direct avec <strong style="color:var(--gold);">+10 pts</strong> de bienvenue<br>
+          <div style="margin-top:6px;font-style:italic;color:var(--smoke);font-size:10px;">Les points te font monter en niveau (FAN → VIP → OR → PLATINE)</div>
+        </div>
+
+        <!-- Ton lien -->
+        <label style="display:block;font-size:10px;letter-spacing:1.5px;color:var(--smoke);margin-bottom:4px;">🔗 TON LIEN DE PARRAINAGE</label>
+        <div style="display:flex;gap:6px;margin-bottom:14px;">
+          <input type="text" id="parrainLienInput" value="${parrainUrl}" readonly style="flex:1;background:#0f0f0f;border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--cream);font-size:11px;font-family:monospace;">
+          <button onclick="copierLienParrainage()" style="background:var(--gold);color:#000;border:none;border-radius:8px;padding:8px 14px;font-size:11px;cursor:pointer;font-weight:700;white-space:nowrap;" id="btnCopierLien">📋 Copier</button>
+        </div>
+
+        <!-- Boutons partage -->
+        <label style="display:block;font-size:10px;letter-spacing:1.5px;color:var(--smoke);margin-bottom:8px;">📤 PARTAGER PAR</label>
+        <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:8px;margin-bottom:14px;">
+          <a href="https://wa.me/?text=${encodeURIComponent(messagePartage)}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;border-radius:8px;padding:10px;text-decoration:none;font-size:12px;font-weight:600;justify-content:center;">
+            <span style="font-size:16px;">💬</span> WhatsApp
+          </a>
+          <a href="sms:?body=${encodeURIComponent(messagePartage)}" style="display:flex;align-items:center;gap:8px;background:#3a3a3a;color:#fff;border-radius:8px;padding:10px;text-decoration:none;font-size:12px;font-weight:600;justify-content:center;">
+            <span style="font-size:16px;">📱</span> SMS
+          </a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(parrainUrl)}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;background:#1877F2;color:#fff;border-radius:8px;padding:10px;text-decoration:none;font-size:12px;font-weight:600;justify-content:center;">
+            <span style="font-size:16px;">f</span> Facebook
+          </a>
+          <a href="mailto:?subject=${encodeURIComponent('Rejoins TWOQ !')}&body=${encodeURIComponent(messagePartage)}" style="display:flex;align-items:center;gap:8px;background:#0f0f0f;border:1px solid var(--border);color:var(--cream);border-radius:8px;padding:10px;text-decoration:none;font-size:12px;font-weight:600;justify-content:center;">
+            <span style="font-size:16px;">✉️</span> Email
+          </a>
+        </div>
+
+        ${typeof navigator.share === 'function' ? `
+          <button onclick="partagerNatif()" style="width:100%;background:linear-gradient(135deg,#D4AF37,#F0D77A);color:#000;border:none;border-radius:10px;padding:11px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;font-weight:700;margin-bottom:10px;">📲 PARTAGER VIA TOUTES LES APPS</button>
+        ` : ''}
+
+        <button onclick="fermerParrainage()" style="width:100%;background:transparent;color:var(--smoke);border:1px solid var(--border);border-radius:10px;padding:10px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1.5px;cursor:pointer;">FERMER</button>
+      </div>
+    `;
+
+    window._parrainMessage = messagePartage;
+    window._parrainUrl = parrainUrl;
+  }
+
+  window.copierLienParrainage = function() {
+    const input = document.getElementById('parrainLienInput');
+    if (!input) return;
+    input.select();
+    input.setSelectionRange(0, 99999);
+    try {
+      document.execCommand('copy');
+      const btn = document.getElementById('btnCopierLien');
+      if (btn) {
+        const original = btn.textContent;
+        btn.textContent = '✓ Copié !';
+        btn.style.background = '#3CB371';
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.style.background = 'var(--gold)';
+        }, 2000);
+      }
+    } catch(e) {
+      alert('Lien copié manuellement : ' + input.value);
+    }
+  };
+
+  window.partagerNatif = async function() {
+    if (typeof navigator.share !== 'function') return;
+    try {
+      await navigator.share({
+        title: 'THE WORLD OF QUEEN',
+        text: window._parrainMessage || 'Rejoins-moi sur TWOQ !',
+        url: window._parrainUrl
+      });
+    } catch(e) { 
+      // L'utilisateur a annulé, c'est OK
+      console.log('[Partage] annulé');
+    }
+  };
+
+  window.fermerParrainage = function() {
+    const modal = document.getElementById('parrainageModal');
+    if (modal) modal.remove();
+  };
+
+  // ──────────────────────────────────────────────────────────────────────
+  // 🤝 DÉTECTION URL ?parrain=XXX à l'inscription
+  // ──────────────────────────────────────────────────────────────────────
+  function getParrainFromUrl() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const parrainId = params.get('parrain');
+      if (parrainId && parrainId.match(/^[0-9a-f-]{36}$/i)) {
+        // Stocker dans localStorage pour persistance
+        localStorage.setItem('twoq_parrain_id', parrainId);
+        return parrainId;
+      }
+    } catch(e) {}
+    return localStorage.getItem('twoq_parrain_id') || null;
+  }
+  window.getParrainFromUrl = getParrainFromUrl;
+
+  // Appelée automatiquement après création d'un fan (à brancher dans le flow inscription)
+  window.enregistrerParrainagePostInscription = async function(filleulId) {
+    const parrainId = getParrainFromUrl();
+    if (!parrainId || !filleulId) return;
+    if (parrainId === filleulId) return; // self-parrainage interdit
+    
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/enregistrer_parrainage', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ p_parrain_id: parrainId, p_filleul_id: filleulId, p_source: 'pwa' })
+      });
+      const result = await r.json();
+      if (result && result.success) {
+        console.log('[Parrain] ✅ Parrainage enregistré');
+        localStorage.removeItem('twoq_parrain_id'); // clean
+        return true;
+      }
+    } catch(e) {
+      console.warn('[Parrain] Erreur:', e);
+    }
+    return false;
   };
 
   // Quiz TWOQ — lancer le quiz (réservé membres pour valider le score)
@@ -5929,7 +6164,14 @@
       });
       if (response.ok) {
         const result = await response.json();
-        return { ok: true, data: result[0] };
+        const nouveauFan = result[0];
+        // 🤝 Enregistrement parrainage si applicable
+        if (nouveauFan && nouveauFan.id) {
+          try {
+            await enregistrerParrainagePostInscription(nouveauFan.id);
+          } catch(e) { console.warn('[Parrain] Échec post-inscription:', e); }
+        }
+        return { ok: true, data: nouveauFan };
       } else {
         const err = await response.json();
         // Email déjà existant ?
@@ -6136,7 +6378,30 @@
   // Auto-restore au chargement après que la session fan soit prête
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(restoreFavsFromSupabase, 2000);
+    // 🤝 Détecter si l'utilisateur arrive avec un lien de parrainage
+    try {
+      const parrainId = getParrainFromUrl();
+      const fan = getFan();
+      // Si on a un parrain ET pas encore connecté → on affiche un message de bienvenue
+      if (parrainId && (!fan || !fan.id) && !sessionStorage.getItem('twoq_parrain_msg_seen')) {
+        sessionStorage.setItem('twoq_parrain_msg_seen', '1');
+        setTimeout(() => afficherToastParrain(), 2500);
+      }
+    } catch(e) {}
   });
+
+  function afficherToastParrain() {
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed; bottom:90px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg, #D4AF37 0%, #F0D77A 100%); color:#000; padding:14px 18px; border-radius:12px; box-shadow:0 6px 20px rgba(212,175,55,0.5); z-index:9999; font-size:13px; max-width:90%; text-align:center; font-weight:600; line-height:1.4;';
+    toast.innerHTML = '🎉 <strong>Tu as été invité par un fan !</strong><br><span style="font-size:11px; font-weight:400;">Inscris-toi pour recevoir +10 pts de bienvenue ✨</span>';
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.5s, transform 0.5s';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+      setTimeout(() => toast.remove(), 500);
+    }, 5000);
+  }
 
   function toggleFav(ev, id, city, venue, date, tm) {
     ev.stopPropagation();
