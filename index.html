@@ -7618,6 +7618,331 @@
   window.openContactModal = openContactModal;
   window.closeContactModal = closeContactModal;
 
+  // 💌 ============================================================
+  // FORMULAIRE D'ENVOI DE MESSAGE FAN (intégré dans l'app)
+  // ============================================================
+  // Le fan tape son message directement dans l'app → insertion Supabase
+  // dans la table `messages_fans`. L'admin OMP voit ensuite le message
+  // dans sa page "Messagerie Fans" et peut répondre.
+  // ============================================================
+  
+  function openMessageFanForm() {
+    // Vérif connexion
+    if (!isFanConnected()) {
+      closeContactModal();
+      // Inviter à se connecter
+      if (typeof openLoginModal === 'function') {
+        setTimeout(() => {
+          const eyebrow = document.querySelector('#loginModal .signup-eyebrow');
+          if (eyebrow) eyebrow.textContent = 'CONNECTE-TOI POUR NOUS ENVOYER UN MESSAGE';
+          openLoginModal();
+        }, 300);
+      } else {
+        alert('🔒 Connecte-toi pour nous envoyer un message.');
+      }
+      return;
+    }
+
+    closeContactModal();
+    setTimeout(() => {
+      const modal = document.getElementById('messageFanModal');
+      if (!modal) return;
+      // Reset
+      const form = document.getElementById('msgFanForm');
+      if (form) form.reset();
+      const err = document.getElementById('msgFanError');
+      if (err) err.style.display = 'none';
+      const counter = document.getElementById('msgFanCounter');
+      if (counter) counter.textContent = '0';
+      
+      // Afficher
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Compteur de caractères
+      const ta = form ? form.querySelector('textarea[name="message"]') : null;
+      if (ta && counter) {
+        ta.oninput = () => { counter.textContent = ta.value.length; };
+      }
+      
+      // Personnaliser l'eyebrow avec le prénom
+      const fan = getFan();
+      const eyebrow = document.getElementById('msgFanEyebrow');
+      if (eyebrow && fan && fan.prenom) {
+        eyebrow.textContent = 'SALUT ' + fan.prenom.toUpperCase() + ', ON T\'ÉCOUTE';
+      }
+    }, 250);
+  }
+  window.openMessageFanForm = openMessageFanForm;
+
+  function closeMessageFanForm() {
+    const modal = document.getElementById('messageFanModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+  window.closeMessageFanForm = closeMessageFanForm;
+
+  async function submitMessageFan(event) {
+    event.preventDefault();
+    const form = event.target;
+    const errBox = document.getElementById('msgFanError');
+    const submitBtn = document.getElementById('msgFanSubmit');
+    
+    const fan = getFan();
+    if (!fan || !fan.email) {
+      errBox.textContent = 'Tu n\'es pas connecté. Reconnecte-toi pour envoyer.';
+      errBox.style.display = 'block';
+      return;
+    }
+
+    const categorie = form.categorie.value;
+    const sujet = (form.sujet.value || '').trim();
+    const message = (form.message.value || '').trim();
+
+    if (!categorie) {
+      errBox.textContent = 'Choisis une catégorie.';
+      errBox.style.display = 'block';
+      return;
+    }
+    if (message.length < 10) {
+      errBox.textContent = 'Ton message doit faire au moins 10 caractères.';
+      errBox.style.display = 'block';
+      return;
+    }
+
+    errBox.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Envoi en cours...';
+
+    try {
+      // Le thread_id sera défini après insertion (= id du message)
+      const payload = {
+        fan_id: fan.id || null,
+        fan_email: fan.email,
+        fan_prenom: fan.prenom || null,
+        categorie: categorie,
+        sujet: sujet || null,
+        message: message,
+        sens: 'fan_vers_omp',
+        lu_par_omp: false,
+        lu_par_fan: true,
+        statut: 'ouvert'
+      };
+
+      const response = await fetch(SUPABASE_URL + '/rest/v1/messages_fans', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Erreur insertion message:', text);
+        throw new Error('Erreur serveur (' + response.status + ')');
+      }
+
+      const data = await response.json();
+      const insertedId = data && data[0] && data[0].id;
+      
+      // Mise à jour : thread_id = id du message (puisque c'est le 1er message du fil)
+      if (insertedId) {
+        await fetch(SUPABASE_URL + '/rest/v1/messages_fans?id=eq.' + insertedId, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ thread_id: insertedId })
+        });
+      }
+
+      // Confirmation
+      closeMessageFanForm();
+      setTimeout(() => {
+        alert('✅ Message envoyé !\n\nMerci ' + (fan.prenom || '') + ', on revient vers toi rapidement.\n\nTu retrouveras la réponse dans "Mes messages".');
+      }, 200);
+
+    } catch (err) {
+      console.error('submitMessageFan:', err);
+      errBox.textContent = '❌ Impossible d\'envoyer ton message. Réessaie dans un instant.';
+      errBox.style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Envoyer →';
+    }
+  }
+  window.submitMessageFan = submitMessageFan;
+
+  // 📬 ============================================================
+  // PAGE "MES MESSAGES" — Historique des échanges du fan
+  // ============================================================
+  
+  async function openMyMessages() {
+    if (!isFanConnected()) {
+      alert('🔒 Connecte-toi pour voir tes messages.');
+      return;
+    }
+    
+    const modal = document.getElementById('myMessagesModal');
+    if (!modal) return;
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    await loadMyMessages();
+  }
+  window.openMyMessages = openMyMessages;
+
+  function closeMyMessages() {
+    const modal = document.getElementById('myMessagesModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+  window.closeMyMessages = closeMyMessages;
+
+  async function loadMyMessages() {
+    const container = document.getElementById('myMessagesContainer');
+    if (!container) return;
+    
+    const fan = getFan();
+    if (!fan || !fan.email) {
+      container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--smoke);">Connecte-toi pour voir tes messages.</div>';
+      return;
+    }
+
+    container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--smoke);">Chargement...</div>';
+
+    try {
+      const url = SUPABASE_URL + '/rest/v1/messages_fans'
+        + '?fan_email=eq.' + encodeURIComponent(fan.email)
+        + '&order=created_at.desc'
+        + '&select=*';
+      
+      const response = await fetch(url, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+
+      if (!response.ok) throw new Error('Erreur ' + response.status);
+      const messages = await response.json();
+
+      if (!messages || messages.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:40px 20px; color:var(--smoke);">
+            <div style="font-size:48px; margin-bottom:12px;">📭</div>
+            <div style="font-size:14px; margin-bottom:6px;">Aucun message pour l'instant</div>
+            <div style="font-size:12px;">Clique sur "+ Nouveau message" pour nous écrire !</div>
+          </div>`;
+        return;
+      }
+
+      // Grouper par thread_id
+      const threads = {};
+      messages.forEach(m => {
+        const tid = m.thread_id || m.id;
+        if (!threads[tid]) threads[tid] = [];
+        threads[tid].push(m);
+      });
+
+      // Trier chaque thread par date asc (le plus ancien en premier dans le fil)
+      Object.values(threads).forEach(t => t.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
+
+      // Trier les threads par date du dernier message desc
+      const threadEntries = Object.entries(threads).sort((a, b) => {
+        const aLast = a[1][a[1].length - 1].created_at;
+        const bLast = b[1][b[1].length - 1].created_at;
+        return new Date(bLast) - new Date(aLast);
+      });
+
+      const CATEG_LABEL = {
+        billetterie: '🎟️ Billetterie',
+        wall_of_fans: '📸 Wall of Fans',
+        suggestion: '💡 Suggestion',
+        autre: '💬 Autre',
+        reponse_omp: '👑 Réponse TWOQ'
+      };
+
+      const html = threadEntries.map(([tid, msgs]) => {
+        const first = msgs[0];
+        const last = msgs[msgs.length - 1];
+        const hasUnreadResponse = msgs.some(m => m.sens === 'omp_vers_fan' && !m.lu_par_fan);
+        
+        const msgsHtml = msgs.map(m => {
+          const isFromFan = m.sens === 'fan_vers_omp';
+          const dateStr = new Date(m.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+          
+          return `
+            <div style="margin-bottom:10px; ${isFromFan ? 'margin-left:25%;' : 'margin-right:25%;'}">
+              <div style="background:${isFromFan ? 'rgba(212,175,55,0.1)' : 'rgba(139,0,0,0.15)'}; border:1px solid ${isFromFan ? 'rgba(212,175,55,0.3)' : 'rgba(139,0,0,0.4)'}; border-radius:10px; padding:10px 12px;">
+                <div style="font-size:10px; color:${isFromFan ? 'var(--gold)' : '#c44'}; font-weight:700; letter-spacing:1px; margin-bottom:4px;">
+                  ${isFromFan ? 'TOI' : '👑 ÉQUIPE TWOQ'} · ${dateStr}
+                </div>
+                ${m.sujet ? `<div style="font-size:11px; color:var(--smoke); margin-bottom:4px; font-style:italic;">Sujet : ${escapeHtml(m.sujet)}</div>` : ''}
+                <div style="font-size:13px; color:var(--cream); white-space:pre-wrap; line-height:1.4;">${escapeHtml(m.message)}</div>
+              </div>
+            </div>`;
+        }).join('');
+
+        return `
+          <div style="background:#0f0f0f; border:1px solid ${hasUnreadResponse ? 'var(--gold)' : 'var(--border)'}; border-radius:12px; padding:14px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border);">
+              <div style="font-size:11px; color:var(--gold); font-weight:600; letter-spacing:1px;">${CATEG_LABEL[first.categorie] || '💬'}</div>
+              ${hasUnreadResponse ? '<span style="background:#E11D2A; color:#fff; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700;">NOUVELLE RÉPONSE</span>' : `<span style="font-size:10px; color:var(--smoke);">${first.statut === 'resolu' ? '✓ Résolu' : 'Ouvert'}</span>`}
+            </div>
+            ${msgsHtml}
+          </div>`;
+      }).join('');
+
+      container.innerHTML = html;
+
+      // Marquer comme lus les messages réponses OMP non lus
+      const unreadIds = messages.filter(m => m.sens === 'omp_vers_fan' && !m.lu_par_fan).map(m => m.id);
+      if (unreadIds.length > 0) {
+        // Marquer en bg, sans bloquer l'UI
+        unreadIds.forEach(async (id) => {
+          try {
+            await fetch(SUPABASE_URL + '/rest/v1/messages_fans?id=eq.' + id, {
+              method: 'PATCH',
+              headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ lu_par_fan: true })
+            });
+          } catch(e) {}
+        });
+      }
+
+    } catch (err) {
+      console.error('loadMyMessages:', err);
+      container.innerHTML = '<div style="text-align:center; padding:30px; color:#E11D2A;">❌ Impossible de charger tes messages.</div>';
+    }
+  }
+  window.loadMyMessages = loadMyMessages;
+
+  // Helper pour escape HTML
+  function escapeHtmlMsg(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+  // Si escapeHtml n'existe pas déjà globalement, l'exposer
+  if (typeof window.escapeHtml !== 'function') {
+    window.escapeHtml = escapeHtmlMsg;
+  }
+
   async function submitLogin(event) {
     event.preventDefault();
     const form = event.target;
@@ -9865,8 +10190,7 @@
     <div class="signup-eyebrow">CHOISIS LE TYPE DE MESSAGE</div>
 
     <!-- ━━━ CONTACT FAN ━━━ -->
-    <a href="mailto:twoqfans@gmail.com?subject=Message%20d'un%20fan%20TWOQ" 
-       onclick="setTimeout(closeContactModal, 300);"
+    <a onclick="openMessageFanForm()" 
        style="display:flex; align-items:center; gap:14px; background:linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(20,20,20,0.95) 100%); border:1px solid rgba(212,175,55,0.5); border-radius:12px; padding:16px; margin-bottom:12px; text-decoration:none; color:var(--cream); cursor:pointer; transition:all 0.2s;"
        onmouseover="this.style.borderColor='rgba(212,175,55,0.9)'"
        onmouseout="this.style.borderColor='rgba(212,175,55,0.5)'">
@@ -9876,7 +10200,7 @@
       <div style="flex:1; min-width:0;">
         <div style="color:var(--gold); font-size:10px; letter-spacing:2px; font-weight:700; margin-bottom:3px;">CONTACT FAN</div>
         <div style="color:var(--cream); font-size:15px; font-family:var(--serif); margin-bottom:3px;">Une question, un message ?</div>
-        <div style="color:var(--smoke); font-size:11px; font-style:italic;">→ twoqfans@gmail.com</div>
+        <div style="color:var(--smoke); font-size:11px; font-style:italic;">→ Écris-nous directement dans l'app</div>
       </div>
       <span style="color:var(--gold); font-size:18px; font-weight:700;">→</span>
     </a>
@@ -9901,6 +10225,77 @@
     <div style="text-align:center; margin-top:18px; font-size:11px; color:var(--smoke); font-style:italic;">
       💡 Tu peux aussi nous suivre sur les réseaux sociaux dans l'app
     </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 💌 MODAL FORMULAIRE ENVOI MESSAGE FAN                        -->
+<!-- ============================================================ -->
+<div id="messageFanModal" class="signup-modal" onclick="if(event.target===this) closeMessageFanForm()">
+  <div class="signup-content" style="max-width:480px;">
+    <div class="signup-handle"></div>
+    <button class="signup-close" onclick="closeMessageFanForm()" aria-label="Fermer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="signup-tag">NOUVEAU MESSAGE</div>
+    <div class="signup-title">Écris-nous !</div>
+    <div class="signup-eyebrow" id="msgFanEyebrow">ON REVIENT VERS TOI RAPIDEMENT</div>
+
+    <form id="msgFanForm" onsubmit="submitMessageFan(event)">
+      <div class="signup-error" id="msgFanError" style="display:none;"></div>
+
+      <!-- Catégorie -->
+      <div class="signup-field">
+        <div class="signup-label">CATÉGORIE</div>
+        <select class="signup-input" name="categorie" required style="cursor:pointer;">
+          <option value="">— Choisis le sujet —</option>
+          <option value="billetterie">🎟️ Billetterie</option>
+          <option value="wall_of_fans">📸 Wall of Fans</option>
+          <option value="suggestion">💡 Suggestion</option>
+          <option value="autre">💬 Autre</option>
+        </select>
+      </div>
+
+      <!-- Sujet (optionnel) -->
+      <div class="signup-field">
+        <div class="signup-label">SUJET <span style="color:var(--smoke); text-transform:none; font-weight:400;">(facultatif)</span></div>
+        <input class="signup-input" name="sujet" type="text" maxlength="120" placeholder="Ex: Date de Lyon, problème billet..." />
+      </div>
+
+      <!-- Message -->
+      <div class="signup-field">
+        <div class="signup-label">TON MESSAGE</div>
+        <textarea class="signup-input" name="message" required minlength="10" maxlength="2000" rows="6" placeholder="Tape ton message ici... (min 10 caractères)" style="resize:vertical; font-family:inherit;"></textarea>
+        <div style="font-size:10px; color:var(--smoke); text-align:right; margin-top:4px;"><span id="msgFanCounter">0</span> / 2000</div>
+      </div>
+
+      <button type="submit" class="signup-submit" id="msgFanSubmit">Envoyer →</button>
+
+      <div style="text-align:center; margin-top:14px;">
+        <a onclick="closeMessageFanForm(); setTimeout(openMyMessages, 200);" style="color:var(--gold); font-size:12px; cursor:pointer;">📬 Voir mes messages</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 📬 MODAL "MES MESSAGES" (historique du fan)                  -->
+<!-- ============================================================ -->
+<div id="myMessagesModal" class="signup-modal" onclick="if(event.target===this) closeMyMessages()">
+  <div class="signup-content" style="max-width:560px;">
+    <div class="signup-handle"></div>
+    <button class="signup-close" onclick="closeMyMessages()" aria-label="Fermer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="signup-tag">📬 MES MESSAGES</div>
+    <div class="signup-title">Mes échanges</div>
+    <div class="signup-eyebrow">HISTORIQUE DE TES MESSAGES AVEC L'ÉQUIPE TWOQ</div>
+
+    <div id="myMessagesContainer" style="margin-top:20px; max-height:60vh; overflow-y:auto;">
+      <div style="text-align:center; padding:30px; color:var(--smoke);">Chargement...</div>
+    </div>
+
+    <button onclick="closeMyMessages(); setTimeout(openMessageFanForm, 200);" class="signup-submit" style="margin-top:18px;">+ Nouveau message</button>
   </div>
 </div>
 
