@@ -887,6 +887,9 @@
       animation: pitchReviewsScroll 90s linear infinite;
       width: max-content;
     }
+    .pitch-reviews-track.paused {
+      animation-play-state: paused;
+    }
     @keyframes pitchReviewsScroll {
       0%   { transform: translateX(0); }
       100% { transform: translateX(-50%); }
@@ -1717,6 +1720,87 @@
     }
     .partner-logo-link:hover .partner-logo-img {
       opacity: 1;
+    }
+
+    /* === 🎤 BANDEAU LIVE TONIGHT — apparaît en haut quand concert ACTIF === */
+    .live-tonight-banner {
+      position: relative;
+      margin: 0 0 18px;
+      background: linear-gradient(135deg, #8B0000 0%, #C81010 50%, #8B0000 100%);
+      border-radius: 14px;
+      padding: 16px 18px;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(199, 16, 16, 0.5), 0 4px 16px rgba(0, 0, 0, 0.4);
+      animation: liveTonightPulse 1.8s ease-in-out infinite;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+    }
+    .live-tonight-banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+      animation: liveTonightShimmer 2.5s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes liveTonightShimmer {
+      0%   { left: -100%; }
+      100% { left: 100%; }
+    }
+    @keyframes liveTonightPulse {
+      0%, 100% { box-shadow: 0 0 30px rgba(199, 16, 16, 0.5), 0 4px 16px rgba(0, 0, 0, 0.4); }
+      50%      { box-shadow: 0 0 50px rgba(255, 50, 50, 0.8), 0 6px 20px rgba(0, 0, 0, 0.5); }
+    }
+    .live-tonight-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .live-tonight-dot {
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: liveTonightDot 1s ease-in-out infinite;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+    }
+    @keyframes liveTonightDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.5; transform: scale(0.85); }
+    }
+    .live-tonight-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .live-tonight-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 4px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    .live-tonight-sub {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.92);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .live-tonight-arrow {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      flex-shrink: 0;
+      animation: liveTonightArrow 1.2s ease-in-out infinite;
+    }
+    @keyframes liveTonightArrow {
+      0%, 100% { transform: translateX(0); }
+      50%      { transform: translateX(4px); }
     }
 
     /* === SYSTÈME NIVEAUX FAN === */
@@ -3288,15 +3372,15 @@
       z-index: 5;
       cursor: pointer;
     }
-    /* Reels (vertical) : zones swipe haut/bas (12% de hauteur chacune) */
+    /* Reels (vertical) : zones tap haut/bas (35% de hauteur chacune) — élargies pour ergonomie */
     .video-modal-content.vertical .swipe-zone {
       display: block;
     }
     .video-modal-content.vertical .swipe-top {
-      top: 0; left: 0; right: 0; height: 18%;
+      top: 0; left: 0; right: 0; height: 35%;
     }
     .video-modal-content.vertical .swipe-bottom {
-      bottom: 0; left: 0; right: 0; height: 18%;
+      bottom: 0; left: 0; right: 0; height: 35%;
     }
     .video-modal-content.vertical .swipe-left,
     .video-modal-content.vertical .swipe-right {
@@ -3775,12 +3859,9 @@
       font-weight: 700;
       transform: rotate(-4deg);
       box-shadow: 2px 2px 0 #5A0000;
-      vertical-align: middle;
-      margin-left: 14px;
-      position: relative;
-      top: -4px;
       animation: actuHeartbeat 1.4s ease-in-out infinite;
       transform-origin: center center;
+      flex-shrink: 0;
     }
     @keyframes actuHeartbeat {
       0%, 100% { transform: rotate(-4deg) scale(1); }
@@ -4058,6 +4139,50 @@
     });
   }
 
+  // 🎤 ============================================================
+  // BANDEAU LIVE TONIGHT — Concert Interactif mis en avant le jour J
+  // ============================================================
+  // Apparait en haut des pages Dates et Show quand un concert est ACTIF.
+  // Au clic → bascule sur Fan Zone + scroll au bloc CONCERT INTERACTIF
+  // ============================================================
+  function renderLiveTonightBanner() {
+    const state = window._concertState;
+    if (!state || !state.isLive) return '';
+    
+    const ville = state.concertVille && state.concertVille !== 'TEST'
+      ? state.concertVille.toUpperCase()
+      : (state.concertVille === 'TEST' ? 'MODE TEST 🧪' : '');
+    
+    return `
+      <div class="live-tonight-banner" onclick="goToConcertInteractif()">
+        <div class="live-tonight-content">
+          <div class="live-tonight-dot"></div>
+          <div class="live-tonight-info">
+            <div class="live-tonight-title">🎤 LIVE TONIGHT ${ville ? '· ' + ville : ''}</div>
+            <div class="live-tonight-sub">Vote pour la chanson surprise du show ce soir !</div>
+          </div>
+          <div class="live-tonight-arrow">→</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Bascule sur Fan Zone et scroll au Concert Interactif
+  window.goToConcertInteractif = function() {
+    if (typeof show === 'function') show('fanzone');
+    // Scroll vers le bloc CONCERT INTERACTIF après le rendu
+    setTimeout(() => {
+      const target = document.getElementById('concertInteractifContainer');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Effet pulse 1 fois pour attirer l'œil
+        target.style.transition = 'transform 0.4s';
+        target.style.transform = 'scale(1.03)';
+        setTimeout(() => { target.style.transform = ''; }, 400);
+      }
+    }, 350);
+  };
+
   // 🤝 ============================================================
   // PARTENAIRES TWOQ
   // ============================================================
@@ -4148,6 +4273,8 @@
         <!-- Bienvenue sur toute la largeur -->
         <div class="welcome-shine" style="font-size:12px; color:var(--gold); font-weight:600; letter-spacing:0.2px; white-space:nowrap; margin-bottom:14px;">Bienvenue dans l'univers magique de Queen !</div>
 
+        ${renderLiveTonightBanner()}
+
         <!-- Séparateur doré étoilé (avant photo) -->
         <div class="gold-divider" style="margin:0 0 14px;">
           <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
@@ -4179,7 +4306,7 @@
               <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
             </div>
             <div style="font-size:13px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:4px;">THE WORLD OF QUEEN</div>
-            <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; margin-bottom:12px;">L'Éternelle Légende<span class="badge-actu">ACTU</span></div>
+            <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; margin-bottom:12px; display:flex; align-items:center; flex-wrap:wrap; gap:12px;"><span>L'Éternelle Légende</span><span class="badge-actu">ACTU</span></div>
             <div style="font-size:14px; color:var(--smoke); line-height:1.5;">
               Le grand lancement de la nouvelle tournée et du nouveau show !
             </div>
@@ -4301,6 +4428,9 @@
             <button class="region-btn" data-region="sud-est" onclick="filterByRegion('sud-est')">
               <span class="region-icon">☀️</span><span class="region-name">Sud-Est</span>
             </button>
+            <button class="region-btn" data-region="centre-est" onclick="filterByRegion('centre-est')">
+              <span class="region-icon">⛰️</span><span class="region-name">Centre-Est</span>
+            </button>
             <button class="region-btn" data-region="sud-ouest" onclick="filterByRegion('sud-ouest')">
               <span class="region-icon">🍷</span><span class="region-name">Sud-Ouest</span>
             </button>
@@ -4349,6 +4479,8 @@
         <img src="./icons/logo-twoq-titre.png" alt="The World of Queen" class="show-logo">
       </div>
       <div class="h1">Le show</div>
+
+      ${renderLiveTonightBanner()}
 
       <div class="section-eyebrow" style="margin-top:18px;">TEASER OFFICIEL</div>
       <div class="section-title">Le nouveau spectacle</div>
@@ -4429,7 +4561,10 @@
         </div>
 
         <div class="pitch-reviews">
-          <div class="pitch-reviews-label">★  ILS ONT VU LE SHOW  ★</div>
+          <div class="pitch-reviews-label" style="display:flex; align-items:center; justify-content:center; gap:10px;">
+            <span>★  ILS ONT VU LE SHOW  ★</span>
+            <button id="pitchReviewsToggleBtn" onclick="togglePitchReviews()" aria-label="Pause/Reprendre" style="background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); color:var(--gold); width:24px; height:24px; border-radius:50%; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:11px; transition:all 0.2s; padding:0;" onmouseover="this.style.background='rgba(212,175,55,0.3)'" onmouseout="this.style.background='rgba(212,175,55,0.15)'">⏸</button>
+          </div>
           <div class="pitch-reviews-marquee">
             <div class="pitch-reviews-track">
               <div class="pitch-review-bubble">
@@ -5471,30 +5606,22 @@
       </div>
       ` : ''}
 
-      <!-- ─── AVANTAGES DE TON COMPTE — Accordéon encadré or ─── -->
+      <!-- ─── AVANTAGES DE TON COMPTE — Affichage fixe (non cliquable) ─── -->
       <div class="section-eyebrow" style="margin-top:22px;">AVANTAGES DE TON COMPTE</div>
-      <div class="benefits-accordion" id="benefitsAccordion" onclick="toggleBenefits()" style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px 16px; cursor:pointer; transition:all 0.2s;">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-          <div style="flex:1; min-width:0;">
-            <div style="font-size:13px; color:var(--cream); font-weight:500; margin-bottom:4px;">✨ 11 avantages exclusifs débloqués</div>
-            <div id="benefitsTeaser" style="font-size:10px; color:var(--smoke); line-height:1.5;">❤ favoris · 🏆 concours · <span style="color:#FF6B6B;">⚡ tarifs réduits</span> · +8 autres</div>
-          </div>
-          <div id="benefitsChevron" style="color:var(--gold); font-size:14px; transition:transform 0.3s; flex-shrink:0;">▼</div>
-        </div>
-        <div id="benefitsList" style="max-height:0; overflow:hidden; transition:max-height 0.4s ease-out;">
-          <div style="display:flex; flex-wrap:wrap; gap:6px; padding-top:14px; border-top:1px dashed rgba(212,175,55,0.2); margin-top:14px;">
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">❤ Dates favorites</span>
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🏆 Jeux concours</span>
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">✓ Précommande prioritaire</span>
-            <span style="background:rgba(139,0,0,0.15); border:1px solid rgba(139,0,0,0.5); color:#FF6B6B; padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px; font-weight:600;">⚡ Tarifs réduits</span>
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">💬 Newsletter VIP</span>
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🔒 Contenus inédits</span>
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">⚠ Alertes changements</span>
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">📋 Sondages exclusifs</span>
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">💬 Communauté fans</span>
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🎂 Cadeau anniversaire</span>
-            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🏅 Statut Super-fan</span>
-          </div>
+      <div style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px 16px;">
+        <div style="font-size:13px; color:var(--cream); font-weight:500; margin-bottom:12px;">✨ 11 avantages exclusifs débloqués</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">❤ Dates favorites</span>
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🏆 Jeux concours</span>
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">✓ Précommande prioritaire</span>
+          <span style="background:rgba(139,0,0,0.15); border:1px solid rgba(139,0,0,0.5); color:#FF6B6B; padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px; font-weight:600;">⚡ Tarifs réduits</span>
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">💬 Newsletter VIP</span>
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🔒 Contenus inédits</span>
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">⚠ Alertes changements</span>
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">📋 Sondages exclusifs</span>
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">💬 Communauté fans</span>
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🎂 Cadeau anniversaire</span>
+          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:10px; letter-spacing:0.5px;">🏅 Statut Super-fan</span>
         </div>
       </div>
 
@@ -7123,7 +7250,7 @@
     // Bourgogne / Centre
     'dijon': 'centre', 'chartres': 'centre', 'bourges': 'centre', 'orléans': 'centre', 'orleans': 'centre', 'tours': 'centre',
     // Auvergne-Rhône-Alpes
-    'lyon': 'sud-est', 'grenoble': 'sud-est', 'annecy': 'sud-est', 'chambéry': 'sud-est', 'chambery': 'sud-est', 'saint-étienne': 'sud-est', 'saint-etienne': 'sud-est', 'cournon-d\'auvergne': 'sud-est', 'cournon': 'sud-est', 'clermont-ferrand': 'sud-est', 'montélimar': 'sud-est', 'montelimar': 'sud-est',
+    'lyon': 'centre-est', 'grenoble': 'centre-est', 'annecy': 'centre-est', 'chambéry': 'centre-est', 'chambery': 'centre-est', 'saint-étienne': 'centre-est', 'saint-etienne': 'centre-est', 'cournon-d\'auvergne': 'centre-est', 'cournon': 'centre-est', 'clermont-ferrand': 'centre-est', 'montélimar': 'centre-est', 'montelimar': 'centre-est', 'valence': 'centre-est',
     // PACA
     'marseille': 'sud-est', 'nice': 'sud-est', 'toulon': 'sud-est', 'cannes': 'sud-est', 'avignon': 'sud-est', 'aix-en-provence': 'sud-est', 'le silo': 'sud-est',
     // Occitanie
@@ -7370,6 +7497,20 @@
     // === Chargement asynchrone du Concert Interactif (badge LIVE + votes) ===
     if (name === 'fanzone' && typeof initConcertInteractif === 'function') {
       setTimeout(initConcertInteractif, 300);
+    }
+
+    // === Charger l'état Concert Interactif aussi sur dates/show pour afficher le bandeau LIVE TONIGHT ===
+    if ((name === 'dates' || name === 'show') && typeof initConcertInteractif === 'function') {
+      const wasLive = window._concertState && window._concertState.isLive;
+      setTimeout(() => {
+        initConcertInteractif().then(() => {
+          // Si l'état a changé (devient LIVE), re-render l'écran pour afficher le bandeau
+          if (window._concertState && window._concertState.isLive && !wasLive) {
+            const screen = document.getElementById('screen');
+            if (screen && screens[name]) screen.innerHTML = screens[name]();
+          }
+        }).catch(() => {});
+      }, 400);
     }
 
     // === STOP SON D'INTRO dès qu'on quitte la page d'accueil ===
@@ -9029,6 +9170,16 @@
       wrapper.style.maxHeight = '0';
       chevron.style.transform = 'rotate(0deg)';
     }
+  };
+
+  // ▶️⏸ Toggle pause/play sur le carrousel d'avis "ILS ONT VU LE SHOW"
+  window.togglePitchReviews = function() {
+    const track = document.querySelector('.pitch-reviews-track');
+    const btn = document.getElementById('pitchReviewsToggleBtn');
+    if (!track || !btn) return;
+    const isPaused = track.classList.toggle('paused');
+    btn.textContent = isPaused ? '▶' : '⏸';
+    btn.setAttribute('aria-label', isPaused ? 'Reprendre' : 'Pause');
   };
 
   // 💬 Partage Messenger : essaie l'app native sur mobile, sinon Facebook web (desktop)
