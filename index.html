@@ -8139,7 +8139,7 @@
       condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) < 70,
       icon: '⭐',
       desc: 'Profil 100% complet',
-      benefits: ['Tous les avantages FAN', 'Jeux concours exclusifs', 'Cadeau anniversaire 🎂', '+1 chance bonus dans les concours']
+      benefits: ['Tous les avantages FAN', 'Jeux concours exclusifs', 'Message d\'anniversaire 🎂', '+1 chance bonus dans les concours']
     },
     {
       key: 'or',
@@ -8151,7 +8151,7 @@
       condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) >= 70 && (fan?.fan_score || 0) < 90,
       icon: '🥇',
       desc: 'Score 70-89',
-      benefits: ['Tous les avantages VIP', 'Tarifs réduits -10%', 'Pré-réservation 48h avant', 'Invitations événements privés', 'Goodie surprise']
+      benefits: ['Tous les avantages VIP', 'Tarifs réduits -10% sur vos billets', 'Pré-réservation 48h avant', 'Invitations événements privés']
     },
     {
       key: 'platine',
@@ -8163,7 +8163,7 @@
       condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) >= 90,
       icon: '💎',
       desc: 'Score 90+ (Légende)',
-      benefits: ['Tous les avantages OR', 'Tarifs réduits -15%', '1 place gratuite par an', 'Rencontre artistes garantie', 'Mention "Légende TWOQ"', 'Plaque souvenir personnalisée']
+      benefits: ['Tous les avantages OR', 'Tarifs réduits -10% sur vos billets', '1 pass\'ta journée par an', 'Rencontre artistes garantie', 'Mention "Légende TWOQ"']
     }
   ];
 
@@ -8259,6 +8259,17 @@
         <div class="signup-tag">PROGRAMME DE FIDÉLITÉ</div>
         <div class="signup-title">Les 4 niveaux TWOQ</div>
         <div class="signup-eyebrow">PLUS TU ES ACTIF, PLUS TU GAGNES</div>
+        <div class="level-formula-box" style="margin-top:16px;">
+          <div class="level-formula-title">💡 Comment ton score augmente :</div>
+          <div class="level-formula-body">
+            • 1 concert vu = <strong>+10 pts</strong><br/>
+            • 1 favori ❤ = <strong>+2 pts</strong><br/>
+            • 1 concours joué = <strong>+5 pts</strong><br/>
+            • Profil complet = <strong>+10 pts</strong><br/>
+            • Newsletter activée = <strong>+5 pts</strong><br/>
+            • Ancienneté = <strong>+1 pt/mois</strong> (max 12)
+          </div>
+        </div>
         <div style="margin-top:16px;">
           ${FAN_LEVELS.map(lvl => `
             <div class="level-detail-card" style="--lvl-color:${lvl.color}; --lvl-bg:${lvl.bg};">
@@ -8274,17 +8285,6 @@
               </ul>
             </div>
           `).join('')}
-        </div>
-        <div class="level-formula-box">
-          <div class="level-formula-title">💡 Comment ton score augmente :</div>
-          <div class="level-formula-body">
-            • 1 concert vu = <strong>+10 pts</strong><br/>
-            • 1 favori ❤ = <strong>+2 pts</strong><br/>
-            • 1 concours joué = <strong>+5 pts</strong><br/>
-            • Profil complet = <strong>+10 pts</strong><br/>
-            • Newsletter activée = <strong>+5 pts</strong><br/>
-            • Ancienneté = <strong>+1 pt/mois</strong> (max 12)
-          </div>
         </div>
       `;
     } else {
