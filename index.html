@@ -1810,15 +1810,21 @@
       display: flex;
       gap: 14px;
       align-items: stretch;
-      background: linear-gradient(135deg, rgba(20, 17, 10, 0.85), rgba(10, 10, 10, 0.6));
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      border-radius: 16px;
-      padding: 16px 14px;
+      background: linear-gradient(135deg, rgba(40, 30, 12, 0.9), rgba(20, 20, 20, 0.8));
+      border: 2px solid var(--gold);
+      border-radius: 18px;
+      padding: 20px 18px;
       margin-bottom: 22px;
       cursor: pointer;
       transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 0 24px rgba(212, 175, 55, 0.25), 0 4px 12px rgba(0, 0, 0, 0.5);
+      animation: joinGlow 2.5s ease-in-out infinite;
+    }
+    @keyframes joinGlow {
+      0%, 100% { box-shadow: 0 0 24px rgba(212, 175, 55, 0.25), 0 4px 12px rgba(0, 0, 0, 0.5); }
+      50%      { box-shadow: 0 0 36px rgba(212, 175, 55, 0.5), 0 4px 16px rgba(0, 0, 0, 0.5); }
     }
     .join-card::before {
       content: '';
@@ -4274,7 +4280,7 @@
         </div>
 
         <!-- Bienvenue sur toute la largeur -->
-        <div class="welcome-shine" style="font-size:14px; color:var(--gold); font-weight:600; letter-spacing:0.2px; white-space:nowrap; margin-bottom:14px;">Bienvenue dans l'univers magique de Queen !</div>
+        <div class="welcome-shine" style="font-size:12px; color:var(--gold); font-weight:600; letter-spacing:0.2px; margin-bottom:14px;">Bienvenue dans l'univers magique de Queen !</div>
 
         ${renderLiveTonightBanner()}
 
@@ -4304,12 +4310,15 @@
               </svg>
             </span>
           </div>
-          <div style="padding:18px 20px;">
+          <div style="padding:18px 0;">
             <div class="gold-divider" style="margin:0 0 16px;">
               <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
             </div>
             <div style="font-size:14px; letter-spacing:2px; color:#FFFFFF; font-weight:700; margin-bottom:4px;">THE WORLD OF QUEEN</div>
-            <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; margin-bottom:12px; display:flex; align-items:center; flex-wrap:wrap; gap:12px;"><span>L'Éternelle Légende</span><span class="badge-actu">ACTU</span></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
+              <div style="font-family:var(--serif); font-size:28px; font-weight:500; color:var(--cream); line-height:1.2; flex:1; min-width:0;">L'Éternelle Légende</div>
+              <span class="badge-actu" style="flex-shrink:0;">ACTU</span>
+            </div>
             <div style="font-size:14px; color:var(--smoke); line-height:1.5;">
               Le grand lancement de la nouvelle tournée et du nouveau show !
             </div>
@@ -4683,7 +4692,7 @@
         </div>
 
         <div class="pitch-credit">
-          Production exclusive · <span class="omp-logo omp-big"><span class="omp-r">O</span>h my prod<span class="omp-r"> !</span></span>
+          Production exclusive<br><span class="omp-logo omp-big"><span class="omp-r">O</span>h my prod<span class="omp-r"> !</span></span>
         </div>
       </div>
 
@@ -5300,7 +5309,7 @@
               <span class="btn-gold" style="display:inline-block; padding:7px 14px; font-size:13px;">Découvrir →</span>
             </div>
             <!-- Photo officielle Boutique TWOQ - à droite, avec fade vers la gauche -->
-            <img src="assets/boutique-merch.png" alt="" loading="lazy" style="position:absolute; right:0; top:0; bottom:0; height:100%; width:42%; object-fit:cover; object-position:100% center; opacity:1; -webkit-mask-image:linear-gradient(to right, transparent 0%, black 45%); mask-image:linear-gradient(to right, transparent 0%, black 45%); pointer-events:none; z-index:1;">
+            <img src="assets/boutique-merch.png" alt="" loading="lazy" style="position:absolute; right:0; top:0; bottom:0; height:100%; width:55%; object-fit:cover; object-position:center center; opacity:1; -webkit-mask-image:linear-gradient(to right, transparent 0%, black 30%); mask-image:linear-gradient(to right, transparent 0%, black 30%); pointer-events:none; z-index:1;">
           </a>
         </div>
       </div>
@@ -5609,22 +5618,30 @@
       </div>
       ` : ''}
 
-      <!-- ─── AVANTAGES DE TON COMPTE — Affichage fixe (non cliquable) ─── -->
+      <!-- ─── AVANTAGES DE TON COMPTE — Accordéon déroulant ─── -->
       <div class="section-eyebrow" style="margin-top:22px;">AVANTAGES DE TON COMPTE</div>
-      <div style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px 16px;">
-        <div style="font-size:14px; color:var(--cream); font-weight:500; margin-bottom:12px;">✨ 11 avantages exclusifs débloqués</div>
-        <div style="display:flex; flex-wrap:wrap; gap:6px;">
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">❤ Dates favorites</span>
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">🏆 Jeux concours</span>
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">✓ Précommande prioritaire</span>
-          <span style="background:rgba(139,0,0,0.15); border:1px solid rgba(139,0,0,0.5); color:#FF6B6B; padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px; font-weight:600;">⚡ Tarifs réduits</span>
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">💬 Newsletter VIP</span>
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">🔒 Contenus inédits</span>
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">⚠ Alertes changements</span>
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">📋 Sondages exclusifs</span>
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">💬 Communauté fans</span>
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">🎂 Cadeau anniversaire</span>
-          <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:12px; letter-spacing:0.5px;">🏅 Statut Super-fan</span>
+      <div id="benefitsAccordion" onclick="toggleBenefits()" style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px 16px; cursor:pointer; transition:all 0.2s;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:13px; color:var(--cream); font-weight:500; margin-bottom:4px;">✨ 11 avantages exclusifs débloqués</div>
+            <div style="font-size:11px; color:var(--smoke); line-height:1.5;">❤ Favoris · 🏆 Concours · <span style="color:#FF6B6B;">⚡ Tarifs réduits</span> · 💬 Newsletter VIP · +7 autres</div>
+          </div>
+          <div id="benefitsChevron" style="color:var(--gold); font-size:14px; transition:transform 0.3s; flex-shrink:0;">▼</div>
+        </div>
+        <div id="benefitsList" style="max-height:0; overflow:hidden; transition:max-height 0.4s ease-out;">
+          <div style="display:flex; flex-wrap:wrap; gap:6px; padding-top:14px; border-top:1px dashed rgba(212,175,55,0.2); margin-top:14px;">
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">❤ Dates favorites</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">🏆 Jeux concours</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">✓ Précommande prioritaire</span>
+            <span style="background:rgba(139,0,0,0.15); border:1px solid rgba(139,0,0,0.5); color:#FF6B6B; padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px; font-weight:600;">⚡ Tarifs réduits</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">💬 Newsletter VIP</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">🔒 Contenus inédits</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">⚠ Alertes changements</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">📋 Sondages exclusifs</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">💬 Communauté fans</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">🎂 Cadeau anniversaire</span>
+            <span style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); color:var(--gold); padding:5px 10px; border-radius:20px; font-size:11px; letter-spacing:0.5px;">🏅 Statut Super-fan</span>
+          </div>
         </div>
       </div>
 
