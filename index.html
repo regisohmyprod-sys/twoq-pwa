@@ -5008,6 +5008,18 @@
           }
         </style>
 
+        <!-- 📣 BLOC PARTAGE PAGE FACEBOOK OFFICIELLE -->
+        <div id="partagePageFbCard" onclick="ouvrirPartagePageFb()" style="margin-top:6px; margin-bottom:14px; background:linear-gradient(135deg, rgba(24, 119, 242, 0.1) 0%, rgba(20, 20, 20, 0.95) 100%); border:2px solid #1877F2; border-radius:14px; padding:14px; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-size:28px;">📣</div>
+            <div style="flex:1; min-width:0;">
+              <div style="color:#1877F2; font-weight:700; font-size:15px; margin-bottom:3px;">Supporte la page TWOQ <span id="partageFbBonus" style="background:rgba(212,175,55,0.2); color:var(--gold); padding:2px 6px; border-radius:6px; font-size:10px; margin-left:4px;">+5 pts</span></div>
+              <div id="partageFbSub" style="color:var(--smoke); font-size:11px;">Partage notre page Facebook · Aide-nous à grandir</div>
+            </div>
+            <div id="partageFbArrow" style="color:#1877F2; font-size:18px;">→</div>
+          </div>
+        </div>
+
         <!-- BLOC SUIVEZ-NOUS -->
         <div style="margin-top:18px;">
           <div class="section-eyebrow" style="margin-bottom:10px;">SUIVEZ-NOUS</div>
@@ -5042,7 +5054,7 @@
               <span class="btn-gold" style="display:inline-block; padding:7px 14px; font-size:11px;">Découvrir →</span>
             </div>
             <!-- Photo officielle Boutique TWOQ - à droite, avec fade vers la gauche -->
-            <img src="assets/boutique-merch.png" alt="" loading="lazy" style="position:absolute; right:0; top:0; bottom:0; height:100%; width:32%; object-fit:cover; object-position:100% center; opacity:0.9; -webkit-mask-image:linear-gradient(to right, transparent 0%, black 70%); mask-image:linear-gradient(to right, transparent 0%, black 70%); pointer-events:none; z-index:1;">
+            <img src="assets/boutique-merch.png" alt="" loading="lazy" style="position:absolute; right:0; top:0; bottom:0; height:100%; width:42%; object-fit:cover; object-position:100% center; opacity:1; -webkit-mask-image:linear-gradient(to right, transparent 0%, black 45%); mask-image:linear-gradient(to right, transparent 0%, black 45%); pointer-events:none; z-index:1;">
           </a>
         </div>
       </div>
@@ -5329,13 +5341,24 @@
       ${renderStatusSection(fan)}
 
       ${isConnected ? `
-      <!-- ─── MES NOTIFICATIONS — Bloc encadré or ─── -->
+      <!-- ─── MES NOTIFICATIONS — Accordéon encadré or ─── -->
       <div class="section-eyebrow" style="margin-top:22px;">
         🔔 MES NOTIFICATIONS 
         <span id="notifsBadge" style="background:#E11D2A; color:#fff; padding:2px 8px; border-radius:10px; font-size:10px; letter-spacing:1px; margin-left:6px; display:none; font-weight:700;"></span>
       </div>
-      <div id="notifsContainer" style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px;">
-        <div style="text-align:center; padding:8px; color:var(--smoke); font-size:11px;">Chargement…</div>
+      <div id="notifsAccordion" onclick="toggleNotifsAccordion(event)" style="background:linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%); border:1px solid rgba(212,175,55,0.4); border-radius:10px; padding:14px 16px; cursor:pointer; transition:all 0.2s;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:13px; color:var(--cream); font-weight:500; margin-bottom:4px;">📬 <span id="notifsTeaserCount">Voir mes notifications</span></div>
+            <div id="notifsTeaserHint" style="font-size:10px; color:var(--smoke); line-height:1.5;">Clique pour déplier la liste</div>
+          </div>
+          <div id="notifsChevron" style="color:var(--gold); font-size:14px; transition:transform 0.3s; flex-shrink:0;">▼</div>
+        </div>
+        <div id="notifsListWrapper" style="max-height:0; overflow:hidden; transition:max-height 0.4s ease-out;">
+          <div id="notifsContainer" style="padding-top:14px; border-top:1px dashed rgba(212,175,55,0.2); margin-top:14px; max-height:50vh; overflow-y:auto;">
+            <div style="text-align:center; padding:8px; color:var(--smoke); font-size:11px;">Chargement…</div>
+          </div>
+        </div>
       </div>
       ` : ''}
 
@@ -6551,8 +6574,8 @@
           <a href="sms:?body=${encodeURIComponent(messagePartage)}" style="display:flex;align-items:center;gap:8px;background:#3a3a3a;color:#fff;border-radius:8px;padding:10px;text-decoration:none;font-size:12px;font-weight:600;justify-content:center;">
             <span style="font-size:16px;">📱</span> SMS
           </a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(parrainUrl)}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;background:#1877F2;color:#fff;border-radius:8px;padding:10px;text-decoration:none;font-size:12px;font-weight:600;justify-content:center;">
-            <span style="font-size:16px;">f</span> Facebook
+          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(parrainUrl)}" target="_blank" rel="noopener" onclick="return partageMessenger(event, '${parrainUrl}');" style="display:flex;align-items:center;gap:8px;background:#0084FF;color:#fff;border-radius:8px;padding:10px;text-decoration:none;font-size:12px;font-weight:600;justify-content:center;">
+            <span style="font-size:16px;">💬</span> Messenger
           </a>
           <a href="mailto:?subject=${encodeURIComponent('Rejoins TWOQ !')}&body=${encodeURIComponent(messagePartage)}" style="display:flex;align-items:center;gap:8px;background:#0f0f0f;border:1px solid var(--border);color:var(--cream);border-radius:8px;padding:10px;text-decoration:none;font-size:12px;font-weight:600;justify-content:center;">
             <span style="font-size:16px;">✉️</span> Email
@@ -8151,7 +8174,7 @@
       condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) >= 70 && (fan?.fan_score || 0) < 90,
       icon: '🥇',
       desc: 'Score 70-89',
-      benefits: ['Tous les avantages VIP', 'Tarifs réduits -10% sur vos billets', 'Pré-réservation 48h avant', 'Invitations événements privés']
+      benefits: ['Tous les avantages VIP', 'Tarifs réduits <strong>-10%</strong> sur vos billets', 'Pré-réservation 48h avant', '+2 chances bonus dans les concours', '1 place / an à gagner']
     },
     {
       key: 'platine',
@@ -8163,7 +8186,7 @@
       condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) >= 90,
       icon: '💎',
       desc: 'Score 90+ (Légende)',
-      benefits: ['Tous les avantages OR', 'Tarifs réduits -10% sur vos billets', '1 pass\'ta journée par an', 'Rencontre artistes garantie', 'Mention "Légende TWOQ"']
+      benefits: ['Tous les avantages OR', 'Tarifs réduits <strong>-10%</strong> sur vos billets', '2 places à gagner par an', '1 pass\'ta journée par an (pour 2 personnes)', 'Rencontre artistes garantie', 'Mention "Légende TWOQ"']
     }
   ];
 
@@ -8817,6 +8840,162 @@
       if (teaser) teaser.style.opacity = '1';
     }
   };
+
+  // 🔔 Accordéon Mes Notifications
+  let _notifsAccordionOpen = false;
+  window.toggleNotifsAccordion = function(event) {
+    // Évite que le clic à l'intérieur d'une notif relance le toggle
+    if (event && event.target && event.target.closest('#notifsContainer')) return;
+    _notifsAccordionOpen = !_notifsAccordionOpen;
+    const wrapper = document.getElementById('notifsListWrapper');
+    const chevron = document.getElementById('notifsChevron');
+    if (!wrapper || !chevron) return;
+    if (_notifsAccordionOpen) {
+      wrapper.style.maxHeight = '60vh';
+      chevron.style.transform = 'rotate(180deg)';
+    } else {
+      wrapper.style.maxHeight = '0';
+      chevron.style.transform = 'rotate(0deg)';
+    }
+  };
+
+  // 💬 Partage Messenger : essaie l'app native sur mobile, sinon Facebook web (desktop)
+  window.partageMessenger = function(event, url) {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      // Tentative app Messenger native
+      event.preventDefault();
+      const messengerUrl = 'fb-messenger://share?link=' + encodeURIComponent(url);
+      const fallbackUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+      window.location.href = messengerUrl;
+      // Fallback web après 800ms si l'app n'est pas installée
+      setTimeout(() => {
+        window.open(fallbackUrl, '_blank');
+      }, 800);
+      return false;
+    }
+    // Desktop : laisse passer le href par défaut (partage Facebook web)
+    return true;
+  };
+
+  // 📣 ============================================================
+  // PARTAGE PAGE FACEBOOK OFFICIELLE TWOQ avec récompense (+5 pts/jour)
+  // ============================================================
+  // Système d'honneur avec cooldown 24h via localStorage.
+  // À chaque partage validé, une ligne est insérée dans Supabase pour
+  // tracker l'activité (table `fan_partages_fb`).
+  // ============================================================
+  const PARTAGE_FB_KEY = 'twoq_last_partage_fb';
+  const PARTAGE_FB_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+  const FB_PAGE_URL = 'https://www.facebook.com/theworldofqueen';
+
+  function getLastPartageFb() {
+    try {
+      const v = localStorage.getItem(PARTAGE_FB_KEY);
+      return v ? parseInt(v, 10) : 0;
+    } catch (e) { return 0; }
+  }
+
+  function timeToNextPartageFb() {
+    const last = getLastPartageFb();
+    if (!last) return 0;
+    const remaining = (last + PARTAGE_FB_COOLDOWN_MS) - Date.now();
+    return remaining > 0 ? remaining : 0;
+  }
+
+  function formatTimeRemaining(ms) {
+    const totalMin = Math.ceil(ms / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    if (h > 0) return h + 'h' + (m > 0 ? String(m).padStart(2, '0') : '');
+    return m + ' min';
+  }
+
+  // Met à jour le visuel du bloc selon l'état (disponible / cooldown)
+  window.updatePartageFbCard = function() {
+    const card = document.getElementById('partagePageFbCard');
+    const sub = document.getElementById('partageFbSub');
+    const arrow = document.getElementById('partageFbArrow');
+    const bonus = document.getElementById('partageFbBonus');
+    if (!card || !sub) return;
+
+    const remaining = timeToNextPartageFb();
+    if (remaining > 0) {
+      // En cooldown : bouton grisé
+      card.style.opacity = '0.6';
+      card.style.cursor = 'not-allowed';
+      card.style.borderColor = '#444';
+      sub.innerHTML = '✓ Déjà partagé · Reviens dans <strong style="color:var(--gold);">' + formatTimeRemaining(remaining) + '</strong>';
+      if (arrow) arrow.style.color = '#666';
+      if (bonus) bonus.style.opacity = '0.5';
+    } else {
+      // Disponible
+      card.style.opacity = '1';
+      card.style.cursor = 'pointer';
+      card.style.borderColor = '#1877F2';
+      sub.textContent = 'Partage notre page Facebook · Aide-nous à grandir';
+      if (arrow) arrow.style.color = '#1877F2';
+      if (bonus) bonus.style.opacity = '1';
+    }
+  };
+
+  // Action principale : ouvrir le partage + enregistrer
+  window.ouvrirPartagePageFb = async function() {
+    if (!isFanConnected()) {
+      if (typeof openLoginModal === 'function') openLoginModal();
+      return;
+    }
+    
+    // Vérif cooldown
+    const remaining = timeToNextPartageFb();
+    if (remaining > 0) {
+      alert('🕐 Tu as déjà partagé aujourd\'hui !\n\nReviens dans ' + formatTimeRemaining(remaining) + ' pour gagner à nouveau +5 pts.');
+      return;
+    }
+    
+    const fan = getFan();
+    if (!fan || !fan.email) return;
+    
+    // 1. Enregistrer le timestamp local IMMÉDIATEMENT (évite double-clic)
+    try { localStorage.setItem(PARTAGE_FB_KEY, String(Date.now())); } catch(e) {}
+    updatePartageFbCard();
+    
+    // 2. Tracker en Supabase (best-effort, pas bloquant)
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/fan_partages_fb', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          fan_id: fan.id || null,
+          fan_email: fan.email,
+          fan_prenom: fan.prenom || null
+        })
+      });
+    } catch (e) { console.warn('Track partage FB:', e); }
+    
+    // 3. Ouvrir le partage Facebook
+    const partageUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(FB_PAGE_URL);
+    window.open(partageUrl, '_blank', 'width=600,height=600');
+    
+    // 4. Feedback
+    setTimeout(() => {
+      alert('🎉 Bravo ' + (fan.prenom || '') + ' !\n\n+5 pts ajoutés à ton score TWOQ.\n\nReviens demain pour gagner à nouveau !');
+    }, 600);
+  };
+
+  // Init au chargement de la Fan Zone
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(updatePartageFbCard, 500);
+  });
+  // Refresh aussi quand on change d'onglet
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => setTimeout(updatePartageFbCard, 200));
+  });
 
   // ──────────────────────────────────────────────────────────────────────
   // MES CONCOURS — Chargement et affichage dans la page MOI
@@ -9910,6 +10089,22 @@
     if (menuBadge) {
       menuBadge.style.display = nonLues > 0 ? 'inline-block' : 'none';
       menuBadge.textContent = nonLues;
+    }
+
+    // Maj du teaser de l'accordéon (compteur + hint)
+    const teaserCount = document.getElementById('notifsTeaserCount');
+    const teaserHint = document.getElementById('notifsTeaserHint');
+    if (teaserCount) {
+      if (notifs.length === 0) {
+        teaserCount.textContent = 'Aucune notification';
+      } else if (nonLues > 0) {
+        teaserCount.innerHTML = `<strong style="color:var(--gold);">${nonLues} nouvelle${nonLues > 1 ? 's' : ''}</strong> · ${notifs.length} au total`;
+      } else {
+        teaserCount.textContent = `${notifs.length} notification${notifs.length > 1 ? 's' : ''}`;
+      }
+    }
+    if (teaserHint) {
+      teaserHint.textContent = notifs.length === 0 ? 'Tu seras prévenu des dates, concours...' : 'Clique pour déplier la liste';
     }
 
     if (notifs.length === 0) {
