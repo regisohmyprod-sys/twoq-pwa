@@ -1512,8 +1512,8 @@
       background-position: 100% center;
       background-repeat: no-repeat;
       opacity: 0.6;
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 60%);
-      mask-image: linear-gradient(to right, transparent 0%, black 60%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 75%);
+      mask-image: linear-gradient(to right, transparent 0%, black 75%);
     }
     .shop-overlay { position: absolute; inset: 0; }
     .shop-content {
@@ -1982,6 +1982,17 @@
     @keyframes signupSlide {
       from { opacity: 0; transform: translateY(40px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === Surcharge spécifique : modal Contact centré (au milieu de l'écran) === */
+    #contactModal {
+      align-items: center !important;
+      padding: 16px;
+    }
+    #contactModal .signup-content {
+      border-radius: 24px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+      max-height: 88vh;
     }
     .signup-handle {
       width: 40px;
@@ -4994,7 +5005,7 @@
               <span class="btn-gold" style="display:inline-block; padding:7px 14px; font-size:11px;">Découvrir →</span>
             </div>
             <!-- Photo officielle Boutique TWOQ - à droite, avec fade vers la gauche -->
-            <img src="assets/boutique-merch.png" alt="" loading="lazy" style="position:absolute; right:0; top:0; bottom:0; height:100%; width:42%; object-fit:cover; object-position:100% center; opacity:0.9; -webkit-mask-image:linear-gradient(to right, transparent 0%, black 55%); mask-image:linear-gradient(to right, transparent 0%, black 55%); pointer-events:none; z-index:1;">
+            <img src="assets/boutique-merch.png" alt="" loading="lazy" style="position:absolute; right:0; top:0; bottom:0; height:100%; width:32%; object-fit:cover; object-position:100% center; opacity:0.9; -webkit-mask-image:linear-gradient(to right, transparent 0%, black 70%); mask-image:linear-gradient(to right, transparent 0%, black 70%); pointer-events:none; z-index:1;">
           </a>
         </div>
       </div>
