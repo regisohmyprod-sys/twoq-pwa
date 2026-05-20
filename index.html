@@ -1994,6 +1994,43 @@
       border-bottom: 1px solid rgba(212, 175, 55, 0.4);
       max-height: 88vh;
     }
+
+    /* === Surcharge : modaux Messagerie Fans (envoi + historique) centrés === */
+    #messageFanModal,
+    #myMessagesModal {
+      align-items: center !important;
+      padding: 16px;
+    }
+    #messageFanModal .signup-content,
+    #myMessagesModal .signup-content {
+      border-radius: 24px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+      max-height: 88vh;
+    }
+
+    /* === Style du dropdown Catégorie (cohérent charte TWOQ noir/or) === */
+    #msgFanForm select.signup-input {
+      background-color: #0a0a0a;
+      color: var(--cream);
+      cursor: pointer;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1L6 6L11 1' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+    #msgFanForm select.signup-input option {
+      background-color: #0a0a0a;
+      color: var(--cream);
+      padding: 10px;
+    }
+    #msgFanForm select.signup-input option:checked,
+    #msgFanForm select.signup-input option:hover {
+      background-color: #D4AF37;
+      color: #0a0a0a;
+    }
     .signup-handle {
       width: 40px;
       height: 4px;
