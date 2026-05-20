@@ -6971,6 +6971,59 @@
   // Crée un fan dans Supabase (étape 1)
   async function createFan(data) {
     try {
+      // NOUVELLE LOGIQUE : Vérifier si l'email existe déjà
+      const checkEmail = await fetch(SUPABASE_URL + '/rest/v1/fans?email=eq.' + encodeURIComponent(data.email) + '&select=id,email,prenom,profil_complete', {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      });
+      
+      if (checkEmail.ok) {
+        const existing = await checkEmail.json();
+        if (existing && existing.length > 0) {
+          const existingFan = existing[0];
+          
+          // CAS 1 : Compte importé incomplet → ACTIVATION
+          if (!existingFan.profil_complete) {
+            // UPDATE du fan existant avec les nouvelles infos
+            const updateResponse = await fetch(SUPABASE_URL + '/rest/v1/fans?id=eq.' + existingFan.id, {
+              method: 'PATCH',
+              headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+              },
+              body: JSON.stringify({
+                ...data,
+                profil_complete: false, // Sera mis à true à l'étape 2
+                source: 'wix_activation' // Marque qu'il a activé son compte importé
+              })
+            });
+            
+            if (updateResponse.ok) {
+              const result = await updateResponse.json();
+              const fanActive = result[0];
+              
+              // 🤝 Enregistrement parrainage si applicable
+              if (fanActive && fanActive.id) {
+                try {
+                  await enregistrerParrainagePostInscription(fanActive.id);
+                } catch(e) { console.warn('[Parrain] Échec post-activation:', e); }
+              }
+              
+              return { ok: true, data: fanActive, activated: true }; // Flag pour afficher message spécial
+            }
+            return { ok: false, error: 'update_failed', message: 'Erreur lors de l\'activation de ton compte.' };
+          }
+          
+          // CAS 2 : Compte déjà complet → Erreur
+          return { ok: false, error: 'duplicate', message: 'Cet email est déjà inscrit. Tu as déjà un compte complet !' };
+        }
+      }
+      
+      // CAS 3 : Email nouveau → Création normale
       const response = await fetch(SUPABASE_URL + '/rest/v1/fans', {
         method: 'POST',
         headers: {
@@ -6993,7 +7046,7 @@
         return { ok: true, data: nouveauFan };
       } else {
         const err = await response.json();
-        // Email déjà existant ?
+        // Email déjà existant (fallback si check raté)
         if (err.code === '23505' || (err.message || '').toLowerCase().includes('duplicate')) {
           return { ok: false, error: 'duplicate', message: 'Cet email est déjà inscrit. Tu as déjà un compte !' };
         }
@@ -7687,6 +7740,12 @@
     if (result.ok) {
       // Sauvegarde locale
       setFan(result.data);
+      // Message spécial si activation d'un compte importé
+      if (result.activated) {
+        // Petit délai pour laisser voir un message
+        submitBtn.innerHTML = '✅ Compte activé !';
+        await new Promise(r => setTimeout(r, 800));
+      }
       // Bascule sur l'étape 2
       closeSignupStep1();
       setTimeout(() => openSignupStep2Inline(), 350);
