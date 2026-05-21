@@ -38,7 +38,7 @@
       --smoke: #8B8580;
       --serif: 'Playfair Display', Georgia, serif;
       --sans: 'Inter', -apple-system, system-ui, sans-serif;
-      --tab-h: 64px;
+      --tab-h: 72px;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
@@ -115,13 +115,17 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      color: var(--smoke);
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      font-weight: 500;
+      color: rgba(245, 241, 232, 0.75);
+      font-size: 11px;
+      letter-spacing: 0.4px;
+      font-weight: 600;
       padding: 8px 2px;
       transition: color 0.2s;
       white-space: nowrap;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
     }
     .tab.active { color: var(--gold); }
     .tab svg { width: 22px; height: 22px; stroke-width: 1.5; }
