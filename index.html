@@ -409,8 +409,8 @@
     }
     .lightbox-close {
       position: fixed;
-      top: 16px;
-      right: 16px;
+      top: max(16px, env(safe-area-inset-top, 16px));
+      right: max(16px, env(safe-area-inset-right, 16px));
       width: 44px;
       height: 44px;
       border-radius: 50%;
@@ -423,6 +423,8 @@
       cursor: pointer;
       box-shadow: 0 4px 16px rgba(0,0,0,0.6);
       z-index: 10000;
+      -webkit-tap-highlight-color: rgba(212, 175, 55, 0.4);
+      touch-action: manipulation;
     }
     .lightbox-nav {
       position: fixed;
@@ -2197,15 +2199,15 @@
       margin: 0 auto 18px;
     }
     .signup-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top, 14px));
+      right: max(14px, env(safe-area-inset-right, 14px));
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      color: var(--cream);
+      background: rgba(212, 175, 55, 0.95);
+      border: none;
+      color: #0A0A0A;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -2214,9 +2216,10 @@
       line-height: 1;
       -webkit-tap-highlight-color: rgba(212, 175, 55, 0.4);
       touch-action: manipulation;
-      z-index: 10;
+      z-index: 99999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
     }
-    .signup-close:active { background: rgba(212, 175, 55, 0.3); }
+    .signup-close:active { background: var(--gold-pale); transform: scale(0.95); }
     .signup-tag {
       color: var(--gold);
       font-size: 11px;
@@ -3313,12 +3316,12 @@
       position: relative;
     }
     .quiz-close {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: transparent;
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      color: var(--gold);
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top, 14px));
+      right: max(14px, env(safe-area-inset-right, 14px));
+      background: rgba(212, 175, 55, 0.95);
+      border: none;
+      color: #0A0A0A;
       width: 44px;
       height: 44px;
       border-radius: 50%;
@@ -3330,9 +3333,10 @@
       justify-content: center;
       -webkit-tap-highlight-color: rgba(212, 175, 55, 0.4);
       touch-action: manipulation;
-      z-index: 10;
+      z-index: 99999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
     }
-    .quiz-close:active { background: rgba(212, 175, 55, 0.2); }
+    .quiz-close:active { background: var(--gold-pale); transform: scale(0.95); }
     .quiz-title {
       font-size: 13px;
       letter-spacing: 2.5px;
@@ -3613,9 +3617,9 @@
       display: block;
     }
     .video-modal-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
+      position: fixed;
+      top: max(16px, env(safe-area-inset-top, 16px));
+      right: max(16px, env(safe-area-inset-right, 16px));
       width: 44px;
       height: 44px;
       border-radius: 50%;
@@ -3629,6 +3633,8 @@
       box-shadow: 0 4px 16px rgba(0,0,0,0.5);
       z-index: 10000;
       transition: transform 0.2s;
+      -webkit-tap-highlight-color: rgba(212, 175, 55, 0.4);
+      touch-action: manipulation;
     }
     .video-modal-close:hover {
       transform: scale(1.1);
