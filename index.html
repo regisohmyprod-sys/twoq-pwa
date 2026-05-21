@@ -2463,6 +2463,93 @@
       transform: translateY(-2px);
     }
     /* Carte "TARIFS RÉDUITS" en rouge clignotant pour attirer l'oeil */
+    /* === BOUTON BILLETTERIE EXCLUSIVE OR/PLATINE === */
+    .billetterie-vip-card {
+      position: relative;
+      margin: 22px 0 14px;
+      background: linear-gradient(135deg, #1a1408 0%, #2a1f0a 50%, #1a1408 100%);
+      border: 2px solid #D4AF37;
+      border-radius: 14px;
+      padding: 18px 18px;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: 0 0 0 0 rgba(212,175,55,0.7);
+      animation: billetterieVipPulse 2.6s ease-in-out infinite;
+      transition: transform 0.2s;
+    }
+    .billetterie-vip-card:hover,
+    .billetterie-vip-card:active {
+      transform: translateY(-2px);
+    }
+    .billetterie-vip-shine {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent 0%, rgba(240,215,122,0.35) 50%, transparent 100%);
+      animation: billetterieVipShine 3.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .billetterie-vip-content {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 2;
+    }
+    .billetterie-vip-icon {
+      font-size: 30px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    .billetterie-vip-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .billetterie-vip-title {
+      color: #F0D77A;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 2px;
+      font-family: var(--serif, 'Cinzel', serif);
+      margin-bottom: 4px;
+    }
+    .billetterie-vip-sub {
+      color: #F5F1E8;
+      font-size: 13px;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+    .billetterie-vip-note {
+      color: #8B8580;
+      font-size: 10.5px;
+      font-style: italic;
+      letter-spacing: 0.3px;
+    }
+    .billetterie-vip-arrow {
+      color: #D4AF37;
+      font-size: 22px;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .billetterie-vip-card:hover .billetterie-vip-arrow {
+      transform: translateX(4px);
+    }
+    @keyframes billetterieVipPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(212,175,55,0.5), 0 4px 12px rgba(0,0,0,0.4);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(212,175,55,0), 0 4px 16px rgba(212,175,55,0.3);
+      }
+    }
+    @keyframes billetterieVipShine {
+      0% { left: -100%; }
+      50%, 100% { left: 200%; }
+    }
+
     .tarifs-reduits-card {
       border-color: rgba(255, 48, 48, 0.4) !important;
       animation: tarifsBlink 2s ease-in-out infinite;
@@ -5604,8 +5691,32 @@
              <div class="mut" style="margin-top:4px; font-size:13px;">Tape sur le cœur d'une date dans l'onglet DATES</div>
            </div>`;
 
+      // Bouton BILLETTERIE EXCLUSIVE : visible UNIQUEMENT pour OR et PLATINE
+      let billetterieVipHTML = '';
+      if (isConnected) {
+        const lvl = getFanLevel(fan);
+        if (lvl && (lvl.key === 'or' || lvl.key === 'platine')) {
+          billetterieVipHTML = `
+            <div class="billetterie-vip-card" onclick="ouvrirBilletterieVip()">
+              <div class="billetterie-vip-shine"></div>
+              <div class="billetterie-vip-content">
+                <div class="billetterie-vip-icon">🎟️</div>
+                <div class="billetterie-vip-text">
+                  <div class="billetterie-vip-title">BILLETTERIE EXCLUSIVE</div>
+                  <div class="billetterie-vip-sub">Réservée membres ${lvl.icon} ${lvl.label} · Tarifs réduits <strong>-10%</strong></div>
+                  <div class="billetterie-vip-note">* Disponible sur ~90% des dates de tournée</div>
+                </div>
+                <div class="billetterie-vip-arrow">→</div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
       return `
       ${headerHTML}
+
+      ${billetterieVipHTML}
 
       ${renderStatusSection(fan)}
 
@@ -8542,6 +8653,31 @@
     }
   }
 
+  // ============================================================
+  // === BILLETTERIE EXCLUSIVE OR/PLATINE ===
+  // 🎯 RÉGIS : remplace cette URL par ton vrai lien Ticketmaster marque blanche.
+  // Le lien doit pouvoir contenir un code/paramètre d'identification membre si tu veux.
+  // ============================================================
+  const BILLETTERIE_VIP_URL = 'https://lesdernierscouches.com/?s=THE+WORLD+OF+QUEEN';
+  // Note RGPD : la billetterie ouvre dans un nouvel onglet, le membre est identifié à l'arrivée
+
+  // Ouverture de la billetterie exclusive — réservée aux membres OR et PLATINE
+  function ouvrirBilletterieVip() {
+    const fan = getFan();
+    if (!fan) {
+      alert('Connecte-toi d\'abord pour accéder à la billetterie exclusive.');
+      return;
+    }
+    const lvl = getFanLevel(fan);
+    if (!lvl || (lvl.key !== 'or' && lvl.key !== 'platine')) {
+      alert('La billetterie exclusive est réservée aux membres OR et PLATINE.\n\nTon niveau actuel : ' + (lvl?.label || 'FAN') + '\n\nMonte ton score à 70+ pour y accéder !');
+      return;
+    }
+    // Construire l'URL avec un paramètre d'identification (à adapter selon ton système Ticketmaster)
+    const url = BILLETTERIE_VIP_URL + (BILLETTERIE_VIP_URL.includes('?') ? '&' : '?') + 'membre=' + encodeURIComponent(fan.id || fan.email);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
   // === SYSTÈME DE NIVEAUX FAN ===
   // 4 niveaux : Fan (0-39) / VIP (profil complet) / Or (70-89) / Platine (90+)
   const FAN_LEVELS = [
@@ -8579,7 +8715,7 @@
       condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) >= 70 && (fan?.fan_score || 0) < 90,
       icon: '🥇',
       desc: 'Score 70-89',
-      benefits: ['Tous les avantages VIP', 'Tarifs réduits <strong>-10%</strong> sur vos billets', 'Pré-réservation 48h avant', '+2 chances bonus dans les concours', '1 place / an à gagner']
+      benefits: ['Tous les avantages VIP', 'Tarifs réduits <strong>-10%</strong> sur ~90% des dates<sup>*</sup>', 'Pré-réservation 48h avant', '+2 chances bonus dans les concours', '1 place / an à gagner', '🎟️ <strong>Billetterie exclusive OR/PLATINE</strong>']
     },
     {
       key: 'platine',
@@ -8591,7 +8727,7 @@
       condition: (fan) => fan?.profil_complete && (fan?.fan_score || 0) >= 90,
       icon: '💎',
       desc: 'Score 90+ (Légende)',
-      benefits: ['Tous les avantages OR', 'Tarifs réduits <strong>-10%</strong> sur vos billets', '2 places à gagner par an', '1 pass\'ta journée par an (pour 2 personnes)', 'Rencontre artistes garantie', 'Mention "Légende TWOQ"']
+      benefits: ['Tous les avantages OR', 'Tarifs réduits <strong>-10%</strong> sur ~90% des dates<sup>*</sup>', '2 places à gagner par an', '1 pass\'ta journée par an (pour 2 personnes)', 'Rencontre artistes garantie', 'Mention "Légende TWOQ"']
     }
   ];
 
@@ -8714,6 +8850,9 @@
             </div>
           `).join('')}
         </div>
+        <div style="margin-top:16px; padding:10px 12px; background:rgba(212,175,55,0.06); border-left:2px solid #D4AF37; border-radius:4px; font-size:11px; color:#8B8580; line-height:1.5; font-style:italic;">
+          <sup>*</sup> Les tarifs réduits s'appliquent sur environ 90% des dates de tournée. Certaines billetteries sont gérées directement par les salles partenaires et restent hors de notre contrôle.
+        </div>
       `;
     } else {
       // Vue détaillée d'un niveau spécifique
@@ -8728,6 +8867,11 @@
           <ul class="level-detail-benefits">
             ${lvl.benefits.map(b => `<li>${b}</li>`).join('')}
           </ul>
+          ${(lvl.key === 'or' || lvl.key === 'platine') ? `
+            <div style="margin-top:10px; padding:10px 12px; background:rgba(212,175,55,0.06); border-left:2px solid #D4AF37; border-radius:4px; font-size:11px; color:#8B8580; line-height:1.5; font-style:italic;">
+              <sup>*</sup> Les tarifs réduits s'appliquent sur environ 90% des dates de tournée. Certaines billetteries sont gérées directement par les salles partenaires et restent hors de notre contrôle.
+            </div>
+          ` : ''}
         </div>
         <button class="signup-skip" onclick="openLevelDetail('all')" style="margin-top:14px;">Voir tous les niveaux →</button>
       `;
