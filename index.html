@@ -11976,7 +11976,7 @@
     // Pour iOS, on affiche une MODAL plein écran (plus visible que le bandeau en bas)
     // car la barre Safari peut être cachée et l'utilisateur peut ne pas la trouver
     const modalHTML = `
-      <div id="twoqInstallBanner" style="position:fixed; inset:0; z-index:99999; background:rgba(10,10,10,0.92); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:24px; opacity:0; transition:opacity 0.4s ease-out;">
+      <div id="twoqInstallBanner" style="position:fixed; top:0; left:0; right:0; bottom:auto; max-height:75vh; z-index:99999; background:rgba(10,10,10,0.92); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); display:flex; align-items:flex-start; justify-content:center; padding:20px 16px 16px; opacity:0; transition:opacity 0.4s ease-out; overflow-y:auto;">
         <div style="background:linear-gradient(180deg, #141414 0%, #0A0A0A 100%); border:2px solid #D4AF37; border-radius:20px; padding:32px 24px; max-width:380px; width:100%; text-align:center; box-shadow:0 0 80px rgba(212,175,55,0.3); position:relative;">
           <button onclick="window.twoqDismissInstall()" aria-label="Fermer" style="position:absolute; top:8px; right:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(212,175,55,0.25); border-radius:50%; color:#D4AF37; font-size:22px; cursor:pointer; width:44px; height:44px; display:flex; align-items:center; justify-content:center; line-height:1; -webkit-tap-highlight-color:rgba(212,175,55,0.4); touch-action:manipulation; z-index:10;">×</button>
 
