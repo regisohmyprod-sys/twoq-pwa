@@ -11744,5 +11744,266 @@
   </div>
 </div>
 
+
+<!-- ============================================================ -->
+<!-- === ANALYTICS TRACKER TWOQ + BANDEAU INSTALL PWA === -->
+<!-- ============================================================ -->
+<script>
+(function() {
+  'use strict';
+
+  // Configuration Supabase (réutilise les mêmes constantes que le reste du site)
+  const SUPABASE_URL = (window.SUPABASE_URL || 'https://nhxqcavianozskxgfcbt.supabase.co');
+  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
+  const TABLE = 'app_analytics_events';
+
+  // -------- Session ID anonyme persistant --------
+  let sessionId = localStorage.getItem('twoq_session_id');
+  if (!sessionId) {
+    sessionId = 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2, 11);
+    localStorage.setItem('twoq_session_id', sessionId);
+  }
+
+  // -------- Détection de l'environnement --------
+  function detectDevice() {
+    const ua = navigator.userAgent;
+    if (/iPad|tablet/i.test(ua)) return 'tablet';
+    if (/Mobile|Android|iPhone/i.test(ua)) return 'mobile';
+    return 'desktop';
+  }
+  function detectOS() {
+    const ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod/.test(ua)) return 'iOS';
+    if (/Android/.test(ua)) return 'Android';
+    if (/Windows/.test(ua)) return 'Windows';
+    if (/Mac/.test(ua)) return 'macOS';
+    if (/Linux/.test(ua)) return 'Linux';
+    return 'Other';
+  }
+  function detectBrowser() {
+    const ua = navigator.userAgent;
+    if (/Edg/.test(ua)) return 'Edge';
+    if (/Chrome/.test(ua) && !/Edg/.test(ua)) return 'Chrome';
+    if (/Safari/.test(ua) && !/Chrome/.test(ua)) return 'Safari';
+    if (/Firefox/.test(ua)) return 'Firefox';
+    return 'Other';
+  }
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.navigator.standalone === true ||
+           document.referrer.includes('android-app://');
+  }
+
+  // -------- Parse UTM params --------
+  function getUTM() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      utm_source: params.get('utm_source') || (params.get('source') === 'qr' ? 'qr' : null),
+      utm_campaign: params.get('utm_campaign') || null
+    };
+  }
+
+  // -------- Récupération du fan connecté si présent --------
+  function getCurrentFanId() {
+    try {
+      const fanStr = localStorage.getItem('twoq_fan');
+      if (!fanStr) return null;
+      const fan = JSON.parse(fanStr);
+      return fan && fan.id ? fan.id : null;
+    } catch { return null; }
+  }
+
+  // -------- Fonction d'envoi d'un event --------
+  async function track(eventType, extra) {
+    if (!SUPABASE_ANON_KEY) {
+      console.warn('[Analytics] SUPABASE_ANON_KEY manquante, tracker désactivé');
+      return;
+    }
+    extra = extra || {};
+    const utm = getUTM();
+    const payload = {
+      event_type: eventType,
+      session_id: sessionId,
+      fan_id: getCurrentFanId(),
+      page: extra.page || (location.hash.replace('#', '') || 'home'),
+      device_type: detectDevice(),
+      os: detectOS(),
+      browser: detectBrowser(),
+      is_standalone: isStandalone(),
+      utm_source: utm.utm_source,
+      utm_campaign: utm.utm_campaign,
+      referrer_domain: document.referrer ? new URL(document.referrer).hostname : null,
+      payload: extra.payload || {}
+    };
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/' + TABLE, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload),
+        keepalive: true
+      });
+    } catch (e) {
+      console.warn('[Analytics] échec envoi:', e);
+    }
+  }
+  window.twoqTrack = track; // exposé pour debug + appels externes
+
+  // -------- TRACKING AUTOMATIQUE --------
+
+  // 1. Détection arrivée QR code
+  const utm = getUTM();
+  if (utm.utm_source === 'qr') {
+    track('qr_scan');
+  }
+
+  // 2. Visite initiale (1 fois par chargement de page)
+  track('visit');
+
+  // 3. Lancement depuis l'écran d'accueil (PWA installée)
+  if (isStandalone()) {
+    track('launch_standalone');
+  }
+
+  // 4. Tracking navigation entre pages (changement de hash)
+  let lastPage = location.hash;
+  window.addEventListener('hashchange', () => {
+    if (location.hash !== lastPage) {
+      lastPage = location.hash;
+      track('page_view', { page: location.hash.replace('#', '') || 'home' });
+    }
+  });
+
+  // ============================================================
+  // === BANDEAU D'INSTALLATION PWA PERSONNALISÉ ===
+  // ============================================================
+
+  let deferredPrompt = null;
+  let installBannerShown = false;
+
+  // Capture du prompt natif (Android/Chrome)
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Affiche notre bandeau personnalisé après 8 secondes (laisse le temps d'apprécier le site)
+    setTimeout(() => showInstallBanner(), 8000);
+  });
+
+  // Sur iOS, le beforeinstallprompt n'existe pas → on affiche un bandeau d'instructions
+  function isIOSSafari() {
+    const ua = navigator.userAgent;
+    return /iPad|iPhone|iPod/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS/.test(ua);
+  }
+
+  if (isIOSSafari() && !isStandalone() && !localStorage.getItem('twoq_install_dismissed')) {
+    setTimeout(() => showInstallBannerIOS(), 10000);
+  }
+
+  // Si déjà installé ou refusé récemment, on n'affiche pas
+  function shouldShowBanner() {
+    if (isStandalone()) return false;
+    if (installBannerShown) return false;
+    const dismissedAt = localStorage.getItem('twoq_install_dismissed');
+    if (dismissedAt) {
+      const daysSince = (Date.now() - parseInt(dismissedAt, 10)) / 86400000;
+      if (daysSince < 7) return false; // pas avant 7 jours après refus
+    }
+    return true;
+  }
+
+  function buildBannerHTML(opts) {
+    return `
+      <div id="twoqInstallBanner" style="position:fixed; bottom:0; left:0; right:0; z-index:9999; background:linear-gradient(180deg, #0A0A0A 0%, #141414 100%); border-top:2px solid #D4AF37; padding:16px 18px; box-shadow:0 -8px 30px rgba(0,0,0,0.6); transform:translateY(100%); transition:transform 0.4s ease-out; padding-bottom:calc(16px + env(safe-area-inset-bottom));">
+        <button onclick="window.twoqDismissInstall()" aria-label="Fermer" style="position:absolute; top:8px; right:8px; background:transparent; border:none; color:#8B8580; font-size:22px; cursor:pointer; padding:4px 10px;">×</button>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div style="font-size:36px; flex-shrink:0;">📱</div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-family:'Cinzel', serif; font-size:14px; letter-spacing:1.5px; color:#D4AF37; font-weight:700; margin-bottom:4px;">INSTALLE L'APPLI TWOQ</div>
+            <div style="font-size:12px; color:#F5F1E8; line-height:1.4;">${opts.subtitle}</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button onclick="window.twoqAcceptInstall()" style="flex:1; background:#D4AF37; color:#0A0A0A; border:none; padding:11px 14px; border-radius:6px; font-weight:700; font-size:13px; letter-spacing:1px; cursor:pointer; font-family:inherit;">${opts.acceptLabel}</button>
+          <button onclick="window.twoqDismissInstall()" style="background:transparent; color:#8B8580; border:1px solid #333; padding:11px 14px; border-radius:6px; font-size:12px; cursor:pointer; font-family:inherit;">Plus tard</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function showInstallBanner() {
+    if (!shouldShowBanner() || !deferredPrompt) return;
+    installBannerShown = true;
+    track('install_prompt');
+    const html = buildBannerHTML({
+      subtitle: "Accès rapide, notifs concours, et ton statut de fan toujours à portée de main.",
+      acceptLabel: "✨ INSTALLER"
+    });
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    document.body.appendChild(div.firstElementChild);
+    setTimeout(() => {
+      const banner = document.getElementById('twoqInstallBanner');
+      if (banner) banner.style.transform = 'translateY(0)';
+    }, 100);
+  }
+
+  function showInstallBannerIOS() {
+    if (!shouldShowBanner()) return;
+    installBannerShown = true;
+    track('install_prompt');
+    const html = buildBannerHTML({
+      subtitle: "Touche <strong style='color:#D4AF37;'>Partager</strong> ⬆ puis <strong style='color:#D4AF37;'>Sur l'écran d'accueil</strong> pour installer l'app.",
+      acceptLabel: "👍 J'AI COMPRIS"
+    });
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    document.body.appendChild(div.firstElementChild);
+    setTimeout(() => {
+      const banner = document.getElementById('twoqInstallBanner');
+      if (banner) banner.style.transform = 'translateY(0)';
+    }, 100);
+  }
+
+  window.twoqAcceptInstall = async function() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const result = await deferredPrompt.userChoice;
+      if (result.outcome === 'accepted') {
+        track('install_accepted');
+      } else {
+        track('install_dismissed');
+      }
+      deferredPrompt = null;
+    } else {
+      // iOS : on considère que l'utilisateur a vu les instructions
+      track('install_accepted', { payload: { manual: true } });
+    }
+    hideBanner();
+  };
+
+  window.twoqDismissInstall = function() {
+    track('install_dismissed');
+    localStorage.setItem('twoq_install_dismissed', Date.now().toString());
+    hideBanner();
+  };
+
+  function hideBanner() {
+    const banner = document.getElementById('twoqInstallBanner');
+    if (!banner) return;
+    banner.style.transform = 'translateY(100%)';
+    setTimeout(() => banner.remove(), 400);
+  }
+
+  // Évènement appinstalled = confirmation finale d'installation
+  window.addEventListener('appinstalled', () => {
+    track('install_accepted', { payload: { event: 'appinstalled' } });
+  });
+})();
+</script>
+
 </body>
 </html>
