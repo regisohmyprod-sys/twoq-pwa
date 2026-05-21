@@ -5193,6 +5193,17 @@
         <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
       </div>
 
+      <div class="section-eyebrow">VIDÉOS BACKSTAGE</div>
+      <div class="section-title">Les coulisses !</div>
+      <div class="section-sub" style="text-align:center; color:var(--smoke); font-size:13px; margin:-4px 0 14px; font-style:italic;">Vis l'envers du décor de la tournée</div>
+      <div class="reels-scroll" id="backstageScroll">
+        ${renderBackstageCards()}
+      </div>
+
+      <div class="gold-divider" style="margin:22px 0 18px;">
+        <span class="line"></span><span class="star"><svg class="crown-svg" width="20" height="16" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 16h20l-1.5-11-5 4L12 2 8.5 9l-5-4L2 16z" fill="#D4AF37"/><rect x="2" y="15" width="20" height="2" fill="#B8941F"/></svg></span><span class="line"></span>
+      </div>
+
       <div class="section-eyebrow">COMMUNAUTÉ</div>
       <div class="contest-card">
         <div class="section-title" style="margin:0 0 12px;">Rejoins la famille TWOQ</div>
@@ -8840,14 +8851,58 @@
     return `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/upload/w_1600,q_auto,f_auto/${encodeURIComponent(id)}`;
   }
 
+  // === Pagination galerie : 15 photos d'abord, +15 à chaque clic "Voir plus" ===
+  const GALLERY_PAGE_SIZE = 15;
+  let galleryVisibleCount = GALLERY_PAGE_SIZE;
+
   function buildGallery() {
+    galleryVisibleCount = GALLERY_PAGE_SIZE; // reset à chaque ouverture
+    renderGallery();
+  }
+
+  function renderGallery() {
     const grid = document.getElementById('galleryGrid');
     if (!grid) return;
-    grid.innerHTML = GALLERY_PHOTOS.map((id, i) => `
+    const total = GALLERY_PHOTOS.length;
+    const visible = Math.min(galleryVisibleCount, total);
+    const photosHTML = GALLERY_PHOTOS.slice(0, visible).map((id, i) => `
       <div class="gallery-item" onclick="openLightbox(${i})">
         <img src="${thumbUrl(id)}" alt="Photo ${i+1}" loading="lazy" onload="this.classList.add('loaded')">
       </div>
     `).join('');
+
+    grid.innerHTML = photosHTML;
+
+    // Gestion du bouton "Voir plus"
+    let btnContainer = document.getElementById('galleryLoadMore');
+    if (btnContainer) btnContainer.remove();
+
+    if (visible < total) {
+      const restant = total - visible;
+      const next = Math.min(GALLERY_PAGE_SIZE, restant);
+      btnContainer = document.createElement('div');
+      btnContainer.id = 'galleryLoadMore';
+      btnContainer.style.cssText = 'text-align:center; margin-top:20px;';
+      btnContainer.innerHTML = `
+        <button onclick="galleryShowMore()" class="btn-outline" style="cursor:pointer; padding:12px 24px; font-size:13px; letter-spacing:1.5px; font-weight:600; display:inline-flex; align-items:center; gap:8px;">
+          ✨ VOIR PLUS DE PHOTOS
+          <span style="opacity:0.7; font-size:11px;">(+${next} sur ${restant} restantes)</span>
+          <span style="font-size:14px;">↓</span>
+        </button>
+      `;
+      grid.parentNode.insertBefore(btnContainer, grid.nextSibling);
+    }
+  }
+
+  function galleryShowMore() {
+    galleryVisibleCount += GALLERY_PAGE_SIZE;
+    renderGallery();
+    // Scroll doux vers les nouvelles photos
+    setTimeout(() => {
+      const items = document.querySelectorAll('.gallery-item');
+      const target = items[galleryVisibleCount - GALLERY_PAGE_SIZE];
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
   }
 
   // === LIGHTBOX avec swipe + autoplay ===
@@ -8952,6 +9007,157 @@
     'Q6VOdTNU9mE', 'ipjg7xsZcx8', 'khyyP4NIBQ4', 'OIo40mWmRII',
     'aYgoOJWT6Bg', 'DmWIfaYm2L0', 'B9lPjOJjRuQ'
   ];
+
+  // ============================================================
+  // === BACKSTAGE VIDEOS (YouTube) ===
+  // 9 Shorts + 1 vidéo classique. Pour ajouter : insère un objet avec :
+  // - id    : ID YouTube (les 11 caractères après v= ou /shorts/)
+  // - type  : 'reel' pour un Short vertical, 'video' pour une vidéo horizontale 16:9
+  // - title : Titre affiché sur la card (optionnel)
+  // ============================================================
+  const BACKSTAGE_VIDEOS = [
+    { id: '9Lx_4Bc0ZRk', type: 'reel',  title: 'Backstage #1' },
+    { id: 'SCtHfFzkq7w', type: 'reel',  title: 'Backstage #2' },
+    { id: '-W-woVjiloQ', type: 'reel',  title: 'Backstage #3' },
+    { id: 'chyTQ_LgrIY', type: 'reel',  title: 'Backstage #4' },
+    { id: 'qXs92xDOUMY', type: 'reel',  title: 'Backstage #5' },
+    { id: 'cWNrb7g8SwU', type: 'reel',  title: 'Backstage #6' },
+    { id: 'YBKTs_8a668', type: 'reel',  title: 'Backstage #7' },
+    { id: '8A4Cb4qCG78', type: 'reel',  title: 'Backstage #8' },
+    { id: 'xEo49qDV660', type: 'reel',  title: 'Backstage #9' },
+    { id: 'gLbys7eH3zs', type: 'video', title: 'Les coulisses' },
+  ];
+
+  // Thumbnail YouTube fiable pour shorts ET vidéos (toujours présente)
+  function ytThumb(id) {
+    return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  }
+
+  function renderBackstageCards() {
+    if (!BACKSTAGE_VIDEOS || BACKSTAGE_VIDEOS.length === 0) {
+      return `
+        <div style="background:rgba(212,175,55,0.05); border:1px dashed rgba(212,175,55,0.3); border-radius:14px; padding:30px 20px; text-align:center; color:var(--smoke); font-size:14px; min-width:100%;">
+          🎬 <strong style="color:var(--gold);">Bientôt disponible</strong><br>
+          <span style="font-size:12px; font-style:italic; opacity:0.8;">Les vidéos des coulisses arrivent très vite...</span>
+        </div>
+      `;
+    }
+    return BACKSTAGE_VIDEOS.map((v, i) => `
+      <a href="#" onclick="event.preventDefault(); openBackstageVideo(${i})" class="reel-card" style="position:relative;">
+        <img src="${ytThumb(v.id)}" alt="${v.title || 'Backstage'}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%); pointer-events:none;">
+          <div style="background:rgba(212,175,55,0.95); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.4);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#0A0A0A"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        ${v.title ? `<div style="position:absolute; bottom:8px; left:8px; right:8px; color:#fff; font-size:11px; font-weight:600; text-shadow:0 1px 4px rgba(0,0,0,0.9); pointer-events:none; letter-spacing:0.3px;">${v.title}</div>` : ''}
+      </a>
+    `).join('');
+  }
+
+  // === LECTEUR BACKSTAGE (YouTube) avec swipe entre vidéos backstage ===
+  let currentBackstageIndex = 0;
+
+  function openBackstageVideo(index) {
+    if (!BACKSTAGE_VIDEOS[index]) return;
+    currentBackstageIndex = index;
+    const v = BACKSTAGE_VIDEOS[index];
+    const modal = document.getElementById('backstageModal');
+    const modalContent = document.getElementById('backstageModalContent');
+    const iframe = document.getElementById('backstageIframe');
+
+    // Adapter le format vertical (reel) ou horizontal (video)
+    if (v.type === 'reel') {
+      modalContent.classList.add('vertical');
+    } else {
+      modalContent.classList.remove('vertical');
+    }
+
+    // Charger la vidéo YouTube avec autoplay
+    iframe.src = `https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+    document.getElementById('backstageTitle').textContent = v.title || '';
+    document.getElementById('backstageCounter').textContent = `${index + 1} / ${BACKSTAGE_VIDEOS.length}`;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Hint swipe
+    const hint = document.getElementById('backstageSwipeHint');
+    if (hint) {
+      hint.classList.remove('hidden');
+      hint.style.animation = 'none';
+      void hint.offsetWidth;
+      hint.style.animation = '';
+    }
+  }
+
+  function closeBackstageVideo() {
+    const modal = document.getElementById('backstageModal');
+    const iframe = document.getElementById('backstageIframe');
+    iframe.src = '';  // stoppe la vidéo
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function backstagePrev() {
+    if (BACKSTAGE_VIDEOS.length === 0) return;
+    const newIdx = (currentBackstageIndex - 1 + BACKSTAGE_VIDEOS.length) % BACKSTAGE_VIDEOS.length;
+    openBackstageVideo(newIdx);
+  }
+
+  function backstageNext() {
+    if (BACKSTAGE_VIDEOS.length === 0) return;
+    const newIdx = (currentBackstageIndex + 1) % BACKSTAGE_VIDEOS.length;
+    openBackstageVideo(newIdx);
+  }
+
+  // Swipe tactile sur la modal backstage (les zones invisibles sur les bords gèrent ça)
+  let backstageTouchStartX = 0;
+  let backstageTouchStartY = 0;
+  let backstageSwiped = false;
+  document.addEventListener('touchstart', (e) => {
+    const modal = document.getElementById('backstageModal');
+    if (modal && modal.classList.contains('active')) {
+      backstageTouchStartX = e.touches[0].clientX;
+      backstageTouchStartY = e.touches[0].clientY;
+      backstageSwiped = false;
+    }
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    const modal = document.getElementById('backstageModal');
+    if (!modal || !modal.classList.contains('active') || backstageSwiped) return;
+    const isVertical = document.getElementById('backstageModalContent').classList.contains('vertical');
+    const diffX = e.touches[0].clientX - backstageTouchStartX;
+    const diffY = e.touches[0].clientY - backstageTouchStartY;
+    // Pour reels verticaux : swipe vertical (haut/bas). Pour vidéos : swipe horizontal.
+    if (isVertical) {
+      if (Math.abs(diffY) > 50) {
+        backstageSwiped = true;
+        const hint = document.getElementById('backstageSwipeHint');
+        if (hint) hint.classList.add('hidden');
+        if (diffY > 0) backstagePrev();
+        else backstageNext();
+      }
+    } else {
+      if (Math.abs(diffX) > 50) {
+        backstageSwiped = true;
+        const hint = document.getElementById('backstageSwipeHint');
+        if (hint) hint.classList.add('hidden');
+        if (diffX > 0) backstagePrev();
+        else backstageNext();
+      }
+    }
+  }, { passive: true });
+
+  // Touches clavier sur la modal backstage
+  document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('backstageModal');
+    if (!modal || !modal.classList.contains('active')) return;
+    if (e.key === 'Escape') closeBackstageVideo();
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') backstagePrev();
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') backstageNext();
+  });
+  // === FIN BACKSTAGE VIDEOS ===
+
   let currentVideoIndex = 0;
   let currentVideoType = 'video';
 
@@ -10798,6 +11004,28 @@
   <div class="video-swipe-hint" id="videoSwipeHint">
     <div class="swipe-hint-icon" id="swipeHintIcon">↑</div>
     <div class="swipe-hint-text" id="swipeHintText">Swipe pour la suivante</div>
+  </div>
+</div>
+
+<!-- MODAL LECTEUR BACKSTAGE (YouTube) avec swipe entre vidéos backstage uniquement -->
+<div id="backstageModal" class="video-modal" onclick="if(event.target===this) closeBackstageVideo()">
+  <button class="video-modal-close" onclick="closeBackstageVideo()" aria-label="Fermer">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <div class="video-modal-content" id="backstageModalContent">
+    <iframe id="backstageIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <!-- Zones de swipe : haut/bas pour shorts (vertical), gauche/droite pour vidéos -->
+    <div class="swipe-zone swipe-top" onclick="backstagePrev()"></div>
+    <div class="swipe-zone swipe-bottom" onclick="backstageNext()"></div>
+    <div class="swipe-zone swipe-left" onclick="backstagePrev()"></div>
+    <div class="swipe-zone swipe-right" onclick="backstageNext()"></div>
+  </div>
+  <div class="video-counter" id="backstageCounter">1 / 1</div>
+  <div style="position:absolute; bottom:60px; left:50%; transform:translateX(-50%); color:#D4AF37; font-size:13px; font-weight:600; letter-spacing:1px; text-align:center; max-width:90%; text-shadow:0 1px 6px rgba(0,0,0,0.9); pointer-events:none;" id="backstageTitle"></div>
+  <!-- Hint d'animation au 1er affichage -->
+  <div class="video-swipe-hint" id="backstageSwipeHint">
+    <div class="swipe-hint-icon" id="backstageSwipeHintIcon">↑</div>
+    <div class="swipe-hint-text">Swipe pour la suivante</div>
   </div>
 </div>
 
