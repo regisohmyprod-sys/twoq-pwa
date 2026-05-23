@@ -11983,46 +11983,25 @@
     if (!shouldShowBanner()) return;
     installBannerShown = true;
     track('install_prompt');
-    // Pour iOS, on affiche une MODAL plein écran (plus visible que le bandeau en bas)
-    // car la barre Safari peut être cachée et l'utilisateur peut ne pas la trouver
+    // Message simple et rassurant : "L'app arrive sur l'App Store, en attendant utilise Safari"
     const modalHTML = `
-      <div id="twoqInstallBanner" style="position:fixed; top:0; left:0; right:0; bottom:auto; max-height:75vh; z-index:99999; background:rgba(10,10,10,0.92); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); display:flex; align-items:flex-start; justify-content:center; padding:20px 16px 16px; opacity:0; transition:opacity 0.4s ease-out; overflow-y:auto;">
-        <div style="background:linear-gradient(180deg, #141414 0%, #0A0A0A 100%); border:2px solid #D4AF37; border-radius:20px; padding:32px 24px; max-width:380px; width:100%; text-align:center; box-shadow:0 0 80px rgba(212,175,55,0.3); position:relative;">
-          <button onclick="window.twoqDismissInstall()" aria-label="Fermer" style="position:absolute; top:8px; right:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(212,175,55,0.25); border-radius:50%; color:#D4AF37; font-size:22px; cursor:pointer; width:44px; height:44px; display:flex; align-items:center; justify-content:center; line-height:1; -webkit-tap-highlight-color:rgba(212,175,55,0.4); touch-action:manipulation; z-index:10;">×</button>
+      <div id="twoqInstallBanner" style="position:fixed; bottom:0; left:0; right:0; z-index:9999; background:linear-gradient(180deg, #0A0A0A 0%, #141414 100%); border-top:2px solid #D4AF37; padding:18px 18px; box-shadow:0 -8px 30px rgba(0,0,0,0.7); transform:translateY(100%); transition:transform 0.4s ease-out; padding-bottom:calc(18px + env(safe-area-inset-bottom));">
+        <button onclick="window.twoqDismissInstall()" aria-label="Fermer" style="position:absolute; top:6px; right:6px; background:rgba(255,255,255,0.05); border:1px solid rgba(212,175,55,0.25); border-radius:50%; color:#D4AF37; font-size:22px; cursor:pointer; width:40px; height:40px; display:flex; align-items:center; justify-content:center; line-height:1; -webkit-tap-highlight-color:rgba(212,175,55,0.4); touch-action:manipulation; z-index:10;">×</button>
 
-          <div style="font-size:11px; letter-spacing:4px; color:#D4AF37; font-weight:700; margin-bottom:10px;">⭐ INVITATION EXCLUSIVE ⭐</div>
-
-          <div style="font-family:'Cinzel', serif; font-size:18px; color:#F5F1E8; font-weight:500; letter-spacing:1.5px; margin-bottom:20px;">INSTALLE L'APPLI TWOQ<br>SUR TON IPHONE</div>
-
-          <div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); border-radius:12px; padding:16px 14px; text-align:left; margin-bottom:18px; font-size:13px; color:#F5F1E8; line-height:1.7;">
-            <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;">
-              <span style="background:#D4AF37; color:#0A0A0A; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0;">1</span>
-              <span>Touche en HAUT de l'écran pour faire apparaître la barre Safari</span>
-            </div>
-            <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;">
-              <span style="background:#D4AF37; color:#0A0A0A; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0;">2</span>
-              <span>Touche l'icône <strong style="color:#D4AF37;">Partager</strong> <span style="display:inline-block; vertical-align:middle; border:1.5px solid #D4AF37; border-radius:4px; padding:1px 4px; line-height:1;"><span style="font-size:14px;">⬆</span></span> en bas</span>
-            </div>
-            <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;">
-              <span style="background:#D4AF37; color:#0A0A0A; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0;">3</span>
-              <span>Fais défiler vers le bas et touche <strong style="color:#D4AF37;">"Sur l'écran d'accueil"</strong></span>
-            </div>
-            <div style="display:flex; align-items:flex-start; gap:10px;">
-              <span style="background:#D4AF37; color:#0A0A0A; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0;">4</span>
-              <span>Touche <strong style="color:#D4AF37;">"Ajouter"</strong> ✨</span>
-            </div>
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:12px;">
+          <div style="font-size:36px; flex-shrink:0;">📱</div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-family:'Cinzel', serif; font-size:13px; letter-spacing:2px; color:#D4AF37; font-weight:700; margin-bottom:4px;">L'APPLI TWOQ ARRIVE BIENTÔT</div>
+            <div style="font-size:12px; color:#F5F1E8; line-height:1.45;">Disponible prochainement sur l'<strong style="color:#D4AF37;">App Store</strong> 🎉</div>
           </div>
+        </div>
 
-          <div style="display:flex; align-items:center; justify-content:center; gap:8px; font-size:11px; color:#8B8580; margin-bottom:18px; letter-spacing:1px;">
-            <span style="display:inline-block; width:24px; height:1px; background:#D4AF37;"></span>
-            <span>OU CONTINUE EN MODE NAVIGATEUR</span>
-            <span style="display:inline-block; width:24px; height:1px; background:#D4AF37;"></span>
-          </div>
+        <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.18); border-radius:10px; padding:11px 13px; font-size:11.5px; color:#cfcfc7; line-height:1.55; margin-bottom:12px;">
+          ✨ En attendant, profite de l'expérience complète <strong style="color:#D4AF37;">ici même dans Safari</strong> — tous les concours, ton statut fan, les news...
+        </div>
 
-          <div style="display:flex; gap:10px;">
-            <button onclick="window.twoqAcceptInstall()" style="flex:1; background:#D4AF37; color:#0A0A0A; border:none; padding:12px 14px; border-radius:8px; font-weight:700; font-size:12px; letter-spacing:1.5px; cursor:pointer; font-family:inherit;">✨ INSTALLER</button>
-            <button onclick="window.twoqDismissInstall()" style="background:transparent; color:#8B8580; border:1px solid #333; padding:12px 16px; border-radius:8px; font-size:12px; cursor:pointer; font-family:inherit;">Plus tard</button>
-          </div>
+        <div style="display:flex; gap:8px;">
+          <button onclick="window.twoqDismissInstall()" style="flex:1; background:#D4AF37; color:#0A0A0A; border:none; padding:12px 14px; border-radius:8px; font-weight:700; font-size:12px; letter-spacing:1.5px; cursor:pointer; font-family:inherit;">✓ J'AI COMPRIS</button>
         </div>
       </div>
     `;
@@ -12031,7 +12010,7 @@
     document.body.appendChild(div.firstElementChild);
     setTimeout(() => {
       const banner = document.getElementById('twoqInstallBanner');
-      if (banner) banner.style.opacity = '1';
+      if (banner) banner.style.transform = 'translateY(0)';
     }, 100);
   }
 
