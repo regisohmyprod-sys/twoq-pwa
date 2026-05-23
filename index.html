@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" style="background:#0A0A0A;">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
@@ -17,12 +17,6 @@
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-180.png">
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png">
-
-  <!-- Fond noir immédiat pour éviter le flash blanc au chargement -->
-  <style>
-    html, body { background-color: #0A0A0A !important; margin:0; padding:0; }
-    body::before { content:""; position:fixed; inset:0; background:#0A0A0A; z-index:-1; }
-  </style>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,12 +41,10 @@
       --tab-h: 72px;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
-      /* Fallback Chrome Android : padding supplémentaire pour ne pas être caché par la barre navigateur */
-      --extra-bottom: 4px;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--cream); font-family: var(--sans); height: 100%; overflow: hidden; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--cream); font-family: var(--sans); height: 100%; overflow: hidden; }
     body { font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 
     a { color: var(--gold); text-decoration: none; }
@@ -62,8 +54,6 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      /* Utilise dvh (dynamic viewport height) qui s'ajuste à la barre du navigateur */
-      height: 100dvh;
       max-width: 480px;
       margin: 0 auto;
       position: relative;
@@ -74,7 +64,7 @@
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: calc(var(--safe-top) + 16px) 16px calc(var(--tab-h) + var(--safe-bottom) + var(--extra-bottom) + 24px);
+      padding: calc(var(--safe-top) + 16px) 16px calc(var(--tab-h) + var(--safe-bottom) + 24px);
       -webkit-overflow-scrolling: touch;
     }
     .screen::-webkit-scrollbar { display: none; }
@@ -107,8 +97,8 @@
     .tabbar {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: calc(var(--tab-h) + var(--safe-bottom) + var(--extra-bottom));
-      padding-bottom: calc(var(--safe-bottom) + var(--extra-bottom));
+      height: calc(var(--tab-h) + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
       background: rgba(10,10,10,0.95);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
