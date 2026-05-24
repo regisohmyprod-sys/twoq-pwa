@@ -622,8 +622,8 @@
     /* === PAGE SHOW : ajouts === */
     .show-logo-wrap {
       text-align: center;
-      margin: -50px -16px -2px;
-      padding: 0 16px 4px;
+      margin: 8px -16px -2px;
+      padding: 0 60px 4px;
       border-bottom: 1px solid rgba(212, 175, 55, 0.35);
     }
     .show-logo-wrap + .h1 {
@@ -631,7 +631,7 @@
     }
     .show-logo {
       max-width: 100%;
-      max-height: 200px;
+      max-height: 180px;
       height: auto;
       width: auto;
       display: inline-block;
@@ -4182,20 +4182,20 @@
     /* Bouton hamburger — fixe en haut à droite */
     #burger-btn {
       position: fixed;
-      top: calc(var(--safe-top) + 14px);
-      right: 16px;
-      width: 46px;
-      height: 46px;
-      background: rgba(10, 10, 10, 0.7);
+      top: calc(var(--safe-top) + 12px);
+      right: 14px;
+      width: 42px;
+      height: 42px;
+      background: rgba(10, 10, 10, 0.75);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(212, 175, 55, 0.4);
-      border-radius: 12px;
+      border-radius: 11px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4.5px;
       cursor: pointer;
       z-index: 1000;
       padding: 0;
@@ -4205,7 +4205,7 @@
     #burger-btn:hover { background: rgba(10, 10, 10, 0.9); border-color: var(--gold); }
     #burger-btn span {
       display: block;
-      width: 22px;
+      width: 20px;
       height: 2px;
       background: var(--gold);
       border-radius: 2px;
@@ -4213,9 +4213,9 @@
       transform-origin: center;
     }
     /* Animation hamburger → croix quand ouvert */
-    #burger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #burger-btn.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
     #burger-btn.open span:nth-child(2) { opacity: 0; }
-    #burger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    #burger-btn.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
     /* Overlay noir semi-transparent derrière le drawer */
     #burger-overlay {
