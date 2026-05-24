@@ -4346,24 +4346,17 @@
     .burger-link.active svg { stroke-width: 2; }
 
     /* === Section PRO-PRESSE (liens externes vers le site web) === */
-    /* 🔒 UNIQUEMENT VISIBLE SUR PC (≥ 1024px) — sur mobile, la redirection auto
-       du site web créerait une boucle vers l'app. Les pros utilisent un PC. */
-    .burger-section-divider,
-    .burger-link-ext {
-      display: none;
-    }
-    @media (min-width: 1024px) {
-      .burger-section-divider {
-        display: flex;
-        margin: 10px 24px 4px;
-        padding-top: 12px;
-        border-top: 1px solid rgba(212, 175, 55, 0.18);
-        align-items: center;
-        gap: 10px;
-      }
-      .burger-link-ext {
-        display: flex;
-      }
+    /* Visible partout (mobile + PC).
+       Sur mobile : clic = affiche un message "Accessible uniquement sur PC"
+       (la redirection auto du site web créerait une boucle vers l'app)
+       Sur PC : clic = ouvre la page externe normalement */
+    .burger-section-divider {
+      margin: 10px 24px 4px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(212, 175, 55, 0.18);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .burger-section-label {
       font-family: var(--sans);
@@ -4393,6 +4386,104 @@
     }
     .burger-link-ext:hover .ext-icon {
       opacity: 1;
+    }
+
+    /* === Toast info "Accessible uniquement sur PC" === */
+    #pc-only-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.92);
+      z-index: 99999;
+      background: linear-gradient(180deg, #141414 0%, #0A0A0A 100%);
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      border-radius: 14px;
+      padding: 22px 24px;
+      max-width: 320px;
+      width: calc(100% - 48px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(212,175,55,0.15);
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s ease;
+    }
+    #pc-only-toast.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .toast-icon {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .toast-title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .toast-text {
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--cream);
+      opacity: 0.85;
+      margin-bottom: 14px;
+    }
+    .toast-url {
+      font-family: var(--sans);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      color: var(--gold-pale);
+      padding: 8px 14px;
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 16px;
+      word-break: break-all;
+    }
+    .toast-close {
+      display: inline-block;
+      background: var(--gold);
+      color: #0A0A0A;
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      padding: 10px 28px;
+      border-radius: 999px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .toast-close:active { transform: scale(0.96); }
+    .toast-close:hover { background: var(--gold-pale); }
+
+    #pc-only-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 99998;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    #pc-only-overlay.show {
+      opacity: 1;
+      visibility: visible;
     }
 
     /* Footer du drawer */
@@ -4512,6 +4603,16 @@
     <div class="burger-footer-text">PRODUIT PAR OH MY PROD</div>
   </div>
 </aside>
+
+<!-- 🖥️ TOAST "Accessible uniquement sur PC" (pour liens PRO-PRESSE sur mobile) -->
+<div id="pc-only-overlay"></div>
+<div id="pc-only-toast" role="dialog" aria-labelledby="pc-only-title">
+  <div class="toast-icon">🖥️</div>
+  <div class="toast-title" id="pc-only-title">Accès réservé PC</div>
+  <div class="toast-text">Cette zone est accessible <strong>uniquement depuis un ordinateur</strong>.<br>Rends-toi sur :</div>
+  <div class="toast-url">www.theworldofqueen.com</div>
+  <button class="toast-close" id="pc-only-close">OK, COMPRIS</button>
+</div>
 
 <div id="splash" class="splash">
   <div class="nebula"></div>
@@ -8368,12 +8469,51 @@
       });
     });
 
-    // Clic sur un lien externe (PRO-PRESSE vers site web) → ferme juste le drawer,
-    // le navigateur gère l'ouverture dans un nouvel onglet via target="_blank"
+    // Clic sur un lien externe (PRO-PRESSE vers site web)
+    //  → SUR PC : laisse le navigateur ouvrir l'URL dans un nouvel onglet + ferme le drawer
+    //  → SUR MOBILE : affiche un toast "Accessible uniquement sur PC"
+    //    (évite la boucle infinie : site web mobile redirige auto vers la PWA)
+    function isMobileDevice() {
+      // Combine media query (largeur écran) + user agent pour fiabilité maximale
+      const narrowScreen = window.matchMedia('(max-width: 1023px)').matches;
+      const mobileUA = /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent);
+      return narrowScreen || mobileUA;
+    }
     document.querySelectorAll('.burger-link-ext').forEach(link => {
-      link.addEventListener('click', () => {
-        closeBurger();
+      link.addEventListener('click', (e) => {
+        if (isMobileDevice()) {
+          e.preventDefault();
+          closeBurger();
+          // Petit délai pour laisser le drawer se fermer joliment avant d'afficher le toast
+          setTimeout(showPcOnlyToast, 250);
+        } else {
+          // PC : on laisse le navigateur ouvrir l'URL, on ferme juste le drawer
+          closeBurger();
+        }
       });
+    });
+
+    // === Toast "Accessible uniquement sur PC" ===
+    function showPcOnlyToast() {
+      const toast = document.getElementById('pc-only-toast');
+      const overlay = document.getElementById('pc-only-overlay');
+      if (!toast || !overlay) return;
+      toast.classList.add('show');
+      overlay.classList.add('show');
+    }
+    function hidePcOnlyToast() {
+      const toast = document.getElementById('pc-only-toast');
+      const overlay = document.getElementById('pc-only-overlay');
+      if (!toast || !overlay) return;
+      toast.classList.remove('show');
+      overlay.classList.remove('show');
+    }
+    const pcOnlyCloseBtn = document.getElementById('pc-only-close');
+    const pcOnlyOverlayEl = document.getElementById('pc-only-overlay');
+    if (pcOnlyCloseBtn) pcOnlyCloseBtn.addEventListener('click', hidePcOnlyToast);
+    if (pcOnlyOverlayEl) pcOnlyOverlayEl.addEventListener('click', hidePcOnlyToast);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hidePcOnlyToast();
     });
 
     // Touche ESC → ferme
