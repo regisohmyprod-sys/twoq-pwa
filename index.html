@@ -4345,6 +4345,45 @@
     }
     .burger-link.active svg { stroke-width: 2; }
 
+    /* === Section PRO-PRESSE (liens externes vers le site web) === */
+    .burger-section-divider {
+      margin: 18px 24px 8px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(212, 175, 55, 0.18);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .burger-section-label {
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      color: var(--gold);
+      opacity: 0.85;
+    }
+    .burger-link-ext {
+      color: var(--gold-pale);
+      font-size: 14px;
+      padding: 14px 28px;
+      opacity: 0.9;
+    }
+    .burger-link-ext:hover {
+      background: rgba(212, 175, 55, 0.08);
+      color: var(--gold);
+      opacity: 1;
+    }
+    .burger-link-ext .ext-icon {
+      width: 14px;
+      height: 14px;
+      margin-left: auto;
+      opacity: 0.65;
+      stroke-width: 2;
+    }
+    .burger-link-ext:hover .ext-icon {
+      opacity: 1;
+    }
+
     /* Footer du drawer */
     .burger-footer {
       padding: 18px 24px 24px;
@@ -4435,6 +4474,26 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       MOI
     </button>
+
+    <!-- 🔒 Section PRO-PRESSE — liens externes vers le site web -->
+    <div class="burger-section-divider">
+      <span class="burger-section-label">PRO-PRESSE</span>
+    </div>
+    <a class="burger-link burger-link-ext" href="https://www.theworldofqueen.com/contact-prod.html" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg>
+      CONTACT PROD
+      <svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+    <a class="burger-link burger-link-ext" href="https://www.theworldofqueen.com/espace-presse.html" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>
+      ESPACE PRESSE
+      <svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+    <a class="burger-link burger-link-ext" href="https://www.theworldofqueen.com/espace-pro.html" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      ESPACE PRO
+      <svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
   </nav>
 
   <div class="burger-footer">
@@ -8287,13 +8346,21 @@
     // Clic sur l'overlay → ferme
     overlay.addEventListener('click', closeBurger);
 
-    // Clic sur un lien → navigue + ferme
-    document.querySelectorAll('.burger-link').forEach(link => {
+    // Clic sur un lien interne → navigue + ferme
+    document.querySelectorAll('.burger-link[data-burger-target]').forEach(link => {
       link.addEventListener('click', () => {
         const target = link.dataset.burgerTarget;
         if (target && typeof show === 'function') {
           show(target);
         }
+        closeBurger();
+      });
+    });
+
+    // Clic sur un lien externe (PRO-PRESSE vers site web) → ferme juste le drawer,
+    // le navigateur gère l'ouverture dans un nouvel onglet via target="_blank"
+    document.querySelectorAll('.burger-link-ext').forEach(link => {
+      link.addEventListener('click', () => {
         closeBurger();
       });
     });
