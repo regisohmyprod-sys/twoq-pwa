@@ -4168,6 +4168,202 @@
       70%      { transform: rotate(-4deg) scale(1); }
     }
 
+    /* ================================================
+       🍔 HAMBURGER MENU — Remplace la tabbar du bas
+       Drawer plein écran noir-or, slide depuis la droite
+       ================================================ */
+    /* On masque la tabbar du bas (on garde les boutons dans le DOM
+       pour ne pas casser la logique JS qui set .tab.active) */
+    .tabbar { display: none !important; }
+
+    /* Ajustement du padding bottom du contenu (plus de tabbar = plus besoin de réserver l'espace) */
+    .screen { padding-bottom: calc(var(--safe-bottom) + 24px) !important; }
+
+    /* Bouton hamburger — fixe en haut à droite */
+    #burger-btn {
+      position: fixed;
+      top: calc(var(--safe-top) + 14px);
+      right: 16px;
+      width: 46px;
+      height: 46px;
+      background: rgba(10, 10, 10, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 1000;
+      padding: 0;
+      transition: background 0.25s, border-color 0.25s, transform 0.15s;
+    }
+    #burger-btn:active { transform: scale(0.94); }
+    #burger-btn:hover { background: rgba(10, 10, 10, 0.9); border-color: var(--gold); }
+    #burger-btn span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+      transform-origin: center;
+    }
+    /* Animation hamburger → croix quand ouvert */
+    #burger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #burger-btn.open span:nth-child(2) { opacity: 0; }
+    #burger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Overlay noir semi-transparent derrière le drawer */
+    #burger-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 998;
+    }
+    #burger-overlay.open { opacity: 1; visibility: visible; }
+
+    /* Drawer principal */
+    #burger-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 86%;
+      max-width: 380px;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 0% 100%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+        #0A0A0A;
+      border-left: 1px solid rgba(212, 175, 55, 0.3);
+      box-shadow: -8px 0 32px rgba(0, 0, 0, 0.6);
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+    }
+    #burger-drawer.open { transform: translateX(0); }
+
+    /* Header du drawer */
+    .burger-header {
+      padding: 22px 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    }
+    .burger-title {
+      font-family: var(--serif);
+      font-weight: 900;
+      font-size: 26px;
+      letter-spacing: 0.35em;
+      background: linear-gradient(180deg, #F5F1E8 0%, #F0D77A 40%, #D4AF37 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      text-shadow: 0 2px 12px rgba(212, 175, 55, 0.25);
+      line-height: 1;
+    }
+    .burger-brand {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      background: linear-gradient(180deg, #F5F1E8 0%, #D4AF37 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    .burger-brand small {
+      display: block;
+      font-size: 9px;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: 0.25em;
+      color: var(--gold-pale);
+      opacity: 0.7;
+      margin-top: 3px;
+    }
+
+    /* Liens du menu */
+    .burger-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 0 24px;
+      display: flex;
+      flex-direction: column;
+    }
+    .burger-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 28px;
+      color: var(--cream);
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, padding-left 0.2s;
+      cursor: pointer;
+      background: none;
+      border-top: none;
+      border-right: none;
+      border-bottom: none;
+      text-align: left;
+      width: 100%;
+    }
+    .burger-link:hover {
+      background: rgba(212, 175, 55, 0.06);
+      color: var(--gold-pale);
+      padding-left: 32px;
+    }
+    .burger-link.active {
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0.14) 0%, transparent 100%);
+      color: var(--gold);
+      border-left-color: var(--gold);
+    }
+    .burger-link svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 1.7;
+      flex-shrink: 0;
+    }
+    .burger-link.active svg { stroke-width: 2; }
+
+    /* Footer du drawer */
+    .burger-footer {
+      padding: 18px 24px 24px;
+      border-top: 1px solid rgba(212, 175, 55, 0.15);
+      text-align: center;
+    }
+    .burger-footer-text {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--smoke);
+      opacity: 0.7;
+    }
+    .burger-footer-crown {
+      font-size: 16px;
+      margin-bottom: 6px;
+      filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.6));
+    }
+
     /* Étoile scintillante 4 branches (style splash) à poser sur l'affiche */
     .sparkle-star {
       position: absolute;
@@ -4193,6 +4389,59 @@
 
 <!-- 🛡️ COUVERTURE NOIRE INSTANTANÉE — masque le flash blanc Chrome avant chargement PWA -->
 <div id="instant-black-cover"></div>
+
+<!-- 🍔 BOUTON HAMBURGER (haut droite, fixe) -->
+<button id="burger-btn" aria-label="Ouvrir le menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- 🍔 OVERLAY (derrière le drawer) -->
+<div id="burger-overlay"></div>
+
+<!-- 🍔 DRAWER MENU (slide depuis la droite) -->
+<aside id="burger-drawer" aria-label="Menu principal">
+  <div class="burger-header">
+    <div class="burger-title">MENU</div>
+    <div class="burger-brand">
+      THE WORLD OF QUEEN
+      <small>L'Éternelle Légende</small>
+    </div>
+  </div>
+
+  <nav class="burger-nav">
+    <button class="burger-link" data-burger-target="dates">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      DATES TOURNÉE
+    </button>
+    <button class="burger-link" data-burger-target="show">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      LE SHOW
+    </button>
+    <button class="burger-link" data-burger-target="artistes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a4 4 0 014 4v5a4 4 0 11-8 0V6a4 4 0 014-4z"/><path d="M19 11a7 7 0 11-14 0M12 18v4M8 22h8"/></svg>
+      ARTISTES
+    </button>
+    <button class="burger-link" data-burger-target="fanzone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      FAN ZONE
+    </button>
+    <button class="burger-link" data-burger-target="boutique">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      MÉDIAS
+    </button>
+    <button class="burger-link" data-burger-target="moi">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      MOI
+    </button>
+  </nav>
+
+  <div class="burger-footer">
+    <div class="burger-footer-crown">👑</div>
+    <div class="burger-footer-text">PRODUIT PAR OH MY PROD</div>
+  </div>
+</aside>
 
 <div id="splash" class="splash">
   <div class="nebula"></div>
@@ -7879,6 +8128,8 @@
     document.querySelectorAll('.tab').forEach(t => {
       t.classList.toggle('active', t.dataset.tab === name);
     });
+    // 🍔 Sync l'état actif du menu hamburger
+    if (typeof window._syncBurgerActive === 'function') window._syncBurgerActive();
 
     // === Chargement asynchrone des concours du fan sur la page MOI ===
     if (name === 'moi' && typeof chargerMesConcours === 'function') {
@@ -7991,6 +8242,70 @@
   document.querySelectorAll('.tab').forEach(t => {
     t.addEventListener('click', () => show(t.dataset.tab));
   });
+
+  // ================================================
+  // 🍔 HAMBURGER MENU — ouverture / fermeture + navigation
+  // ================================================
+  (function setupBurgerMenu() {
+    const btn = document.getElementById('burger-btn');
+    const drawer = document.getElementById('burger-drawer');
+    const overlay = document.getElementById('burger-overlay');
+    if (!btn || !drawer || !overlay) return;
+
+    function openBurger() {
+      btn.classList.add('open');
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+      btn.setAttribute('aria-label', 'Fermer le menu');
+      document.body.style.overflow = 'hidden';
+      syncBurgerActive(); // sync l'état actif à l'ouverture
+    }
+    function closeBurger() {
+      btn.classList.remove('open');
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+      btn.setAttribute('aria-label', 'Ouvrir le menu');
+      document.body.style.overflow = '';
+    }
+    function toggleBurger() {
+      if (drawer.classList.contains('open')) closeBurger();
+      else openBurger();
+    }
+
+    // Sync : met la classe .active sur le lien correspondant à l'onglet courant
+    function syncBurgerActive() {
+      const activeTab = document.querySelector('.tab.active');
+      const currentName = activeTab ? activeTab.dataset.tab : 'dates';
+      document.querySelectorAll('.burger-link').forEach(link => {
+        link.classList.toggle('active', link.dataset.burgerTarget === currentName);
+      });
+    }
+
+    // Clic sur le burger
+    btn.addEventListener('click', toggleBurger);
+
+    // Clic sur l'overlay → ferme
+    overlay.addEventListener('click', closeBurger);
+
+    // Clic sur un lien → navigue + ferme
+    document.querySelectorAll('.burger-link').forEach(link => {
+      link.addEventListener('click', () => {
+        const target = link.dataset.burgerTarget;
+        if (target && typeof show === 'function') {
+          show(target);
+        }
+        closeBurger();
+      });
+    });
+
+    // Touche ESC → ferme
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawer.classList.contains('open')) closeBurger();
+    });
+
+    // Expose syncBurgerActive globalement pour pouvoir l'appeler depuis show() si besoin
+    window._syncBurgerActive = syncBurgerActive;
+  })();
 
   show('dates');
 
