@@ -4691,6 +4691,206 @@
   const SUPABASE_URL = 'https://nhxqcavianozskxgfcbt.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5oeHFjYXZpYW5venNreGdmY2J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyOTE0NjMsImV4cCI6MjA5MDg2NzQ2M30.sul93O7NFiIni3VnTkSld9HM6J73dnAYrnOT8PqFFW4';
 
+  // ================================================
+  // 📊 ANALYTICS TRACKER PWA TWOQ
+  // ================================================
+  // Tracker maison Supabase — RGPD-friendly (pas de cookie, visitor_id anonyme)
+  // Trace : sessions, pageviews, conversions (newsletter, concours, wall, billetterie, social)
+  // Endpoint : table analytics_events (source='pwa')
+  // ================================================
+  const OMP_ANALYTICS = (function() {
+    const STORAGE_VISITOR  = 'twoq_analytics_visitor_id';
+    const STORAGE_SESSION  = 'twoq_analytics_session';
+    const SESSION_TIMEOUT  = 30 * 60 * 1000; // 30 min d'inactivité = nouvelle session
+
+    // --- Générateur UUID v4 simple ---
+    function uuid() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+    }
+
+    // --- Détection device ---
+    function detectDevice() {
+      const ua = (navigator.userAgent || '').toLowerCase();
+      if (/ipad|tablet/i.test(ua) || (window.innerWidth >= 768 && window.innerWidth < 1024 && /mobile|android/i.test(ua))) return 'tablet';
+      if (/mobi|iphone|android/i.test(ua)) return 'mobile';
+      if (window.innerWidth >= 1024) return 'desktop';
+      return 'unknown';
+    }
+
+    // --- Visitor ID (anonyme, persistant) ---
+    function getVisitorId() {
+      let id = null;
+      try { id = localStorage.getItem(STORAGE_VISITOR); } catch(_) {}
+      if (!id) {
+        id = uuid();
+        try { localStorage.setItem(STORAGE_VISITOR, id); } catch(_) {}
+      }
+      return id;
+    }
+
+    // --- Session ID (UUID + timestamp, expire à 30min d'inactivité) ---
+    function getSessionId() {
+      let session = null;
+      try {
+        const raw = sessionStorage.getItem(STORAGE_SESSION) || localStorage.getItem(STORAGE_SESSION);
+        if (raw) session = JSON.parse(raw);
+      } catch(_) {}
+      const now = Date.now();
+      if (!session || (now - (session.last || 0)) > SESSION_TIMEOUT) {
+        session = { id: uuid(), start: now, last: now, isNew: true };
+      } else {
+        session.last = now;
+        session.isNew = false;
+      }
+      try {
+        const serialized = JSON.stringify({ id: session.id, start: session.start, last: session.last });
+        sessionStorage.setItem(STORAGE_SESSION, serialized);
+        localStorage.setItem(STORAGE_SESSION, serialized);
+      } catch(_) {}
+      return session;
+    }
+
+    // --- Envoi événement à Supabase (fire-and-forget, ne bloque jamais l'UI) ---
+    async function sendEvent(eventType, options) {
+      try {
+        options = options || {};
+        const session = getSessionId();
+        const payload = {
+          source: 'pwa',
+          event_type: eventType,
+          page_path: options.page_path || null,
+          session_id: session.id,
+          visitor_id: getVisitorId(),
+          referrer: document.referrer || null,
+          user_agent: (navigator.userAgent || '').substring(0, 300),
+          device_type: detectDevice(),
+          conversion_type: options.conversion_type || null
+        };
+        // Si nouvelle session, on envoie aussi un session_start juste avant
+        if (session.isNew && eventType !== 'session_start') {
+          fetch(SUPABASE_URL + '/rest/v1/analytics_events', {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ ...payload, event_type: 'session_start' })
+          }).catch(() => {}); // silent fail
+        }
+        // Envoi de l'événement principal
+        fetch(SUPABASE_URL + '/rest/v1/analytics_events', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(payload)
+        }).catch(() => {}); // silent fail (offline, réseau, etc.)
+      } catch(e) {
+        // Ne JAMAIS faire planter l'app à cause du tracker
+        console.debug('[Analytics] error:', e);
+      }
+    }
+
+    // --- API publique ---
+    return {
+      pageview: function(page) {
+        sendEvent('pageview', { page_path: page || 'splash' });
+      },
+      conversion: function(type) {
+        sendEvent('conversion', { conversion_type: type, page_path: type });
+      },
+      pwaInstall: function() {
+        sendEvent('pwa_install', { page_path: 'pwa_install' });
+      }
+    };
+  })();
+
+  // Tracker auto : 1er pageview au chargement (page splash)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => OMP_ANALYTICS.pageview('splash'));
+  } else {
+    OMP_ANALYTICS.pageview('splash');
+  }
+
+  // Tracker : détection install PWA
+  window.addEventListener('appinstalled', () => OMP_ANALYTICS.pwaInstall());
+
+  // ================================================
+  // 📊 INTERCEPTEUR GLOBAL window.open()
+  // ================================================
+  // Détecte automatiquement les clics vers :
+  //  - Billetterie (Ticketmaster, Fnac, See Tickets, Oh My Prod, etc.)
+  //  - Réseaux sociaux (Facebook, Instagram, YouTube, TikTok)
+  //  - Site web TWOQ
+  // Évite d'ajouter manuellement le tracking sur chaque bouton.
+  // ================================================
+  (function() {
+    const _originalOpen = window.open;
+    window.open = function(url, target, features) {
+      try {
+        if (typeof url === 'string' && url.startsWith('http')) {
+          const u = url.toLowerCase();
+          let convType = null;
+          // Billetterie (priorité haute)
+          if (u.includes('ticketmaster.fr') || u.includes('ticketmaster.com')) convType = 'billetterie_ticketmaster';
+          else if (u.includes('fnac') || u.includes('francebillet')) convType = 'billetterie_fnac';
+          else if (u.includes('seetickets') || u.includes('see-tickets')) convType = 'billetterie_seetickets';
+          else if (u.includes('digitick')) convType = 'billetterie_digitick';
+          else if (u.includes('ohmyprod') && u.includes('billetterie')) convType = 'billetterie_omp';
+          // Réseaux sociaux
+          else if (u.includes('facebook.com'))  convType = 'social_facebook';
+          else if (u.includes('instagram.com')) convType = 'social_instagram';
+          else if (u.includes('youtube.com') || u.includes('youtu.be')) convType = 'social_youtube';
+          else if (u.includes('tiktok.com'))    convType = 'social_tiktok';
+          else if (u.includes('x.com') || u.includes('twitter.com')) convType = 'social_twitter';
+          // Site web TWOQ (espace pro)
+          else if (u.includes('theworldofqueen.com')) convType = 'site_web_twoq';
+
+          if (convType && typeof OMP_ANALYTICS !== 'undefined') {
+            OMP_ANALYTICS.conversion(convType);
+          }
+        }
+      } catch(_) {}
+      return _originalOpen.call(window, url, target, features);
+    };
+  })();
+
+  // ================================================
+  // 📊 INTERCEPTEUR CLICS LIENS EXTERNES (<a target="_blank">)
+  // ================================================
+  // Délégation globale : capture les clics sur <a> qui ouvrent dans nouvel onglet
+  // (réseaux sociaux, billetterie, etc.) — complémentaire à l'intercepteur window.open
+  // ================================================
+  document.addEventListener('click', function(e) {
+    try {
+      const a = e.target && e.target.closest && e.target.closest('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (!href.startsWith('http')) return;
+      const u = href.toLowerCase();
+      let convType = null;
+      if (u.includes('ticketmaster')) convType = 'billetterie_ticketmaster';
+      else if (u.includes('fnac') || u.includes('francebillet')) convType = 'billetterie_fnac';
+      else if (u.includes('seetickets')) convType = 'billetterie_seetickets';
+      else if (u.includes('facebook.com'))  convType = 'social_facebook';
+      else if (u.includes('instagram.com')) convType = 'social_instagram';
+      else if (u.includes('youtube.com') || u.includes('youtu.be')) convType = 'social_youtube';
+      else if (u.includes('tiktok.com'))    convType = 'social_tiktok';
+      else if (u.includes('theworldofqueen.com')) convType = 'site_web_twoq';
+      if (convType && typeof OMP_ANALYTICS !== 'undefined') {
+        OMP_ANALYTICS.conversion(convType);
+      }
+    } catch(_) {}
+  }, true); // capture phase pour intercepter avant que la navigation se fasse
+
   let TWOQ_DATES_LIVE = null;   // Dates récupérées depuis Supabase (null = pas encore chargé)
   let TWOQ_FEATURED_LIVE = null; // La prochaine date publique chronologique
 
@@ -7028,6 +7228,8 @@
   };
 
   function afficherEcranSuccesPhoto(fan) {
+    // 📊 Tracking conversion : photo Wall of Fans envoyée avec succès
+    try { if (typeof OMP_ANALYTICS !== 'undefined') OMP_ANALYTICS.conversion('wall_photo'); } catch(_) {}
     const modal = document.getElementById('wallPhotoModal');
     if (!modal) return;
 
@@ -7692,6 +7894,8 @@
   // Quiz TWOQ — lancer le quiz (réservé membres pour valider le score)
   function openQuiz() {
     if (!requireMember('lancer le quiz')) return;
+    // 📊 Tracking conversion : tentative quiz Champion's Queen
+    try { if (typeof OMP_ANALYTICS !== 'undefined') OMP_ANALYTICS.conversion('quiz_champion'); } catch(_) {}
     alert('🎯 Quiz TWOQ — fonctionnalité en cours de développement.\n\nBientôt : 15 questions sur Queen et l\'histoire du groupe. Score validé, classement entre fans !');
   }
 
@@ -7791,6 +7995,16 @@
             await enregistrerParrainagePostInscription(nouveauFan.id);
           } catch(e) { console.warn('[Parrain] Échec post-inscription:', e); }
         }
+        // 📊 Tracking conversion : nouvelle inscription fan
+        try {
+          if (typeof OMP_ANALYTICS !== 'undefined') {
+            OMP_ANALYTICS.conversion('signup');
+            // Si la newsletter est cochée → on track aussi cette conversion spécifique
+            if (data && data.consentement_newsletter) {
+              OMP_ANALYTICS.conversion('newsletter');
+            }
+          }
+        } catch(_) {}
         return { ok: true, data: nouveauFan };
       } else {
         const err = await response.json();
@@ -8301,6 +8515,8 @@
     });
     // 🍔 Sync l'état actif du menu hamburger
     if (typeof window._syncBurgerActive === 'function') window._syncBurgerActive();
+    // 📊 Tracking analytics : pageview à chaque changement de page
+    if (typeof OMP_ANALYTICS !== 'undefined') OMP_ANALYTICS.pageview(name);
 
     // === Chargement asynchrone des concours du fan sur la page MOI ===
     if (name === 'moi' && typeof chargerMesConcours === 'function') {
@@ -10159,6 +10375,8 @@
     renderQuizQuestion();
     document.getElementById('quizModal').classList.add('active');
     document.body.style.overflow = 'hidden';
+    // 📊 Tracking conversion : ouverture du Quiz Champion's Queen
+    try { if (typeof OMP_ANALYTICS !== 'undefined') OMP_ANALYTICS.conversion('quiz_champion'); } catch(_) {}
   }
 
   function closeQuiz() {
@@ -10847,6 +11065,8 @@
 
   // Le concours démarre le 1er juillet 2026
   async function openSummerContest() {
+    // 📊 Tracking conversion : tentative Summer Contest
+    try { if (typeof OMP_ANALYTICS !== 'undefined') OMP_ANALYTICS.conversion('quiz_summer'); } catch(_) {}
     const today = new Date();
     const dateDebut = new Date('2026-07-01T00:00:00');
     const dateFin = new Date('2026-08-31T23:59:59');
