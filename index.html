@@ -1,12 +1,27 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <!-- 🛡️ STYLE CRITIQUE — FORCE FOND NOIR INSTANTANÉ (avant tout autre chargement) -->
+  <!-- Évite le flash blanc Chrome avant que la PWA charge -->
+  <style>
+    html, body { background: #0A0A0A !important; margin: 0; padding: 0; }
+    #instant-black-cover {
+      position: fixed; inset: 0;
+      background: #0A0A0A;
+      z-index: 2147483647;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.3s ease;
+    }
+    #instant-black-cover.fade-out { opacity: 0; pointer-events: none; }
+  </style>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <title>The World of Queen l'app</title>
   <meta name="description" content="L'application officielle de The World of Queen — L'Éternelle Légende.">
 
   <meta name="theme-color" content="#0A0A0A">
+  <meta name="background-color" content="#0A0A0A">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -4176,6 +4191,9 @@
 </head>
 <body>
 
+<!-- 🛡️ COUVERTURE NOIRE INSTANTANÉE — masque le flash blanc Chrome avant chargement PWA -->
+<div id="instant-black-cover"></div>
+
 <div id="splash" class="splash">
   <div class="nebula"></div>
 
@@ -4378,6 +4396,20 @@
     container.innerHTML = html;
   }
   generateHyperdrive();
+
+  // ================================================
+  // 🛡️ RETIRER LA COUVERTURE NOIRE — splash prêt à afficher
+  // ================================================
+  const _instantCover = document.getElementById('instant-black-cover');
+  if (_instantCover) {
+    // Double rAF pour s'assurer que le splash est rendu derrière avant de fade
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        _instantCover.classList.add('fade-out');
+        setTimeout(() => _instantCover.remove(), 350);
+      });
+    });
+  }
 
   const splash = document.getElementById('splash');
   const enterBtn = document.getElementById('splashEnterBtn');
