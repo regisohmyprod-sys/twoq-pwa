@@ -8518,6 +8518,15 @@
     // 📊 Tracking analytics : pageview à chaque changement de page
     if (typeof OMP_ANALYTICS !== 'undefined') OMP_ANALYTICS.pageview(name);
 
+    // 🔙 Navigation retour intelligente : push une entrée d'historique
+    //    (sauf si on est en train de répondre à un popstate — voir _isPopState)
+    if (typeof window._isPopState === 'undefined' || !window._isPopState) {
+      try {
+        history.pushState({ twoqPage: name }, '', '#' + name);
+      } catch(_) {}
+    }
+    window._isPopState = false;
+
     // === Chargement asynchrone des concours du fan sur la page MOI ===
     if (name === 'moi' && typeof chargerMesConcours === 'function') {
       setTimeout(chargerMesConcours, 100);
@@ -8739,6 +8748,149 @@
 
     // Expose syncBurgerActive globalement pour pouvoir l'appeler depuis show() si besoin
     window._syncBurgerActive = syncBurgerActive;
+  })();
+
+  // ================================================
+  // 🔙 NAVIGATION RETOUR INTELLIGENTE
+  // ================================================
+  // Gère le bouton retour Android / geste swipe back iOS :
+  //  • Si un modal/drawer est ouvert → le ferme
+  //  • Si on n'est pas sur la page d'accueil (dates) → retour à dates
+  //  • Si on est sur dates → toast "Appuyer encore pour quitter" + 2s
+  //    → 2e appui dans les 2s = vrai sortie de l'app
+  // ================================================
+  (function setupBackNavigation() {
+    let lastBackPressTime = 0;
+    const EXIT_CONFIRM_WINDOW = 2000; // 2 secondes pour reconfirmer
+
+    // Crée le toast d'avertissement (caché par défaut)
+    const exitToast = document.createElement('div');
+    exitToast.id = 'exit-confirm-toast';
+    exitToast.style.cssText = `
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: linear-gradient(180deg, #1A1A1A 0%, #0A0A0A 100%);
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      border-radius: 999px;
+      padding: 14px 24px;
+      color: #F5F1E8;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 24px rgba(212,175,55,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 99999;
+      white-space: nowrap;
+    `;
+    exitToast.innerHTML = '👈 Appuyer encore pour quitter';
+    document.body.appendChild(exitToast);
+
+    function showExitToast() {
+      exitToast.style.opacity = '1';
+      exitToast.style.transform = 'translateX(-50%) translateY(0)';
+      // Cache après 2s
+      setTimeout(() => {
+        exitToast.style.opacity = '0';
+        exitToast.style.transform = 'translateX(-50%) translateY(100px)';
+      }, EXIT_CONFIRM_WINDOW);
+    }
+
+    // Détecte si un modal ou drawer est ouvert
+    function isModalOpen() {
+      // Drawer hamburger
+      const drawer = document.getElementById('burger-drawer');
+      if (drawer && drawer.classList.contains('open')) return 'burger';
+
+      // Modal "PC only" (lien pro presse)
+      const pcToast = document.getElementById('pc-only-toast');
+      if (pcToast && pcToast.classList.contains('show')) return 'pc-only';
+
+      // Modaux génériques avec classe .active ou attribut [open]
+      const activeModals = document.querySelectorAll(
+        '.modal.active, .modal[open], dialog[open], [role="dialog"].active, ' +
+        '.lightbox.active, .modal-overlay.active'
+      );
+      if (activeModals.length > 0) return 'generic';
+
+      return null;
+    }
+
+    // Ferme le modal/drawer ouvert
+    function closeOpenModal(type) {
+      try {
+        if (type === 'burger') {
+          // On utilise les classes (même méthode que setupBurgerMenu)
+          document.getElementById('burger-btn')?.classList.remove('open');
+          document.getElementById('burger-drawer')?.classList.remove('open');
+          document.getElementById('burger-overlay')?.classList.remove('open');
+          document.body.style.overflow = '';
+          return true;
+        }
+        if (type === 'pc-only') {
+          document.getElementById('pc-only-toast')?.classList.remove('show');
+          document.getElementById('pc-only-overlay')?.classList.remove('show');
+          return true;
+        }
+        if (type === 'generic') {
+          // Ferme tous les modaux génériques
+          document.querySelectorAll('.modal.active, .lightbox.active, .modal-overlay.active')
+            .forEach(m => m.classList.remove('active'));
+          document.querySelectorAll('.modal[open], dialog[open]')
+            .forEach(m => m.removeAttribute('open'));
+          document.body.style.overflow = '';
+          return true;
+        }
+      } catch(e) { console.debug('[BackNav] close error:', e); }
+      return false;
+    }
+
+    // Renvoie le nom de la page actuellement active
+    function getCurrentPage() {
+      const activeTab = document.querySelector('.tab.active');
+      return activeTab ? activeTab.dataset.tab : 'dates';
+    }
+
+    // Listener principal : bouton retour Android (et historique général)
+    window.addEventListener('popstate', function(event) {
+      // 1️⃣ Priorité absolue : si un modal/drawer est ouvert, on le ferme et c'est tout
+      const modalType = isModalOpen();
+      if (modalType) {
+        closeOpenModal(modalType);
+        // On re-push une entrée pour que le prochain retour fonctionne aussi
+        try { history.pushState({ twoqPage: getCurrentPage() }, '', '#' + getCurrentPage()); } catch(_) {}
+        return;
+      }
+
+      // 2️⃣ Sinon : analyser la page actuelle
+      const currentPage = getCurrentPage();
+
+      if (currentPage !== 'dates') {
+        // On n'est pas sur l'accueil → retour à dates
+        window._isPopState = true; // empêche show() de re-push une entrée
+        if (typeof show === 'function') show('dates');
+      } else {
+        // On est sur l'accueil → demande de confirmation pour quitter
+        const now = Date.now();
+        if (now - lastBackPressTime < EXIT_CONFIRM_WINDOW) {
+          // 2e appui dans les 2s → on laisse vraiment partir
+          // (on ne push pas de nouvelle entrée → l'app se ferme)
+          return;
+        }
+        // 1er appui : affiche le toast et bloque la sortie
+        lastBackPressTime = now;
+        showExitToast();
+        // Re-push une entrée pour intercepter le prochain retour
+        try { history.pushState({ twoqPage: 'dates' }, '', '#dates'); } catch(_) {}
+      }
+    });
+
+    // Initial : push une entrée vide au chargement pour avoir un point de retour
+    try { history.replaceState({ twoqPage: 'dates' }, '', '#dates'); } catch(_) {}
   })();
 
   show('dates');
