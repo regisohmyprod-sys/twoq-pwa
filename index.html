@@ -7060,10 +7060,10 @@
       return;
     }
 
-    // Vérifier la taille (max 10 Mo)
-    const maxSize = 10 * 1024 * 1024;
+    // Vérifier la taille (max 25 Mo - augmenté pour les photos Samsung haute qualité)
+    const maxSize = 25 * 1024 * 1024;
     if (file.size > maxSize) {
-      alert('❌ Photo trop lourde (' + (file.size / 1024 / 1024).toFixed(1) + ' Mo)\n\nLimite : 10 Mo\n\nAstuce : réduis la taille de la photo avant de l\'envoyer.');
+      alert('❌ Photo trop lourde (' + (file.size / 1024 / 1024).toFixed(1) + ' Mo)\n\nLimite : 25 Mo\n\nAstuce : réduis la taille de la photo avant de l\'envoyer.');
       return;
     }
 
@@ -7159,23 +7159,44 @@
       const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
       const fileName = 'pending/' + fanId + '_' + timestamp + '.' + ext;
 
+      // 🛠️ FIX MOBILE (mai 2026) : sur certains Samsung, file.type est VIDE quand la photo
+      // vient de la caméra → Supabase rejette avec "Failed to fetch". On déduit le MIME
+      // depuis l'extension ou on fallback à image/jpeg.
+      let contentType = file.type;
+      if (!contentType || contentType === '' || !contentType.startsWith('image/')) {
+        const mimeMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', heic: 'image/heic', heif: 'image/heif' };
+        contentType = mimeMap[ext] || 'image/jpeg';
+        console.log('[WallOfFans] ⚠️ file.type vide ou invalide, fallback Content-Type:', contentType);
+      }
+
       const uploadUrl = SUPABASE_URL + '/storage/v1/object/wall-of-fans/' + fileName;
-      const uploadResp = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-          'Content-Type': file.type,
-          'x-upsert': 'true'
-        },
-        body: file
-      });
+      console.log('[WallOfFans] 📤 Upload vers:', uploadUrl, '(', (file.size/1024/1024).toFixed(2), 'MB,', contentType, ')');
+
+      let uploadResp;
+      try {
+        uploadResp = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': contentType,
+            'x-upsert': 'true'
+          },
+          body: file
+        });
+      } catch(fetchErr) {
+        // Failed to fetch = problème réseau ou CORS (souvent mobile)
+        console.error('[WallOfFans] ❌ Fetch error:', fetchErr);
+        throw new Error('Connexion réseau échouée. Vérifie ta connexion et réessaye.');
+      }
 
       if (!uploadResp.ok) {
         const err = await uploadResp.text();
-        console.warn('[WallOfFans] Upload error:', err);
-        throw new Error('Échec de l\'upload : ' + uploadResp.status);
+        console.warn('[WallOfFans] Upload error:', uploadResp.status, err);
+        throw new Error('Échec upload (HTTP ' + uploadResp.status + ') : ' + (err.substring(0, 100) || 'erreur inconnue'));
       }
+
+      console.log('[WallOfFans] ✅ Upload réussi');
 
       // 2. Construire l'URL publique
       const publicUrl = SUPABASE_URL + '/storage/v1/object/public/wall-of-fans/' + fileName;
@@ -7264,13 +7285,14 @@
   // CHARGEMENT DES PHOTOS VALIDÉES (Wall of Fans)
   // ──────────────────────────────────────────────────────────────────────
   async function chargerWallOfFansPhotos() {
-    console.log('[WOF-PWA] 🚀 Début chargement photos Wall of Fans...');
     const grid = document.getElementById('wallOfFansGrid');
     if (!grid) {
-      console.warn('[WOF-PWA] ❌ Élément #wallOfFansGrid introuvable');
+      // Au démarrage, la grille n'est pas dans le DOM (la section "fanzone" n'est pas active).
+      // C'est NORMAL : la fonction sera rappelée quand on ira sur la fanzone via show().
+      // On reste silencieux pour ne pas polluer la console.
       return;
     }
-    console.log('[WOF-PWA] ✅ Grid trouvée');
+    console.log('[WOF-PWA] 🚀 Chargement photos Wall of Fans...');
 
     try {
       // Récupère mises_en_avant en premier, puis validées les plus récentes (max 6)
