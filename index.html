@@ -7972,7 +7972,8 @@
               body: JSON.stringify({
                 ...data,
                 profil_complete: false, // Sera mis à true à l'étape 2
-                source: 'wix_activation' // Marque qu'il a activé son compte importé
+                source: 'wix_activation', // Marque qu'il a activé son compte importé
+                pwa_installed_at: new Date().toISOString() // 🔧 FIX 30/05/2026 : marque l'installation PWA
               })
             });
             
@@ -8006,7 +8007,8 @@
           'Content-Type': 'application/json',
           'Prefer': 'return=representation'
         },
-        body: JSON.stringify(data)
+        // 🔧 FIX 30/05/2026 : marque l'installation PWA dès la création
+        body: JSON.stringify({ ...data, pwa_installed_at: new Date().toISOString() })
       });
       if (response.ok) {
         const result = await response.json();
@@ -8052,7 +8054,8 @@
           'Content-Type': 'application/json',
           'Prefer': 'return=representation'
         },
-        body: JSON.stringify({ ...data, profil_complete: true })
+        // 🔧 FIX 30/05/2026 : marque pwa_installed_at par sécurité (au cas où l'étape 1 n'aurait pas réussi)
+        body: JSON.stringify({ ...data, profil_complete: true, pwa_installed_at: data.pwa_installed_at || new Date().toISOString() })
       });
       if (response.ok) {
         const result = await response.json();
@@ -9683,6 +9686,22 @@
         if (fans.length > 0) {
           // Compte trouvé !
           setFan(fans[0]);
+
+          // 🔧 FIX 30/05/2026 : Si le fan n'a pas encore le flag pwa_installed_at (cas typique d'un fan importé CRM
+          // qui se logue pour la 1ère fois via la PWA), on le marque maintenant. PATCH async non-bloquant.
+          if (!fans[0].pwa_installed_at) {
+            fetch(SUPABASE_URL + '/rest/v1/fans?id=eq.' + fans[0].id, {
+              method: 'PATCH',
+              headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+              },
+              body: JSON.stringify({ pwa_installed_at: new Date().toISOString() })
+            }).catch(e => console.warn('[PWA] Échec marquage pwa_installed_at au login:', e));
+          }
+
           closeLoginModal();
           // Toast de bienvenue
           setTimeout(() => showLoginSuccess(fans[0].prenom), 300);
