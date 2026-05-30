@@ -12888,12 +12888,9 @@
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    // Délai d'affichage du bandeau :
-    // - Si arrivée via QR code : 2 secondes (l'utilisateur vient activement tester l'app)
-    // - Sinon : 8 secondes (laisse le temps d'apprécier le site avant de proposer)
-    const fromQR = getUTM().utm_source === 'qr';
-    const delay = fromQR ? 2000 : 8000;
-    setTimeout(() => showInstallBanner(), delay);
+    // 🔧 FIX 30/05/2026 : affichage immédiat (300ms, le temps que le DOM se rende)
+    // Avant : 2s (QR) / 8s (standard) → impression de lenteur
+    setTimeout(() => showInstallBanner(), 300);
   });
 
   // Sur iOS, le beforeinstallprompt n'existe pas → on affiche un bandeau d'instructions
@@ -12903,10 +12900,9 @@
   }
 
   if (isIOSSafari() && !isStandalone() && !localStorage.getItem('twoq_install_dismissed')) {
-    // Délai d'affichage iOS : 2s si arrivée via QR, 10s sinon
-    const fromQR = getUTM().utm_source === 'qr';
-    const delayIOS = fromQR ? 2000 : 10000;
-    setTimeout(() => showInstallBannerIOS(), delayIOS);
+    // 🔧 FIX 30/05/2026 : affichage immédiat (300ms)
+    // Avant : 2s (QR) / 10s (standard)
+    setTimeout(() => showInstallBannerIOS(), 300);
   }
 
   // Si déjà installé ou refusé récemment, on n'affiche pas
